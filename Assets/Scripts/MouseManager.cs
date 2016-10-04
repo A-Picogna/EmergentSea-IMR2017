@@ -18,7 +18,17 @@ public class MouseManager : MonoBehaviour {
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hitInfo;
 		if (Physics.Raycast (ray, out hitInfo)) {
-			Debug.Log (hitInfo.collider.transform.parent.name);
+			GameObject ourHitObject = hitInfo.collider.transform.gameObject;
+			Debug.Log (ourHitObject.name);
+
+			if (Input.GetMouseButtonDown(0)) {
+				MeshRenderer mr = ourHitObject.GetComponentInChildren<MeshRenderer> ();
+				if (mr.material.color == Color.red) {
+					mr.material.color = Color.white;
+				} else {
+					mr.material.color = Color.red;
+				}
+			}
 		}
 
 	}
