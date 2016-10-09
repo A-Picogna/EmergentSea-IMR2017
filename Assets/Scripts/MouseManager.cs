@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// @Author Alexandre Picogna
+
+using UnityEngine;
 using System.Collections;
 
 public class MouseManager : MonoBehaviour {
@@ -19,7 +21,6 @@ public class MouseManager : MonoBehaviour {
 		RaycastHit hitInfo;
 		if (Physics.Raycast (ray, out hitInfo)) {
 			GameObject ourHitObject = hitInfo.collider.transform.gameObject;
-			Debug.Log (ourHitObject.name);
 
 			if (Input.GetMouseButtonDown(0)) {
 				MeshRenderer mr = ourHitObject.GetComponentInChildren<MeshRenderer> ();
