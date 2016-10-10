@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 public class MouseManager : MonoBehaviour {
 
-	Unit selectedUnit;
+	Ship selectedUnit;
 
 	// Use this for initialization
 	void Start () {
@@ -39,7 +39,7 @@ public class MouseManager : MonoBehaviour {
 			GameObject ourHitObject = hitInfo.collider.transform.parent.gameObject;
 			if (ourHitObject.GetComponent<Hex> () != null) {
 				MouseOver_Hex (ourHitObject);
-			} else if (ourHitObject.GetComponent<Unit> () != null) {
+			} else if (ourHitObject.GetComponent<Ship> () != null) {
 				MouseOver_Unit (ourHitObject);
 			}
 		}
@@ -75,7 +75,7 @@ public class MouseManager : MonoBehaviour {
 	void MouseOver_Unit(GameObject ourHitObject) {
 		//Debug.Log("Raycast hit: " + ourHitObject.name );
 		if (Input.GetMouseButtonDown(0)) {
-			selectedUnit = ourHitObject.GetComponent<Unit> ();
+			selectedUnit = ourHitObject.GetComponent<Ship> ();
 		}
 	}
 }

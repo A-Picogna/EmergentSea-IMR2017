@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Unit : MonoBehaviour {
+public class Ship : MonoBehaviour {
 
 	public Vector3 destination;
 	float speed = 2;
