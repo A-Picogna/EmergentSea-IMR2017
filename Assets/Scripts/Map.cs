@@ -6,6 +6,8 @@ using System.Collections;
 public class Map : MonoBehaviour {
 
 	public GameObject hexPrefab;
+	public GameObject landPrefab;
+	public GameObject seaPrefab;
 
 	// size of map in terms of numer of hexagon
 	public int width = 20;
@@ -43,6 +45,17 @@ public class Map : MonoBehaviour {
 
 			}
 		}
+
+		// We stat to generate some land
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				// GameObject.Find ("Hex_" + x + "_" + y);
+				// if we replace by a land
+				// store coord of the unity world
+				// Delete the sea hex and replace it by land hex
+			}
+		}
+
 
 	}
 	
