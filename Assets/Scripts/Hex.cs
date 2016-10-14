@@ -6,6 +6,7 @@ public class Hex : MonoBehaviour {
 	// Coordinates in the grid (not unity unit)
 	public int x;
 	public int y;
+	private string type;
 
 	public GameObject[] getNeighbours(){
 
@@ -36,6 +37,12 @@ public class Hex : MonoBehaviour {
 		}
 
 		return Neighbours;
+	}
+
+	public string gs_type
+	{
+		get { return type; }
+		set { type = value; }
 	}
 
 }
