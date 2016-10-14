@@ -18,6 +18,7 @@ public class Map_Jihane : MonoBehaviour
     float xOffset = 0.882f;
     float zOffset = 0.764f;
     int nbCasesRemplinit = 8;
+    System.Random rand = new System.Random();
     List<int> abcisses = new List<int>();
     List<int> ordonnes = new List<int>();
     Vector3 unitycord = new Vector3(0,0,0);
@@ -59,15 +60,13 @@ public class Map_Jihane : MonoBehaviour
 
         for (int k=0; k<nbCasesRemplinit ;k++)
         {
-            System.Random rand = new System.Random();
+            
             int x = rand.Next(0, width);
             int y = rand.Next(0, height);
+            Debug.Log(x.ToString());
             abcisses.Add(x);
             ordonnes.Add(y);
         }
-        abcisses.Sort();
-        ordonnes.Sort();
-        //Console.WriteLine("Hello World!");
 
         // We stat to generate some land
 
@@ -77,12 +76,15 @@ public class Map_Jihane : MonoBehaviour
         {
             GameObject remplacable = GameObject.Find("Hex_" + abcisses[a] + "_" + ordonnes[a]);
             unitycord = remplacable.transform.position;
-            remplacable = null;
+            Destroy(remplacable);
+            
             GameObject hex_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
             hex_go.name = "Hex_" + abcisses[a] + "_" + ordonnes[a];
             hex_go.GetComponent<Land>().x = abcisses[a];
             hex_go.GetComponent<Land>().y = ordonnes[a];
-
+            hex_go.transform.SetParent(this.transform);
+            hex_go.isStatic = true;
+            
         }
         // GameObject.Find ("Hex_" + x + "_" + y);
         // if we replace by a land
