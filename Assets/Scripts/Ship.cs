@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Ship : MonoBehaviour {
 
-	private int food, gold, lp, energyQuantity;
+	private List<Node> currentPath = null;
+	private int food, gold, lp, energyQuantity, shipX, shipY;
+	private string shipName;
 	private ArrayList crew = new ArrayList();
 	public Vector3 destination;
 	float speed = 2;
@@ -31,41 +34,6 @@ public class Ship : MonoBehaviour {
 		velocity = Vector3.ClampMagnitude (velocity, direction.magnitude);
 		transform.Translate (velocity);
 	
-	}
-
-	public int Food
-	{
-		get { return food; }
-		set { food = value; }
-	}
-
-	public int Gold
-	{
-		get { return gold; }
-		set { gold = value; }
-	}
-
-	public int Lp
-	{
-		get { return lp; }
-		set { lp = value; }
-	}
-
-	public int EnergyQuantity
-	{
-		get { return energyQuantity; }
-		set { energyQuantity = value; }
-	}
-
-	public ArrayList Crew
-	{
-		get { return crew; }
-		set { crew = value; }
-	}
-
-	public void moveShip(int x, int y)
-	{
-		//tocheck
 	}
 
 	public int calculateEQmax()
@@ -136,4 +104,77 @@ public class Ship : MonoBehaviour {
 	{
 		crew.Remove(member);
 	}
+
+
+
+
+
+	// ====================
+	// GETTER & SETTER 
+	// ====================
+
+	public int Food
+	{
+		get { return food; }
+		set { food = value; }
+	}
+
+	public int Gold
+	{
+		get { return gold; }
+		set { gold = value; }
+	}
+
+	public int Lp
+	{
+		get { return lp; }
+		set { lp = value; }
+	}
+
+	public int EnergyQuantity
+	{
+		get { return energyQuantity; }
+		set { energyQuantity = value; }
+	}
+
+	public ArrayList Crew
+	{
+		get { return crew; }
+		set { crew = value; }
+	}
+
+	public void moveShip(int x, int y)
+	{
+		//tocheck
+	}
+
+	public int ShipX
+	{
+		get { return shipX; }
+		set { shipX = value; }
+	}
+
+	public int ShipY
+	{
+		get { return shipY; }
+		set { shipY = value; }
+	}
+
+	public string ShipName
+	{
+		get { return shipName; }
+		set { shipName = value; }
+	}
+
+	public List<Node> CurrentPath
+	{
+		get { return currentPath; }
+		set { currentPath = value; }
+	}
+
+	// ====================
+	// ====================
+
+
+
 }

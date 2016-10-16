@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 public class MouseManager : MonoBehaviour {
 
-	Ship selectedUnit;
+	public Ship selectedUnit;
 
 	// Use this for initialization
 	void Start () {
