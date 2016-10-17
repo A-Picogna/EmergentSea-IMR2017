@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Hex : MonoBehaviour {
 
@@ -8,8 +9,7 @@ public class Hex : MonoBehaviour {
 	public int y;
 	private string type;
 
-	public GameObject[] getNeighbours(){
-
+	public GameObject[] getNeighboursOld(){
 		GameObject[] Neighbours = new GameObject[6];
 		GameObject leftNeighbour = GameObject.Find("Hex_" + (x-1) + "_" + y);
 		GameObject rightNeighbour = GameObject.Find("Hex_" + (x+1) + "_" + y);
@@ -39,7 +39,41 @@ public class Hex : MonoBehaviour {
 		return Neighbours;
 	}
 
-	public string gs_type
+    public List<GameObject> getNeighbours()
+    {
+        List<GameObject> Neighbours = new List<GameObject>();
+        GameObject leftNeighbour = GameObject.Find("Hex_" + (x - 1) + "_" + y);
+        GameObject rightNeighbour = GameObject.Find("Hex_" + (x + 1) + "_" + y);
+        Neighbours.Add(leftNeighbour);
+        Neighbours.Add(rightNeighbour);
+
+        if (y % 2 == 0)
+        {
+            GameObject upperLeftNeighbour = GameObject.Find("Hex_" + (x - 1) + "_" + (y + 1));
+            GameObject upperRightNeighbour = GameObject.Find("Hex_" + x + "_" + (y + 1));
+            GameObject lowerLeftNeighbour = GameObject.Find("Hex_" + (x - 1) + "_" + (y - 1));
+            GameObject lowerRightNeighbour = GameObject.Find("Hex_" + x + "_" + (y - 1));
+            Neighbours.Add(upperLeftNeighbour);
+            Neighbours.Add(upperRightNeighbour);
+            Neighbours.Add(lowerLeftNeighbour);
+            Neighbours.Add(lowerRightNeighbour);
+        }
+        else
+        {
+            GameObject upperLeftNeighbour = GameObject.Find("Hex_" + x + "_" + (y + 1));
+            GameObject upperRightNeighbour = GameObject.Find("Hex_" + (x + 1) + "_" + (y + 1));
+            GameObject lowerLeftNeighbour = GameObject.Find("Hex_" + x + "_" + (y - 1));
+            GameObject lowerRightNeighbour = GameObject.Find("Hex_" + (x + 1) + "_" + (y - 1));
+            Neighbours.Add(upperLeftNeighbour);
+            Neighbours.Add(upperRightNeighbour);
+            Neighbours.Add(lowerLeftNeighbour);
+            Neighbours.Add(lowerRightNeighbour);
+        }
+
+        return Neighbours;
+    }
+
+    public string gs_type
 	{
 		get { return type; }
 		set { type = value; }
