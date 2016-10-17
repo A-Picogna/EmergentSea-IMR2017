@@ -11,12 +11,8 @@ public class Map : MonoBehaviour {
 	public GameObject landPrefab;
 	public GameObject seaPrefab;
 
-	// NOTABENE : DELETE THIS LINE WHEN THE PATHFINDING WORK !!!!!
-	// THE SELECTED UNIT IS IN MOUSE MANAGER
-	Ship selectedUnit;
-
 	// Map in graph to calculate pathfinding
-	Node[,] graph;
+	public Node[,] graph;
 
 	// size of map in terms of numer of hexagon
 	public int width = 20;
@@ -79,16 +75,22 @@ public class Map : MonoBehaviour {
 	}
 
 	void GeneratePathfindingGraph(){
-		selectedUnit.GetComponent<Ship>().CurrentPath = null;
-
+		
+		// Initialize the array
 		graph = new Node[width, height];
+
+		// Initialize each Node
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				graph [x, y] = new Node ();
+				graph [x, y].x = x;
+				graph [x, y].y = y;
+			}
+		}
+
 		// Creation of the graph with neighbours
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-
-				graph [x, y].x = x;
-				graph [x, y].y = y;
-
 				// First we find the gameobject at te current coord
 				// Then we get his neighbour with the Hex function
 				GameObject currentHex = GameObject.Find ("Hex_" + x + "_" + y);
@@ -105,79 +107,5 @@ public class Map : MonoBehaviour {
 		}
 	}
 
-	public void DijkstraPathfindingTo(int x, int y){
-		List<Node> currentPath = null;
 
-		Dictionary<Node, float> dist = new Dictionary<Node, float> ();
-		Dictionary<Node, Node> prev = new Dictionary<Node, Node> ();
-
-		List<Node> unvisited = new List<Node> ();
-
-		Node source = graph [
-			selectedUnit.GetComponent<Ship> ().ShipX,
-			selectedUnit.GetComponent<Ship> ().ShipY
-		];
-
-		Node target = graph [
-			x,
-			y
-		];
-		dist [source] = 0;
-		prev [source] = null;
-
-		// Initialize everything with infinity distance
-		foreach (Node v in graph) {
-			if (v != source) {
-				dist [v] = Mathf.Infinity;
-				prev [v] = null;
-			}
-			unvisited.Add (v);
-		}
-
-		while (unvisited.Count > 0) {
-
-			// u is going to be the unvisited node with the smallest distance
-			Node u = null;
-
-			foreach (Node possibleU in unvisited) {
-				if (u == null || dist[possibleU] < dist[u]) {
-					u = possibleU;
-				}
-			}
-
-			if (u == target) {
-				break; // Exit the loop!
-			}
-
-			unvisited.Remove (u);
-
-			foreach(Node v in u.neighbours){
-				float alt = dist [u] + u.DistanceTo (v);
-				if (alt < dist [v]) {
-					dist [v] = alt;
-					prev [v] = u;
-				}
-			}
-		}
-
-		// when we're here, we found the shortest route or there is no route at all
-
-		if (prev [target] == null) {
-			// No route!
-			return;
-		}
-
-		currentPath = new List<Node> ();
-
-		Node curr = target;
-
-		while (curr != null) {
-			currentPath.Add (curr);
-			curr = prev [curr];
-		}
-
-		currentPath.Reverse ();
-
-		selectedUnit.GetComponent<Ship>().CurrentPath = currentPath;
-	}
 }
