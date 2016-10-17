@@ -25,14 +25,24 @@ public class Ship : MonoBehaviour {
 		//lp = 2000;
 		destination = transform.position;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
+		if (currentPath != null) {
+			int currNode = 0;
+			while (currNode < currentPath.Count - 1) {
+				Vector3 start = GameObject.Find("Hex_" + currentPath[currNode].x + "_" + currentPath[currNode].y).transform.position;
+				Vector3 end = GameObject.Find("Hex_" + currentPath[currNode+1].x + "_" + currentPath[currNode+1].y).transform.position;
 
-		Vector3 direction = destination - transform.position;
-		Vector3 velocity = direction.normalized * speed * Time.deltaTime;
-		velocity = Vector3.ClampMagnitude (velocity, direction.magnitude);
-		transform.Translate (velocity);
+				Vector3 direction = end - start;
+				Vector3 velocity = direction.normalized * speed * Time.deltaTime;
+				velocity = Vector3.ClampMagnitude (velocity, direction.magnitude);
+				transform.Translate (velocity);
+
+				currNode++;
+			}
+		}
+
 	
 	}
 

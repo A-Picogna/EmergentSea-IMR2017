@@ -16,21 +16,6 @@ public class MouseManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		/* Is the mouse over a Unity UI Element?
-		if(EventSystem.current.IsPointerOverGameObject()) {
-			// It is, so let's not do any of our own custom
-			// mouse stuff, because that would be weird.
-
-			// NOTE!  We might want to ask the system WHAT KIND
-			// of object we're over -- so for things that aren't
-			// buttons, we might not actually want to bail out early.
-
-			return;
-		}*/
-
-		// only work in orthographic mode :
-		// Vector3 worldPoint = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-
 		// WITH 3D OBJECTS :
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hitInfo;
@@ -51,7 +36,7 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 
 			// Check if we get the rights Neighbours
-			GameObject[] Neighbours = ourHitObject.GetComponent<Hex> ().getNeighbours();
+			GameObject[] Neighbours = ourHitObject.GetComponent<Hex> ().getNeighboursOld();
 			for (int i = 0; i < Neighbours.Length; i++) {
 				if (Neighbours[i] != null) {
 					Debug.Log (Neighbours[i].name);

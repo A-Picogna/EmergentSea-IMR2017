@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Hex : MonoBehaviour {
 
@@ -8,7 +9,7 @@ public class Hex : MonoBehaviour {
 	public int y;
 	private string type;
 
-	public GameObject[] getNeighbours(){
+	public GameObject[] getNeighboursOld(){
 
 		GameObject[] Neighbours = new GameObject[6];
 		GameObject leftNeighbour = GameObject.Find("Hex_" + (x-1) + "_" + y);
