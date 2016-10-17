@@ -51,7 +51,7 @@ public class MouseManager : MonoBehaviour {
 			}
 
 			if (selectedUnit != null) {
-				selectedUnit.destination = ourHitObject.transform.position;
+				//selectedUnit.destination = DijkstraPathfindingTo(ourHitObject.transform.position.x, ourHitObject.transform.position.z);
 			}
 		}
 
