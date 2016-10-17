@@ -26,6 +26,10 @@ public class Map : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		//selectedUnit.GetComponent<Ship> ().ShipX = selectedUnit.transform.position.x;
+		//selectedUnit.GetComponent<Ship> ().ShipY = selectedUnit.transform.position.y;
+
 		
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
@@ -54,6 +58,7 @@ public class Map : MonoBehaviour {
 
 			}
 		}
+		GeneratePathfindingGraph ();
 
 		// We stat to generate some land
 		for (int x = 0; x < width; x++) {
@@ -87,7 +92,7 @@ public class Map : MonoBehaviour {
 				// First we find the gameobject at te current coord
 				// Then we get his neighbour with the Hex function
 				GameObject currentHex = GameObject.Find ("Hex_" + x + "_" + y);
-				GameObject[] currentHexNeighbours = currentHex.GetComponent<Hex> ().getNeighbours ();
+				GameObject[] currentHexNeighbours = currentHex.GetComponent<Hex> ().getNeighboursOld();
 				for (int i = 0; i < currentHexNeighbours.Length; i++) {
 					if (currentHexNeighbours [i] != null) {
 						graph [x, y].neighbours.Add (graph [
