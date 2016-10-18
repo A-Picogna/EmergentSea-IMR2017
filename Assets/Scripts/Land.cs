@@ -8,6 +8,7 @@ public class Land : Hex
     // Use this for initialization
     void Start()
     {
+		this.movementCost = Mathf.Infinity;
 
     }
 

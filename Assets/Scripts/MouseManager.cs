@@ -46,11 +46,13 @@ public class MouseManager : MonoBehaviour {
 			}
 
 			MeshRenderer mr = ourHitObject.GetComponentInChildren<MeshRenderer> ();
+			/*
 			if (mr.material.color == Color.red) {
 				mr.material.color = Color.white;
 			} else {
 				mr.material.color = Color.red;
 			}
+			*/
 
 			if (selectedUnit != null) {
 				DijkstraPathfindingTo(ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y);
@@ -64,6 +66,10 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();
 		}
+	}
+
+	float costToEnterTile(int x, int y){
+		return GameObject.Find ("Hex_" + x + "_" + y).GetComponent<Hex>().movementCost;
 	}
 
 	public void DijkstraPathfindingTo(int x, int y){
@@ -114,7 +120,8 @@ public class MouseManager : MonoBehaviour {
 			unvisited.Remove (u);
 
 			foreach(Node v in u.neighbours){
-				float alt = dist [u] + u.DistanceTo (v);
+				//float alt = dist [u] + u.DistanceTo (v);
+				float alt = dist [u] + costToEnterTile(v.x,v.y);
 				if (alt < dist [v]) {
 					dist [v] = alt;
 					prev [v] = u;

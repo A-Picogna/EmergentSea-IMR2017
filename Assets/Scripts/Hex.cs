@@ -7,6 +7,7 @@ public class Hex : MonoBehaviour {
 	// Coordinates in the grid (not unity unit)
 	public int x;
 	public int y;
+	public float movementCost;
 	private string type;
 
 	public GameObject[] getNeighboursOld(){
