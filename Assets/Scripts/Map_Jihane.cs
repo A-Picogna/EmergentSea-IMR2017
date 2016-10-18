@@ -4,6 +4,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class Map_Jihane : MonoBehaviour
 {
@@ -17,10 +18,11 @@ public class Map_Jihane : MonoBehaviour
     public int height = 20;
     float xOffset = 0.882f;
     float zOffset = 0.764f;
-    int nbCasesRemplinit = 8;
+    int nbCasesRemplinit = 10;
     System.Random rand = new System.Random();
     List<int> abcisses = new List<int>();
     List<int> ordonnes = new List<int>();
+    List<GameObject> FirstStep = new List<GameObject>();
     Vector3 unitycord = new Vector3(0,0,0);
 
     // Use this for initialization
@@ -63,14 +65,11 @@ public class Map_Jihane : MonoBehaviour
             
             int x = rand.Next(0, width);
             int y = rand.Next(0, height);
-            Debug.Log(x.ToString());
             abcisses.Add(x);
             ordonnes.Add(y);
         }
 
         // We stat to generate some land
-
-        //GameObject remplacable = GameObject.Find("Hex_" + x + "_" + y);
 
         for (int a = 0; a < nbCasesRemplinit; a++)
         {
@@ -84,8 +83,56 @@ public class Map_Jihane : MonoBehaviour
             hex_go.GetComponent<Land>().y = ordonnes[a];
             hex_go.transform.SetParent(this.transform);
             hex_go.isStatic = true;
+            List<GameObject> Neighbours = hex_go.GetComponent<Hex>().getNeighbours();
             
+            var nonremplacable = rand.Next(0,Neighbours.Count);
+            Neighbours.RemoveAt(nonremplacable);
+            FirstStep = Neighbours;
+            Debug.Log(FirstStep.Count);
+            for (int i = 0; i < FirstStep.Count; i++)
+            {
+                //if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
+                var abs = FirstStep[i].GetComponent<Hex>().x;
+                var ord = FirstStep[i].GetComponent<Hex>().y;
+                unitycord = FirstStep[i].transform.position;
+                Destroy(FirstStep[i]);
+                GameObject land_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
+                land_go.name = "Hex_" + abs + "_" + ord;
+                land_go.GetComponent<Land>().x = abs;
+                land_go.GetComponent<Land>().y = ord;
+                land_go.transform.SetParent(this.transform);
+                land_go.isStatic = true;
+                //NextNeigbours[i,] = land_go.GetComponent<Hex>().getNeighbours();
+                //Debug.Log(NextNeigbours);
+                List<GameObject> NextNeighbours = land_go.GetComponent<Hex>().getNeighbours();
+                var k = 0;
+                while (k < 3)
+                {
+                    var Nextnonremplacable = rand.Next(0, NextNeighbours.Count);
+                    NextNeighbours.RemoveAt(Nextnonremplacable);
+                    k = k + 1;
+                }
+                for (var j=0;j<NextNeighbours.Count;j++)
+                {
+                    //if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
+                    var Nextabs = NextNeighbours[j].GetComponent<Hex>().x;
+                    var Nextord = NextNeighbours[j].GetComponent<Hex>().y;
+                    unitycord = NextNeighbours[j].transform.position;
+                    Destroy(NextNeighbours[j]);
+                    GameObject Next_land_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
+                    Next_land_go.name = "Hex_" + abs + "_" + ord;
+                    Next_land_go.GetComponent<Land>().x = abs;
+                    Next_land_go.GetComponent<Land>().y = ord;
+                    Next_land_go.transform.SetParent(this.transform);
+                    Next_land_go.isStatic = true;
+                }
+            }
         }
+
+
+
+        
+
         // GameObject.Find ("Hex_" + x + "_" + y);
         // if we replace by a land
         // store coord of the unity world
