@@ -9,18 +9,18 @@ public class Hex : MonoBehaviour
     public int x;
     public int y;
     private string type;
+	public float movementCost;
+	public bool isWalkable;
     private bool tag = false;
 
-    public GameObject[] getNeighboursOld()
-    {
+    public GameObject[] getNeighboursOld(){
         GameObject[] Neighbours = new GameObject[6];
         GameObject leftNeighbour = GameObject.Find("Hex_" + (x - 1) + "_" + y);
         GameObject rightNeighbour = GameObject.Find("Hex_" + (x + 1) + "_" + y);
         Neighbours[0] = leftNeighbour;
         Neighbours[1] = rightNeighbour;
 
-        if (y % 2 == 0)
-        {
+        if (y % 2 == 0){
             GameObject upperLeftNeighbour = GameObject.Find("Hex_" + (x - 1) + "_" + (y + 1));
             GameObject upperRightNeighbour = GameObject.Find("Hex_" + x + "_" + (y + 1));
             GameObject lowerLeftNeighbour = GameObject.Find("Hex_" + (x - 1) + "_" + (y - 1));
@@ -30,8 +30,7 @@ public class Hex : MonoBehaviour
             Neighbours[4] = lowerLeftNeighbour;
             Neighbours[5] = lowerRightNeighbour;
         }
-        else
-        {
+        else{
             GameObject upperLeftNeighbour = GameObject.Find("Hex_" + x + "_" + (y + 1));
             GameObject upperRightNeighbour = GameObject.Find("Hex_" + (x + 1) + "_" + (y + 1));
             GameObject lowerLeftNeighbour = GameObject.Find("Hex_" + x + "_" + (y - 1));
@@ -45,8 +44,7 @@ public class Hex : MonoBehaviour
         return Neighbours;
     }
 
-    public List<GameObject> getNeighbours()
-    {
+    public List<GameObject> getNeighbours(){
         List<GameObject> Neighbours = new List<GameObject>();
         GameObject leftNeighbour = GameObject.Find("Hex_" + (x - 1) + "_" + y);
         GameObject rightNeighbour = GameObject.Find("Hex_" + (x + 1) + "_" + y);
@@ -79,14 +77,12 @@ public class Hex : MonoBehaviour
         return Neighbours;
     }
 
-    public string gs_type
-    {
+    public string gs_type{
         get { return type; }
         set { type = value; }
     }
 
-    public bool Tag
-    {
+    public bool Tag{
         get { return tag; }
         set { tag = value; }
     }
