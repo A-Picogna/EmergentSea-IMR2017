@@ -40,7 +40,10 @@ public class MouseManager : MonoBehaviour {
 
 	void MouseOver_Hex(GameObject ourHitObject) {
 		//Debug.Log("Raycast hit: " + ourHitObject.name );
-		if (Input.GetMouseButtonDown(0)) {
+		if (Input.GetMouseButtonDown (0)) {
+			selectedUnit = null;
+		}
+		if (Input.GetMouseButtonDown(1)) {
 
 			// Check if we get the rights Neighbours
 			GameObject[] Neighbours = ourHitObject.GetComponent<Hex> ().getNeighboursOld();
@@ -58,6 +61,7 @@ public class MouseManager : MonoBehaviour {
 				mr.material.color = Color.red;
 			}
 			*/
+
 
 			if (selectedUnit != null && ourHitObject.GetComponent<Hex> ().isWalkable) {
 				DijkstraPathfindingTo(ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y);
