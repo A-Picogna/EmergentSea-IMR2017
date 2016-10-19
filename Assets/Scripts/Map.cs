@@ -23,6 +23,7 @@ public class Map : MonoBehaviour {
 	System.Random rand = new System.Random();
 	List<int> abcisses = new List<int>();
 	List<int> ordonnes = new List<int>();
+	List<GameObject> FirstStep = new List<GameObject>();
 	Vector3 unitycord = new Vector3(0,0,0);
 
 	// Use this for initialization
@@ -53,30 +54,59 @@ public class Map : MonoBehaviour {
 
 		//GameObject remplacable = GameObject.Find("Hex_" + x + "_" + y);
 
-		for (int a = 0; a < nbCasesRemplinit; a++){
-			GameObject remplacable = GameObject.Find("Hex_" + abcisses[a] + "_" + ordonnes[a]);
+		for (int a = 0; a < nbCasesRemplinit; a++) {
+			GameObject remplacable = GameObject.Find ("Hex_" + abcisses [a] + "_" + ordonnes [a]);
 			unitycord = remplacable.transform.position;
-			Destroy(remplacable);
+			Destroy (remplacable);
 
-			GameObject hex_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
-			hex_go.name = "Hex_" + abcisses[a] + "_" + ordonnes[a];
-			hex_go.GetComponent<Land>().x = abcisses[a];
-			hex_go.GetComponent<Land>().y = ordonnes[a];
-			hex_go.transform.SetParent(this.transform);
+			GameObject hex_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+			hex_go.name = "Hex_" + abcisses [a] + "_" + ordonnes [a];
+			hex_go.GetComponent<Land> ().x = abcisses [a];
+			hex_go.GetComponent<Land> ().y = ordonnes [a];
+			hex_go.transform.SetParent (this.transform);
 			hex_go.isStatic = true;
+			List<GameObject> Neighbours = hex_go.GetComponent<Hex> ().getNeighbours ();
 
+			var nonRemplacable = rand.Next (0, Neighbours.Count);
+			Neighbours.RemoveAt (nonRemplacable);
+			FirstStep = Neighbours;
+			Debug.Log (FirstStep.Count);
+			for (int i = 0; i < FirstStep.Count; i++) {
+				//if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
+				var abs = FirstStep [i].GetComponent<Hex> ().x;
+				var ord = FirstStep [i].GetComponent<Hex> ().y;
+				unitycord = FirstStep [i].transform.position;
+				Destroy (FirstStep [i]);
+				GameObject land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+				land_go.name = "Hex_" + abs + "_" + ord;
+				land_go.GetComponent<Land> ().x = abs;
+				land_go.GetComponent<Land> ().y = ord;
+				land_go.transform.SetParent (this.transform);
+				land_go.isStatic = true;
+				//NextNeigbours[i,] = land_go.GetComponent<Hex>().getNeighbours();
+				//Debug.Log(NextNeigbours);
+				List<GameObject> NextNeighbours = land_go.GetComponent<Hex> ().getNeighbours ();
+				var k = 0;
+				while (k < 3) {
+					var Nextnonremplacable = rand.Next (0, NextNeighbours.Count);
+					NextNeighbours.RemoveAt (Nextnonremplacable);
+					k = k + 1;
+				}
+				for (var j = 0; j < NextNeighbours.Count; j++) {
+					//if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
+					var NextAbs = NextNeighbours [j].GetComponent<Hex> ().x;
+					var NextOrd = NextNeighbours [j].GetComponent<Hex> ().y;
+					unitycord = NextNeighbours [j].transform.position;
+					Destroy (NextNeighbours [j]);
+					GameObject Next_land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+					Next_land_go.name = "Hex_" + NextAbs + "_" + NextOrd;
+					Next_land_go.GetComponent<Land> ().x = NextAbs;
+					Next_land_go.GetComponent<Land> ().y = NextOrd;
+					Next_land_go.transform.SetParent (this.transform);
+					Next_land_go.isStatic = true;
+				}
+			}
 		}
-		// GameObject.Find ("Hex_" + x + "_" + y);
-		// if we replace by a land
-		// store coord of the unity world
-		// Delete the sea hex and replace it by land hex
-
-		//au lieu de créer un hex_go je crée un objet land ou sea cad :
-		//land ou sea ont une certaine probabilité, ca va etre un entier en l'occurence qui divisera 1 pour la proba...
-		//si random.Next(0,x) =< entier -- x représentera le nombre de chance au total
-
-
-		//GameObject remplacable = GameObject.Find("Hex_" + x + "_" + y);
 	}
 
 	void initializeMap(){
