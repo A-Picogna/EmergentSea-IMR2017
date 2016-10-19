@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Ship : MonoBehaviour {
 
 	private List<Node> currentPath = null;
-	private int food, gold, lp, energyQuantity, shipX, shipY;
+	private int food, gold, hp, energyQuantity, shipX, shipY;
 	private string shipName;
 	private ArrayList crew = new ArrayList();
 	public Vector3 destination;
@@ -18,12 +18,13 @@ public class Ship : MonoBehaviour {
 		addCrewMember(admiral);
 
 		//Let's make the ship start with 100 gold and food
+		energyQuantity = 10000000;
 		food = 100;
 		gold = 100;
+		//Let's put the ship's hp to 2000 if there is a lp notion for the ship
+		//hp = 2000;
 
-		//Let's put the ship's lp to 2000 if there is a lp notion for the ship
-		//lp = 2000;
-		destination = transform.position;
+		this.destination = this.transform.position;
 	}
 
 	// Update is called once per frame
@@ -33,19 +34,34 @@ public class Ship : MonoBehaviour {
 			while (currNode < currentPath.Count - 1) {
 				Vector3 start = (GameObject.Find("Hex_" + currentPath[currNode].x + "_" + currentPath[currNode].y).transform.position)+new Vector3(0,0.5f,0);
 				Vector3 end = (GameObject.Find("Hex_" + currentPath[currNode+1].x + "_" + currentPath[currNode+1].y).transform.position)+new Vector3(0,0.5f,0);
-				Debug.Log (start);
-				Debug.Log (end);
 				Debug.DrawLine (start, end, Color.red);
 				currNode++;
 			}
+			if (Vector3.Distance (transform.position, GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position) < 0.1f){
+				MoveInPath();
+			}	
 		}
-		/*
-		Vector3 direction = destination - transform.position;
-		Vector3 velocity = direction.normalized * speed * Time.deltaTime;
-		velocity = Vector3.ClampMagnitude (velocity, direction.magnitude);
-		transform.Translate (velocity);
-		*/
-	
+		transform.position = Vector3.Lerp(transform.position, GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position, 5f * Time.deltaTime);
+	}
+
+	public void MoveInPath(){
+		// here we control the remaining energy quantity before moving
+
+		if(currentPath==null)
+			return;
+
+		if(energyQuantity <= 0)
+			return;
+
+		currentPath.RemoveAt(0);
+		transform.position = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
+		energyQuantity -= 1;
+		shipX = currentPath[0].x;
+		shipY = currentPath[0].y;
+
+		if(currentPath.Count == 1) {
+			currentPath = null;
+		}
 	}
 
 	public int calculateEQmax()
@@ -137,10 +153,10 @@ public class Ship : MonoBehaviour {
 		set { gold = value; }
 	}
 
-	public int Lp
+	public int Hp
 	{
-		get { return lp; }
-		set { lp = value; }
+		get { return hp; }
+		set { hp = value; }
 	}
 
 	public int EnergyQuantity

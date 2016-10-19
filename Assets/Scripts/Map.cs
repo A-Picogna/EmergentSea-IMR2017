@@ -44,7 +44,7 @@ public class Map : MonoBehaviour {
 		for (int k=0; k<nbCasesRemplinit ;k++){
 			int x = rand.Next(0, width);
 			int y = rand.Next(0, height);
-			Debug.Log(x.ToString());
+			//Debug.Log(x.ToString());
 			abcisses.Add(x);
 			ordonnes.Add(y);
 		}

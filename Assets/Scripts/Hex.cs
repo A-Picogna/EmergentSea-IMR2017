@@ -9,6 +9,7 @@ public class Hex : MonoBehaviour {
 	public int y;
 	public float movementCost;
 	private string type;
+	public bool isWalkable;
 
 	public GameObject[] getNeighboursOld(){
 		GameObject[] Neighbours = new GameObject[6];

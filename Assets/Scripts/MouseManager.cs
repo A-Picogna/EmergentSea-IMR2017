@@ -29,6 +29,11 @@ public class MouseManager : MonoBehaviour {
 			} else if (ourHitObject.GetComponent<Ship> () != null) {
 				MouseOver_Unit (ourHitObject);
 			}
+		}	
+		if (selectedUnit != null) {
+			GameObject.Find ("Projector").transform.position = selectedUnit.transform.position + new Vector3 (0, 5f, 0);
+		} else {
+			GameObject.Find ("Projector").transform.position = new Vector3 (0, -5f, 0);
 		}
 
 	}
@@ -54,7 +59,7 @@ public class MouseManager : MonoBehaviour {
 			}
 			*/
 
-			if (selectedUnit != null) {
+			if (selectedUnit != null && ourHitObject.GetComponent<Hex> ().isWalkable) {
 				DijkstraPathfindingTo(ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y);
 			}
 		}
@@ -65,6 +70,7 @@ public class MouseManager : MonoBehaviour {
 		//Debug.Log("Raycast hit: " + ourHitObject.name );
 		if (Input.GetMouseButtonDown(0)) {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();
+			GameObject.Find ("Projector").transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 		}
 	}
 
