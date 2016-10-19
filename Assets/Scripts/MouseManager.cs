@@ -3,10 +3,12 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class MouseManager : MonoBehaviour {
 
 	public Ship selectedUnit;
+	public Map map;
 
 	// Use this for initialization
 	void Start () {
@@ -39,19 +41,21 @@ public class MouseManager : MonoBehaviour {
 			GameObject[] Neighbours = ourHitObject.GetComponent<Hex> ().getNeighboursOld();
 			for (int i = 0; i < Neighbours.Length; i++) {
 				if (Neighbours[i] != null) {
-					Debug.Log (Neighbours[i].name);
+					//Debug.Log (Neighbours[i].name);
 				}
 			}
 
 			MeshRenderer mr = ourHitObject.GetComponentInChildren<MeshRenderer> ();
+			/*
 			if (mr.material.color == Color.red) {
 				mr.material.color = Color.white;
 			} else {
 				mr.material.color = Color.red;
 			}
+			*/
 
 			if (selectedUnit != null) {
-				selectedUnit.destination = ourHitObject.transform.position;
+				DijkstraPathfindingTo(ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y);
 			}
 		}
 
@@ -62,5 +66,87 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();
 		}
+	}
+
+	float costToEnterTile(int x, int y){
+		return GameObject.Find ("Hex_" + x + "_" + y).GetComponent<Hex>().movementCost;
+	}
+
+	public void DijkstraPathfindingTo(int x, int y){
+		selectedUnit.GetComponent<Ship>().CurrentPath = null;
+		List<Node> currentPath = null;
+
+		Dictionary<Node, float> dist = new Dictionary<Node, float> ();
+		Dictionary<Node, Node> prev = new Dictionary<Node, Node> ();
+
+		List<Node> unvisited = new List<Node> ();
+
+		Node source = map.graph [
+			selectedUnit.GetComponent<Ship> ().ShipX,
+			selectedUnit.GetComponent<Ship> ().ShipY
+		];
+
+		Node target = map.graph [
+			x,
+			y
+		];
+		dist [source] = 0;
+		prev [source] = null;
+
+		// Initialize everything with infinity distance
+		foreach (Node v in map.graph) {
+			if (v != source) {
+				dist [v] = Mathf.Infinity;
+				prev [v] = null;
+			}
+			unvisited.Add (v);
+		}
+
+		while (unvisited.Count > 0) {
+
+			// u is going to be the unvisited node with the smallest distance
+			Node u = null;
+
+			foreach (Node possibleU in unvisited) {
+				if (u == null || dist[possibleU] < dist[u]) {
+					u = possibleU;
+				}
+			}
+
+			if (u == target) {
+				break; // Exit the loop!
+			}
+
+			unvisited.Remove (u);
+
+			foreach(Node v in u.neighbours){
+				//float alt = dist [u] + u.DistanceTo (v);
+				float alt = dist [u] + costToEnterTile(v.x,v.y);
+				if (alt < dist [v]) {
+					dist [v] = alt;
+					prev [v] = u;
+				}
+			}
+		}
+
+		// when we're here, we found the shortest route or there is no route at all
+
+		if (prev [target] == null) {
+			// No route!
+			return;
+		}
+
+		currentPath = new List<Node> ();
+
+		Node curr = target;
+
+		while (curr != null) {
+			currentPath.Add (curr);
+			curr = prev [curr];
+		}
+
+		currentPath.Reverse ();
+
+		selectedUnit.GetComponent<Ship>().CurrentPath = currentPath;
 	}
 }

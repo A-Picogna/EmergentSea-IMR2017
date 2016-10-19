@@ -8,7 +8,8 @@ public class Sea : Hex
     private int treasure, foodQuantity;
     // Use this for initialization
     void Start()
-    {
+	{
+		this.movementCost = 1;
 
     }
 

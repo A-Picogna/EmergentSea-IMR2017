@@ -7,6 +7,7 @@ public class Hex : MonoBehaviour {
 	// Coordinates in the grid (not unity unit)
 	public int x;
 	public int y;
+	public float movementCost;
 	private string type;
 
 	public GameObject[] getNeighboursOld(){
@@ -44,8 +45,8 @@ public class Hex : MonoBehaviour {
         List<GameObject> Neighbours = new List<GameObject>();
         GameObject leftNeighbour = GameObject.Find("Hex_" + (x - 1) + "_" + y);
         GameObject rightNeighbour = GameObject.Find("Hex_" + (x + 1) + "_" + y);
-        if (leftNeighbour == null) { Neighbours.Add(leftNeighbour); }
-        if (rightNeighbour == null) { Neighbours.Add(rightNeighbour); }
+        if (leftNeighbour != null) { Neighbours.Add(leftNeighbour); }
+        if (rightNeighbour != null) { Neighbours.Add(rightNeighbour); }
 
         if (y % 2 == 0)
         {
@@ -53,10 +54,10 @@ public class Hex : MonoBehaviour {
             GameObject upperRightNeighbour = GameObject.Find("Hex_" + x + "_" + (y + 1));
             GameObject lowerLeftNeighbour = GameObject.Find("Hex_" + (x - 1) + "_" + (y - 1));
             GameObject lowerRightNeighbour = GameObject.Find("Hex_" + x + "_" + (y - 1));
-            if (upperLeftNeighbour == null) { Neighbours.Add(upperLeftNeighbour); }
-            if (upperRightNeighbour == null) { Neighbours.Add(upperRightNeighbour); }
-            if (lowerLeftNeighbour == null) { Neighbours.Add(lowerLeftNeighbour); }
-            if (lowerRightNeighbour == null) { Neighbours.Add(lowerRightNeighbour); }
+            if (upperLeftNeighbour != null) { Neighbours.Add(upperLeftNeighbour); }
+            if (upperRightNeighbour != null) { Neighbours.Add(upperRightNeighbour); }
+            if (lowerLeftNeighbour != null) { Neighbours.Add(lowerLeftNeighbour); }
+            if (lowerRightNeighbour != null) { Neighbours.Add(lowerRightNeighbour); }
         }
         else
         {
@@ -64,10 +65,10 @@ public class Hex : MonoBehaviour {
             GameObject upperRightNeighbour = GameObject.Find("Hex_" + (x + 1) + "_" + (y + 1));
             GameObject lowerLeftNeighbour = GameObject.Find("Hex_" + x + "_" + (y - 1));
             GameObject lowerRightNeighbour = GameObject.Find("Hex_" + (x + 1) + "_" + (y - 1));
-            if (upperLeftNeighbour == null) { Neighbours.Add(upperLeftNeighbour); }
-            if (upperRightNeighbour == null) { Neighbours.Add(upperRightNeighbour); }
-            if (lowerLeftNeighbour == null) { Neighbours.Add(lowerLeftNeighbour); }
-            if (lowerRightNeighbour == null) { Neighbours.Add(lowerRightNeighbour); }
+            if (upperLeftNeighbour != null) { Neighbours.Add(upperLeftNeighbour); }
+            if (upperRightNeighbour != null) { Neighbours.Add(upperRightNeighbour); }
+            if (lowerLeftNeighbour != null) { Neighbours.Add(lowerLeftNeighbour); }
+            if (lowerRightNeighbour != null) { Neighbours.Add(lowerRightNeighbour); }
         }
 
         return Neighbours;
