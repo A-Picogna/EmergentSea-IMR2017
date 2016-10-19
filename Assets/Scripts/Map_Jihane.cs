@@ -23,7 +23,9 @@ public class Map_Jihane : MonoBehaviour
     List<int> abcisses = new List<int>();
     List<int> ordonnes = new List<int>();
     List<GameObject> FirstStep = new List<GameObject>();
-    Vector3 unitycord = new Vector3(0,0,0);
+    List<GameObject> GroupLand = new List<GameObject>();
+    List<GameObject> GroupNeighbours = new List<GameObject>();
+    Vector3 unitycord = new Vector3(0, 0, 0);
 
     // Use this for initialization
     void Start()
@@ -60,9 +62,9 @@ public class Map_Jihane : MonoBehaviour
             }
         }
 
-        for (int k=0; k<nbCasesRemplinit ;k++)
+        for (int k = 0; k < nbCasesRemplinit; k++)
         {
-            
+
             int x = rand.Next(0, width);
             int y = rand.Next(0, height);
             abcisses.Add(x);
@@ -70,13 +72,12 @@ public class Map_Jihane : MonoBehaviour
         }
 
         // We stat to generate some land
-
-        for (int a = 0; a < nbCasesRemplinit; a++)
+        for (int a = 0; a < nbCasesRemplinit + 1; a++)
         {
             GameObject remplacable = GameObject.Find("Hex_" + abcisses[a] + "_" + ordonnes[a]);
             unitycord = remplacable.transform.position;
             Destroy(remplacable);
-            
+
             GameObject hex_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
             hex_go.name = "Hex_" + abcisses[a] + "_" + ordonnes[a];
             hex_go.GetComponent<Land>().x = abcisses[a];
@@ -84,8 +85,8 @@ public class Map_Jihane : MonoBehaviour
             hex_go.transform.SetParent(this.transform);
             hex_go.isStatic = true;
             List<GameObject> Neighbours = hex_go.GetComponent<Hex>().getNeighbours();
-            
-            var nonremplacable = rand.Next(0,Neighbours.Count);
+
+            var nonremplacable = rand.Next(0, Neighbours.Count);
             Neighbours.RemoveAt(nonremplacable);
             FirstStep = Neighbours;
             Debug.Log(FirstStep.Count);
@@ -112,7 +113,7 @@ public class Map_Jihane : MonoBehaviour
                     NextNeighbours.RemoveAt(Nextnonremplacable);
                     k = k + 1;
                 }
-                for (var j=0;j<NextNeighbours.Count;j++)
+                for (var j = 0; j < NextNeighbours.Count; j++)
                 {
                     //if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
                     var Nextabs = NextNeighbours[j].GetComponent<Hex>().x;
@@ -120,30 +121,50 @@ public class Map_Jihane : MonoBehaviour
                     unitycord = NextNeighbours[j].transform.position;
                     Destroy(NextNeighbours[j]);
                     GameObject Next_land_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
-                    Next_land_go.name = "Hex_" + abs + "_" + ord;
-                    Next_land_go.GetComponent<Land>().x = abs;
-                    Next_land_go.GetComponent<Land>().y = ord;
+                    Next_land_go.name = "Hex_" + Nextabs + "_" + Nextord;
+                    Next_land_go.GetComponent<Land>().x = Nextabs;
+                    Next_land_go.GetComponent<Land>().y = Nextord;
                     Next_land_go.transform.SetParent(this.transform);
                     Next_land_go.isStatic = true;
                 }
             }
         }
+        //Vérification Map
+        var verif = false;
+        var l = 0;
+        var m = 0;
+        while (verif != true && l < width)
+        {
+            m = 0;
+            while (verif != true && m < height)
+            {
+                //if hex l_m est un sea
+                //{
+                //GroupLand.Add(Hex(l_m));
+                //verif = true;
+                //hex(l_m).tag = true;
+                //}
+            }
+        }
+        while (GroupLand.Count > 0)
+        {
+
+            //GroupNeighbours = GroupLand[0].GetComponent<Hex>().getNeighbours();
+
+            for (var j = 0; j < GroupNeighbours.Count; j++)
+            {
+                //if GroupNeighbours[j]==sea && tag ==false
+                //{
+                //GroupLand.add(GroupNeighbours[j]);
+                //GroupNeighbours[j].tag = true;
+                //}
+            }
+
+        }
 
 
 
-        
 
-        // GameObject.Find ("Hex_" + x + "_" + y);
-        // if we replace by a land
-        // store coord of the unity world
-        // Delete the sea hex and replace it by land hex
-
-        //au lieu de créer un hex_go je crée un objet land ou sea cad :
-        //land ou sea ont une certaine probabilité, ca va etre un entier en l'occurence qui divisera 1 pour la proba...
-        //si random.Next(0,x) =< entier -- x représentera le nombre de chance au total
-
-
-        //GameObject remplacable = GameObject.Find("Hex_" + x + "_" + y);
     }
 
     // Update is called once per frame
@@ -152,6 +173,5 @@ public class Map_Jihane : MonoBehaviour
 
     }
 }
-
 
 
