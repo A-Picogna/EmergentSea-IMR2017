@@ -82,7 +82,7 @@ public class Hex : MonoBehaviour
         set { type = value; }
     }
 
-    public bool Tag{
+    public bool gs_tag{
         get { return tag; }
         set { tag = value; }
     }
