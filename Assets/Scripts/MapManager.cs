@@ -15,6 +15,15 @@ public class MapManager : MonoBehaviour {
 
 	// MAP INFORMATION
 	public int nbOfSharks = 0; // For testing purposes
+	public int MapWidthParameter = 2;
+	public int DifficultyParameter = 2;
+	public int GroundFrequencyParameter = 2;
+	public int PortFrequencyParameter = 2;
+	public int TreasureFrequencyParameter = 2;
+	//public int Parameter =;
+	//public int Parameter =;
+
+
 
 
 	// Use this before initialization
@@ -35,5 +44,51 @@ public class MapManager : MonoBehaviour {
 		DontDestroyOnLoad(gameObject);
 
 		Debug.Log ("MapManager loaded");
+	}
+		
+	////
+	// Interface pour l'UI
+	////
+	public void MapWidthDropdownCallback(int WidthType) {
+		// 0: Très petit
+		// 1: Petit
+		// 2: Moyen
+		// 3: Grand
+		// 4: Très grand
+		// 5: Gigantesque
+		// 6: Personnalisé
+		MapWidthParameter = WidthType;
+	}
+
+	public void DifficultyDropdownCallback(int DifficultyType) {
+		// 0: Par défaut
+		DifficultyParameter = DifficultyType;
+	}
+
+	public void GroundFrequencyDropdownCallback(int GroundFrequencyType) {
+		// 0: Très basse
+		// 1: Basse
+		// 2: Normale
+		// 3: Elevée
+		// 4: Très élevée
+		GroundFrequencyParameter = GroundFrequencyType;
+	}
+
+	public void PortFrequencyDropdownCallback(int PortFrequencyType) {
+		// 0: Très basse
+		// 1: Basse
+		// 2: Normale
+		// 3: Elevée
+		// 4: Très élevée
+		PortFrequencyParameter = PortFrequencyType;
+	}
+
+	public void TreasureFrequencyDropdownCallback(int TreasureFrequencyType) {
+		// 0: Très basse
+		// 1: Basse
+		// 2: Normale
+		// 3: Elevée
+		// 4: Très élevée
+		TreasureFrequencyParameter = TreasureFrequencyType;
 	}
 }

@@ -6,7 +6,7 @@ public class LaunchScript : MonoBehaviour {
 
 	public void LaunchGame() {
 		
-		SceneManager.LoadScene("Scenes/map.unity");
+		SceneManager.LoadScene(1);
 	
 	}
 }
