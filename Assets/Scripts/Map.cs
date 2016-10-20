@@ -19,7 +19,7 @@ public class Map : MonoBehaviour {
 	public int height = 20;
 	float xOffset = 0.882f;
 	float zOffset = 0.764f;
-	int nbCasesRemplinit = 8;
+	int nbCasesRemplinit = 10;
 	System.Random rand = new System.Random();
 	List<int> abcisses = new List<int>();
 	List<int> ordonnes = new List<int>();
@@ -66,44 +66,41 @@ public class Map : MonoBehaviour {
 			hex_go.transform.SetParent (this.transform);
 			hex_go.isStatic = true;
 			List<GameObject> Neighbours = hex_go.GetComponent<Hex> ().getNeighbours ();
-
-			var nonRemplacable = rand.Next (0, Neighbours.Count);
-			Neighbours.RemoveAt (nonRemplacable);
 			FirstStep = Neighbours;
 			Debug.Log (FirstStep.Count);
 			for (int i = 0; i < FirstStep.Count; i++) {
-				//if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
+				
 				var abs = FirstStep [i].GetComponent<Hex> ().x;
 				var ord = FirstStep [i].GetComponent<Hex> ().y;
-				unitycord = FirstStep [i].transform.position;
-				Destroy (FirstStep [i]);
-				GameObject land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
-				land_go.name = "Hex_" + abs + "_" + ord;
-				land_go.GetComponent<Land> ().x = abs;
-				land_go.GetComponent<Land> ().y = ord;
-				land_go.transform.SetParent (this.transform);
-				land_go.isStatic = true;
-				//NextNeigbours[i,] = land_go.GetComponent<Hex>().getNeighbours();
-				//Debug.Log(NextNeigbours);
-				List<GameObject> NextNeighbours = land_go.GetComponent<Hex> ().getNeighbours ();
-				var k = 0;
-				while (k < 3) {
-					var Nextnonremplacable = rand.Next (0, NextNeighbours.Count);
-					NextNeighbours.RemoveAt (Nextnonremplacable);
-					k = k + 1;
+				GameObject land_go = FirstStep [i];
+
+				if (rand.Next (1, 101) <= 70) {
+					unitycord = FirstStep [i].transform.position;
+					Destroy (FirstStep [i]);
+					land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+					land_go.name = "Hex_" + abs + "_" + ord;
+					land_go.GetComponent<Land> ().x = abs;
+					land_go.GetComponent<Land> ().y = ord;
+					land_go.transform.SetParent (this.transform);
+					land_go.isStatic = true;
 				}
-				for (var j = 0; j < NextNeighbours.Count; j++) {
+
+				List<GameObject> NextNeighbours = land_go.GetComponent<Hex> ().getNeighbours ();
+
+				for (int j = 0; j < NextNeighbours.Count; j++) {
 					//if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
-					var NextAbs = NextNeighbours [j].GetComponent<Hex> ().x;
-					var NextOrd = NextNeighbours [j].GetComponent<Hex> ().y;
-					unitycord = NextNeighbours [j].transform.position;
-					Destroy (NextNeighbours [j]);
-					GameObject Next_land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
-					Next_land_go.name = "Hex_" + NextAbs + "_" + NextOrd;
-					Next_land_go.GetComponent<Land> ().x = NextAbs;
-					Next_land_go.GetComponent<Land> ().y = NextOrd;
-					Next_land_go.transform.SetParent (this.transform);
-					Next_land_go.isStatic = true;
+					if (rand.Next (1, 101) <= 35) {
+						int NextAbs = NextNeighbours [j].GetComponent<Hex> ().x;
+						int NextOrd = NextNeighbours [j].GetComponent<Hex> ().y;
+						unitycord = NextNeighbours [j].transform.position;
+						Destroy (NextNeighbours [j]);
+						GameObject Next_land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+						Next_land_go.name = "Hex_" + NextAbs + "_" + NextOrd;
+						Next_land_go.GetComponent<Land> ().x = NextAbs;
+						Next_land_go.GetComponent<Land> ().y = NextOrd;
+						Next_land_go.transform.SetParent (this.transform);
+						Next_land_go.isStatic = true;
+					}
 				}
 			}
 		}
