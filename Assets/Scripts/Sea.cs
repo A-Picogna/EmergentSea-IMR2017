@@ -9,6 +9,7 @@ public class Sea : Hex
     // Use this for initialization
     void Start()
 	{
+		this.isWalkable = true;
 		this.movementCost = 1;
 
     }
@@ -17,13 +18,13 @@ public class Sea : Hex
     void Update()
     {
 
-    }
+	}
 
-    public int Treasure
-    {
-        get { return treasure; }
-        set { treasure = value; }
-    }
+	public int Treasure
+	{
+		get { return treasure; }
+		set { treasure = value; }
+	}
 
     public int FoodQuantity
     {
