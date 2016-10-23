@@ -45,6 +45,7 @@ public class MouseManager : MonoBehaviour {
 		}
 		if (Input.GetMouseButtonDown(1)) {
 
+			Debug.Log(ourHitObject.GetComponent<Hex> ().IsWalkable);
 			// Check if we get the rights Neighbours
 			GameObject[] Neighbours = ourHitObject.GetComponent<Hex> ().getNeighboursOld();
 			for (int i = 0; i < Neighbours.Length; i++) {
@@ -63,7 +64,7 @@ public class MouseManager : MonoBehaviour {
 			*/
 
 
-			if (selectedUnit != null && ourHitObject.GetComponent<Hex> ().isWalkable) {
+			if (selectedUnit != null && ourHitObject.GetComponent<Hex> ().IsWalkable) {
 				AstarPathfindingTo(ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y);
 			}
 		}
@@ -190,7 +191,7 @@ public class MouseManager : MonoBehaviour {
 			}
 
 			foreach (Node neighbour in node.neighbours) {
-				if (!neighbour.walkable || closedSet.Contains(neighbour)) {
+				if (!neighbour.isWalkable || closedSet.Contains(neighbour)) {
 					continue;
 				}
 

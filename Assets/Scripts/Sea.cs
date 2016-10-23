@@ -9,7 +9,7 @@ public class Sea : Hex
     // Use this for initialization
     void Start()
 	{
-		this.isWalkable = true;
+		this.IsWalkable = true;
 		this.movementCost = 1;
 
     }

@@ -8,7 +8,7 @@ public class Node {
 	public List<Node> neighbours;
 	public float gCost;
 	public float hCost;
-	public bool walkable;
+	public bool isWalkable;
 	public Node parent;
 
 	public Node() {

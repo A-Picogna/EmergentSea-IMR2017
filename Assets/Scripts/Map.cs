@@ -19,7 +19,7 @@ public class Map : MonoBehaviour {
 	public int height = 20;
 	float xOffset = 0.882f;
 	float zOffset = 0.764f;
-	int nbCasesRemplinit = 10;
+	int nbCasesRemplinit = 5;
 	System.Random rand = new System.Random();
 	List<int> abcisses = new List<int>();
 	List<int> ordonnes = new List<int>();
@@ -28,12 +28,9 @@ public class Map : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		//selectedUnit.GetComponent<Ship> ().ShipX = selectedUnit.transform.position.x;
-		//selectedUnit.GetComponent<Ship> ().ShipY = selectedUnit.transform.position.y;
 		initializeMap();
-		GeneratePathfindingGraph ();
 		generateLand ();
-
+		GeneratePathfindingGraph ();
 	}
 	
 	// Update is called once per frame
@@ -73,7 +70,7 @@ public class Map : MonoBehaviour {
 				var ord = FirstStep [i].GetComponent<Hex> ().y;
 				GameObject land_go = FirstStep [i];
 
-				if (rand.Next (1, 101) <= 70) {
+				if (rand.Next (1, 101) <= 30) {
 					unitycord = FirstStep [i].transform.position;
 					Destroy (FirstStep [i]);
 					land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
@@ -88,7 +85,7 @@ public class Map : MonoBehaviour {
 
 				for (int j = 0; j < NextNeighbours.Count; j++) {
 					//if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
-					if (rand.Next (1, 101) <= 35) {
+					if (rand.Next (1, 101) <= 15) {
 						int NextAbs = NextNeighbours [j].GetComponent<Hex> ().x;
 						int NextOrd = NextNeighbours [j].GetComponent<Hex> ().y;
 						unitycord = NextNeighbours [j].transform.position;
@@ -148,16 +145,16 @@ public class Map : MonoBehaviour {
 				// First we find the gameobject at te current coord
 				// Then we get his neighbour with the Hex function
 				GameObject currentHex = GameObject.Find ("Hex_" + x + "_" + y);
-				GameObject[] currentHexNeighbours = currentHex.GetComponent<Hex> ().getNeighboursOld();
-				for (int i = 0; i < currentHexNeighbours.Length; i++) {
-					if (currentHexNeighbours [i] != null) {
-						graph [x, y].neighbours.Add (graph [
-							currentHexNeighbours [i].GetComponent<Hex>().x,
-							currentHexNeighbours [i].GetComponent<Hex>().y
-						]);
-					}
+				List<GameObject> neighbours = currentHex.GetComponent<Hex> ().getNeighbours();
+				foreach (GameObject neighbour in neighbours) {
+					graph [x, y].neighbours.Add (graph [
+						neighbour.GetComponent<Hex>().x,
+						neighbour.GetComponent<Hex>().y
+					]);
 				}
-				graph [x, y].walkable = true;
+				//Debug.Log (currentHex.GetComponent<Hex> ().IsWalkable);
+				//graph [x, y].isWalkable = currentHex.GetComponent<Hex>().IsWalkable;
+				graph [x, y].isWalkable = true;
 			}
 		}
 	}

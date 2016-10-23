@@ -82,9 +82,14 @@ public class Hex : MonoBehaviour
         set { type = value; }
     }
 
-    public bool gs_tag{
-        get { return tag; }
-        set { tag = value; }
-    }
+	public bool gs_tag{
+		get { return tag; }
+		set { tag = value; }
+	}    
+
+	public bool IsWalkable{
+		get { return isWalkable; }
+		set { isWalkable = value; }
+	}
 
 }
