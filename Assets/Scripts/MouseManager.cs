@@ -64,7 +64,7 @@ public class MouseManager : MonoBehaviour {
 
 
 			if (selectedUnit != null && ourHitObject.GetComponent<Hex> ().isWalkable) {
-				DijkstraPathfindingTo(ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y);
+				AstarPathfindingTo(ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y);
 			}
 		}
 
@@ -161,55 +161,62 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	public void AstarPathfindingTo(int x, int y){
-		selectedUnit.GetComponent<Ship>().CurrentPath = null;
-		List<Node> currentPath = null;
-		Dictionary<Node, float> dist = new Dictionary<Node, float> ();
-		Dictionary<Node, Node> prev = new Dictionary<Node, Node> ();
-		List<Node> unvisited = new List<Node> ();
-		Node source = map.graph [
+		Node startNode = map.graph [
 			selectedUnit.GetComponent<Ship> ().ShipX,
 			selectedUnit.GetComponent<Ship> ().ShipY
 		];
-		Node target = map.graph [
+		Node targetNode = map.graph [
 			x,
 			y
 		];
-		dist [source] = 0;
-		prev [source] = source;
-		unvisited.Add (source);
-		while (unvisited.Count > 0) {
-			// u is going to be the unvisited node with the smallest distance
-			Node u = null;
-			foreach (Node possibleU in unvisited) {
-				if (u == null || dist[possibleU] < dist[u]) {
-					u = possibleU;
+		List<Node> openSet = new List<Node>();
+		HashSet<Node> closedSet = new HashSet<Node>();
+		openSet.Add(startNode);
+
+		while (openSet.Count > 0) {
+			Node node = openSet[0];
+			for (int i = 1; i < openSet.Count; i ++) {
+				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
+						node = openSet[i];
 				}
 			}
-			if (u == target) {
-				break; // Exit the loop!
+
+			openSet.Remove(node);
+			closedSet.Add(node);
+
+			if (node == targetNode) {
+				RetracePath(startNode,targetNode);
+				return;
 			}
-			unvisited.Remove (u);
-			foreach(Node v in u.neighbours){
-				//float alt = dist [u] + u.DistanceTo (v);
-				float alt = dist [u] + costToEnterTile(v.x,v.y);
-				if (alt < dist [v]) {
-					dist [v] = alt;
-					prev [v] = u;
+
+			foreach (Node neighbour in node.neighbours) {
+				if (!neighbour.walkable || closedSet.Contains(neighbour)) {
+					continue;
+				}
+
+				float newCostToNeighbour = (node.gCost + node.DistanceTo(neighbour));
+				if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
+					neighbour.gCost = newCostToNeighbour;
+					neighbour.hCost = neighbour.DistanceTo (targetNode);
+					neighbour.parent = node;
+
+					if (!openSet.Contains(neighbour))
+						openSet.Add(neighbour);
 				}
 			}
 		}
-		// when we're here, we found the shortest route or there is no route at all
-		if (prev [target] == null) {
-			// No route!
-			return;
+	}
+
+	void RetracePath(Node startNode, Node endNode) {
+		List<Node> path = new List<Node>();
+		Node currentNode = endNode;
+
+		while (currentNode != startNode) {
+			path.Add(currentNode);
+			currentNode = currentNode.parent;
 		}
-		currentPath = new List<Node> ();
-		Node curr = target;
-		while (curr != null) {
-			currentPath.Add (curr);
-			curr = prev [curr];
-		}
-		currentPath.Reverse ();
-		selectedUnit.GetComponent<Ship>().CurrentPath = currentPath;
+		path.Reverse();
+
+		selectedUnit.GetComponent<Ship> ().CurrentPath = path;
 	}
 }

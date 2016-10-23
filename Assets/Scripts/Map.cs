@@ -67,7 +67,6 @@ public class Map : MonoBehaviour {
 			hex_go.isStatic = true;
 			List<GameObject> Neighbours = hex_go.GetComponent<Hex> ().getNeighbours ();
 			FirstStep = Neighbours;
-			Debug.Log (FirstStep.Count);
 			for (int i = 0; i < FirstStep.Count; i++) {
 				
 				var abs = FirstStep [i].GetComponent<Hex> ().x;
@@ -158,6 +157,7 @@ public class Map : MonoBehaviour {
 						]);
 					}
 				}
+				graph [x, y].walkable = true;
 			}
 		}
 	}

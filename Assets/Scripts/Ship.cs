@@ -9,7 +9,9 @@ public class Ship : MonoBehaviour {
 	private string shipName;
 	private ArrayList crew = new ArrayList();
 	public Vector3 destination;
+	public bool moving = false;
 	float speed = 2;
+	int currNode = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -23,43 +25,45 @@ public class Ship : MonoBehaviour {
 		gold = 100;
 		//Let's put the ship's hp to 2000 if there is a lp notion for the ship
 		//hp = 2000;
-
-		this.destination = this.transform.position;
 	}
 
 	// Update is called once per frame
 	void Update () {		
 		if (currentPath != null) {
-			int currNode = 0;
+			moving = true;
+			currNode = 0;
+			// DEBUG PATHINFINDING
+			/*
 			while (currNode < currentPath.Count - 1) {
 				Vector3 start = (GameObject.Find("Hex_" + currentPath[currNode].x + "_" + currentPath[currNode].y).transform.position)+new Vector3(0,0.5f,0);
 				Vector3 end = (GameObject.Find("Hex_" + currentPath[currNode+1].x + "_" + currentPath[currNode+1].y).transform.position)+new Vector3(0,0.5f,0);
 				Debug.DrawLine (start, end, Color.red);
 				currNode++;
 			}
-			if (Vector3.Distance (transform.position, GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position) < 0.1f){
+			*/
+			if (Vector3.Distance (transform.position, destination) < 0.1f){
 				MoveInPath();
 			}	
 		}
-		transform.position = Vector3.Lerp(transform.position, GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position, 5f * Time.deltaTime);
+		transform.position = Vector3.Lerp(transform.position, destination, 5f * Time.deltaTime);
 	}
 
 	public void MoveInPath(){
 		// here we control the remaining energy quantity before moving
-
 		if(currentPath==null)
 			return;
 
 		if(energyQuantity <= 0)
 			return;
 
-		currentPath.RemoveAt(0);
 		transform.position = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
 		energyQuantity -= 1;
 		shipX = currentPath[0].x;
 		shipY = currentPath[0].y;
+		currentPath.RemoveAt(0);
+		destination = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
 
-		if(currentPath.Count == 1) {
+		if(currentPath.Count == 0) {
 			currentPath = null;
 		}
 	}
