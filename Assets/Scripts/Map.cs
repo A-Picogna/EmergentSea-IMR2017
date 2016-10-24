@@ -28,9 +28,14 @@ public class Map : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		// RESPECT THIS STRIC ORDER
+		// Init map
 		initializeMap();
+		// Generate some lands
 		generateLand ();
-		GeneratePathfindingGraph ();
+		// Add neighbours
+		AddNeighboursToNodes ();
 	}
 	
 	// Update is called once per frame
@@ -56,7 +61,12 @@ public class Map : MonoBehaviour {
 			unitycord = remplacable.transform.position;
 			Destroy (remplacable);
 
+			Node node = graph [abcisses [a], ordonnes [a]];
 			GameObject hex_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+
+			// UPDATE NODES
+			graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
+
 			hex_go.name = "Hex_" + abcisses [a] + "_" + ordonnes [a];
 			hex_go.GetComponent<Land> ().x = abcisses [a];
 			hex_go.GetComponent<Land> ().y = ordonnes [a];
@@ -74,6 +84,11 @@ public class Map : MonoBehaviour {
 					unitycord = FirstStep [i].transform.position;
 					Destroy (FirstStep [i]);
 					land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+
+					// UPDATE NODES
+					node = graph [abs, ord];
+					graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
+
 					land_go.name = "Hex_" + abs + "_" + ord;
 					land_go.GetComponent<Land> ().x = abs;
 					land_go.GetComponent<Land> ().y = ord;
@@ -91,6 +106,11 @@ public class Map : MonoBehaviour {
 						unitycord = NextNeighbours [j].transform.position;
 						Destroy (NextNeighbours [j]);
 						GameObject Next_land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+
+						// UPDATE NODES
+						node = graph [NextAbs, NextOrd];
+						graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
+
 						Next_land_go.name = "Hex_" + NextAbs + "_" + NextOrd;
 						Next_land_go.GetComponent<Land> ().x = NextAbs;
 						Next_land_go.GetComponent<Land> ().y = NextOrd;
@@ -108,10 +128,6 @@ public class Map : MonoBehaviour {
 			for (int y = 0; y < height; y++) {
 
 				// Use the loop for initialise de graph too, we save one loop with this
-				graph [x, y] = new Node ();
-				graph [x, y].x = x;
-				graph [x, y].y = y;
-
 				float xPos = x * xOffset;
 
 				// if we're an odd line, we need to reduce the offset by half
@@ -120,7 +136,9 @@ public class Map : MonoBehaviour {
 				}
 
 				// Creation of a new hex
-				GameObject hex_go = (GameObject)Instantiate(seaPrefab, new Vector3(xPos, 0, y * zOffset), Quaternion.identity);
+				Vector3 worldPosition = new Vector3(xPos, 0, y * zOffset);
+				GameObject hex_go = (GameObject)Instantiate(seaPrefab, worldPosition, Quaternion.identity);
+				graph [x, y] = new Node (x, y, worldPosition, true, "sea");
 
 				// Name the hex according to the grid coordinates
 				hex_go.name = "Hex_" + x + "_" + y;
@@ -138,26 +156,68 @@ public class Map : MonoBehaviour {
 		}
 	}
 
-	void GeneratePathfindingGraph(){
+	public List<Node> getNodesNeighbours(int x, int y){
+		List<Node> neighbours = new List<Node>();
+		if (x-1 >= 0) neighbours.Add (graph [x-1, y]);
+		if (x+1 < width) neighbours.Add (graph [x+1, y]);
+		if (y % 2 == 0) {
+			if (x-1 >= 0 && y+1 < height) neighbours.Add (graph [x - 1, y + 1]);
+			if (y+1 < height) neighbours.Add (graph [x, y+1]);
+			if (x-1 >= 0 && y-1 >= 0) neighbours.Add (graph [x-1, y-1]);
+			if (y-1 >= 0) neighbours.Add (graph [x, y-1]);
+		} else {
+			if (y+1 < height) neighbours.Add (graph [x, y+1]);
+			if (x+1 < width && y+1 < height) neighbours.Add (graph [x+1, y+1]);
+			if ( y-1 >= 0) neighbours.Add (graph [x, y-1]);
+			if (x+1 < width && y-1 >= 0) neighbours.Add (graph [x+1, y-1]);
+		}
+		return neighbours;
+	}
+
+	public List<Node> getSeaNodesNeighbours(int x, int y){
+		List<Node> neighbours = getNodesNeighbours(x, y);
+		List<Node> seaNeighbours = new List<Node>();
+		foreach (Node node in neighbours) {
+			// if it is a sea, we add it to a new list
+			if (node.type == "sea") {
+				seaNeighbours.Add (node);
+			}
+		}
+		return seaNeighbours;
+	}
+
+	public List<Node> getLandNodesNeighbours(int x, int y){
+		List<Node> neighbours = getNodesNeighbours(x, y);
+		List<Node> landNeighbours = new List<Node>();
+		foreach (Node node in neighbours) {
+			// if it is a land, we add it to a new list
+			if (node.type == "land") {
+				landNeighbours.Add (node);
+			}
+		}
+		return landNeighbours;
+	}
+
+	// Add the neighbours to each node, for each node AFTER the land generation
+	void AddNeighboursToNodes(){
 		// Creation of the graph with neighbours
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				// First we find the gameobject at te current coord
-				// Then we get his neighbour with the Hex function
-				GameObject currentHex = GameObject.Find ("Hex_" + x + "_" + y);
-				List<GameObject> neighbours = currentHex.GetComponent<Hex> ().getNeighbours();
-				foreach (GameObject neighbour in neighbours) {
-					graph [x, y].neighbours.Add (graph [
-						neighbour.GetComponent<Hex>().x,
-						neighbour.GetComponent<Hex>().y
-					]);
+				if (x-1 >= 0) graph [x, y].neighbours.Add (graph [x-1, y]);
+				if (x+1 < width) graph [x, y].neighbours.Add (graph [x+1, y]);
+				if (y % 2 == 0) {
+					if (x-1 >= 0 && y+1 < height) graph [x, y].neighbours.Add (graph [x - 1, y + 1]);
+					if (y+1 < height) graph [x, y].neighbours.Add (graph [x, y+1]);
+					if (x-1 >= 0 && y-1 >= 0) graph [x, y].neighbours.Add (graph [x-1, y-1]);
+					if (y-1 >= 0) graph [x, y].neighbours.Add (graph [x, y-1]);
+				} else {
+					if (y+1 < height) graph [x, y].neighbours.Add (graph [x, y+1]);
+					if (x+1 < width && y+1 < height) graph [x, y].neighbours.Add (graph [x+1, y+1]);
+					if ( y-1 >= 0) graph [x, y].neighbours.Add (graph [x, y-1]);
+					if (x+1 < width && y-1 >= 0) graph [x, y].neighbours.Add (graph [x+1, y-1]);
 				}
-				//Debug.Log (currentHex.GetComponent<Hex> ().IsWalkable);
-				//graph [x, y].isWalkable = currentHex.GetComponent<Hex>().IsWalkable;
-				graph [x, y].isWalkable = true;
 			}
 		}
 	}
-
 
 }

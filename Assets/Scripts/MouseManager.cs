@@ -9,6 +9,7 @@ public class MouseManager : MonoBehaviour {
 
 	public Ship selectedUnit;
 	public Map map;
+	public Vector2 mousePos;
 
 	// Use this for initialization
 	void Start () {
@@ -41,11 +42,16 @@ public class MouseManager : MonoBehaviour {
 	void MouseOver_Hex(GameObject ourHitObject) {
 		//Debug.Log("Raycast hit: " + ourHitObject.name );
 		if (Input.GetMouseButtonDown (0)) {
-			selectedUnit = null;
+			mousePos = Input.mousePosition;
 		}
-		if (Input.GetMouseButtonDown(1)) {
 
-			Debug.Log(ourHitObject.GetComponent<Hex> ().IsWalkable);
+		if (Input.GetMouseButtonUp (0)) {
+			if (Vector2.Distance (mousePos, Input.mousePosition) < 0.1f) {
+				selectedUnit = null;
+			}
+		}
+
+		if (Input.GetMouseButton (1)) {
 			// Check if we get the rights Neighbours
 			GameObject[] Neighbours = ourHitObject.GetComponent<Hex> ().getNeighboursOld();
 			for (int i = 0; i < Neighbours.Length; i++) {
@@ -73,7 +79,7 @@ public class MouseManager : MonoBehaviour {
 
 	void MouseOver_Unit(GameObject ourHitObject) {
 		//Debug.Log("Raycast hit: " + ourHitObject.name );
-		if (Input.GetMouseButtonDown(0)) {
+		if (Input.GetMouseButtonUp(0)) {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();
 			GameObject.Find ("Projector").transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 		}
@@ -83,6 +89,67 @@ public class MouseManager : MonoBehaviour {
 		return GameObject.Find ("Hex_" + x + "_" + y).GetComponent<Hex>().movementCost;
 	}
 
+	public void AstarPathfindingTo(int x, int y){
+		Node startNode = map.graph [
+			selectedUnit.GetComponent<Ship> ().ShipX,
+			selectedUnit.GetComponent<Ship> ().ShipY
+		];
+		Node targetNode = map.graph [
+			x,
+			y
+		];
+		List<Node> openSet = new List<Node>();
+		HashSet<Node> closedSet = new HashSet<Node>();
+		openSet.Add(startNode);
+
+		while (openSet.Count > 0) {
+			Node node = openSet[0];
+			for (int i = 1; i < openSet.Count; i ++) {
+				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
+						node = openSet[i];
+				}
+			}
+
+			openSet.Remove(node);
+			closedSet.Add(node);
+
+			if (node == targetNode) {
+				RetracePath(startNode,targetNode);
+				return;
+			}
+
+			float newCostToNeighbour;
+			foreach (Node neighbour in node.neighbours) {
+				if (!neighbour.isWalkable || closedSet.Contains(neighbour)) {
+					continue;
+				}
+				newCostToNeighbour = (node.gCost + node.DistanceTo(neighbour));
+				if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
+					neighbour.gCost = newCostToNeighbour;
+					neighbour.hCost = neighbour.DistanceTo (targetNode);
+					neighbour.parent = node;
+
+					if (!openSet.Contains(neighbour))
+						openSet.Add(neighbour);
+				}
+			}
+		}
+	}
+
+	void RetracePath(Node startNode, Node endNode) {
+		List<Node> path = new List<Node>();
+		Node currentNode = endNode;
+
+		while (currentNode != startNode) {
+			path.Add(currentNode);
+			currentNode = currentNode.parent;
+		}
+		path.Reverse();
+
+		selectedUnit.GetComponent<Ship> ().CurrentPath = path;
+	}
+
+	/*
 	public void DijkstraPathfindingTo(int x, int y){
 		selectedUnit.GetComponent<Ship>().CurrentPath = null;
 		List<Node> currentPath = null;
@@ -160,64 +227,6 @@ public class MouseManager : MonoBehaviour {
 
 		selectedUnit.GetComponent<Ship>().CurrentPath = currentPath;
 	}
+	*/
 
-	public void AstarPathfindingTo(int x, int y){
-		Node startNode = map.graph [
-			selectedUnit.GetComponent<Ship> ().ShipX,
-			selectedUnit.GetComponent<Ship> ().ShipY
-		];
-		Node targetNode = map.graph [
-			x,
-			y
-		];
-		List<Node> openSet = new List<Node>();
-		HashSet<Node> closedSet = new HashSet<Node>();
-		openSet.Add(startNode);
-
-		while (openSet.Count > 0) {
-			Node node = openSet[0];
-			for (int i = 1; i < openSet.Count; i ++) {
-				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
-						node = openSet[i];
-				}
-			}
-
-			openSet.Remove(node);
-			closedSet.Add(node);
-
-			if (node == targetNode) {
-				RetracePath(startNode,targetNode);
-				return;
-			}
-
-			foreach (Node neighbour in node.neighbours) {
-				if (!neighbour.isWalkable || closedSet.Contains(neighbour)) {
-					continue;
-				}
-
-				float newCostToNeighbour = (node.gCost + node.DistanceTo(neighbour));
-				if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
-					neighbour.gCost = newCostToNeighbour;
-					neighbour.hCost = neighbour.DistanceTo (targetNode);
-					neighbour.parent = node;
-
-					if (!openSet.Contains(neighbour))
-						openSet.Add(neighbour);
-				}
-			}
-		}
-	}
-
-	void RetracePath(Node startNode, Node endNode) {
-		List<Node> path = new List<Node>();
-		Node currentNode = endNode;
-
-		while (currentNode != startNode) {
-			path.Add(currentNode);
-			currentNode = currentNode.parent;
-		}
-		path.Reverse();
-
-		selectedUnit.GetComponent<Ship> ().CurrentPath = path;
-	}
 }
