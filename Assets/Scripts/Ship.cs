@@ -55,15 +55,15 @@ public class Ship : MonoBehaviour {
 
 		if(energyQuantity <= 0)
 			return;
-
-		transform.position = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
-		energyQuantity -= 1;
-		shipX = currentPath[0].x;
-		shipY = currentPath[0].y;
-		currentPath.RemoveAt(0);
-		destination = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
-
-		if(currentPath.Count == 0) {
+		
+		if (currentPath.Count > 0) {
+			transform.position = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
+			energyQuantity -= 1;
+			shipX = currentPath [0].x;
+			shipY = currentPath [0].y;
+			currentPath.RemoveAt (0);
+			destination = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
+		} else {
 			currentPath = null;
 		}
 	}

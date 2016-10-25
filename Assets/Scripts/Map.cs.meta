@@ -1,10 +1,16 @@
 fileFormatVersion: 2
 guid: 00d9a9f978ed3d243ab2de51dddb1d0c
-timeCreated: 1475517537
+timeCreated: 1477398091
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - hexPrefab: {fileID: 1000013949587304, guid: e29812af477b11d42896d6d69e2c7ddf,
+      type: 2}
+  - landPrefab: {fileID: 1000012106419294, guid: e507cd3ff67d68140a91fe9f68fd8336,
+      type: 2}
+  - seaPrefab: {fileID: 1000011516354870, guid: 42351b9f573ead14dbd6b887335f3942,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

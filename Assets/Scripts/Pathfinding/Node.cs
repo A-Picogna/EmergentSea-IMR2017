@@ -34,5 +34,52 @@ public class Node {
 		}
 	}
 
+	public List<Node> getNodesNeighbours(Node[,] graph){
+		int width = graph.GetLength (0);
+		int height = graph.GetLength (1);
+		List<Node> neighbours = new List<Node>();
+		if (x-1 >= 0) neighbours.Add (graph [x-1, y]);
+		if (x+1 < width) neighbours.Add (graph [x+1, y]);
+		if (y % 2 == 0) {
+			if (x-1 >= 0 && y+1 < height) neighbours.Add (graph [x - 1, y + 1]);
+			if (y+1 < height) neighbours.Add (graph [x, y+1]);
+			if (x-1 >= 0 && y-1 >= 0) neighbours.Add (graph [x-1, y-1]);
+			if (y-1 >= 0) neighbours.Add (graph [x, y-1]);
+		} else {
+			if (y+1 < height) neighbours.Add (graph [x, y+1]);
+			if (x+1 < width && y+1 < height) neighbours.Add (graph [x+1, y+1]);
+			if ( y-1 >= 0) neighbours.Add (graph [x, y-1]);
+			if (x+1 < width && y-1 >= 0) neighbours.Add (graph [x+1, y-1]);
+		}
+		return neighbours;
+	}
+
+	public List<Node> getSeaNodesNeighbours(Node[,] graph){
+		int width = graph.GetLength (0);
+		int height = graph.GetLength (1);
+		List<Node> neighbours = getNodesNeighbours(x, y);
+		List<Node> seaNeighbours = new List<Node>();
+		foreach (Node node in neighbours) {
+			// if it is a sea, we add it to a new list
+			if (node.type == "sea") {
+				seaNeighbours.Add (node);
+			}
+		}
+		return seaNeighbours;
+	}
+
+	public List<Node> getLandNodesNeighbours(Node[,] graph){
+		int width = graph.GetLength (0);
+		int height = graph.GetLength (1);
+		List<Node> neighbours = getNodesNeighbours(x, y);
+		List<Node> landNeighbours = new List<Node>();
+		foreach (Node node in neighbours) {
+			// if it is a land, we add it to a new list
+			if (node.type == "land") {
+				landNeighbours.Add (node);
+			}
+		}
+		return landNeighbours;
+	}
 
 }

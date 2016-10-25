@@ -17,9 +17,9 @@ public class Map : MonoBehaviour {
 	// size of map in terms of numer of hexagon
 	public int width = 20;
 	public int height = 20;
-	float xOffset = 0.882f;
-	float zOffset = 0.764f;
-	int nbCasesRemplinit = 5;
+	float xOffset = 0.892f;
+	float zOffset = 0.774f;
+	int nbCasesRemplinit = 10;
 	System.Random rand = new System.Random();
 	List<int> abcisses = new List<int>();
 	List<int> ordonnes = new List<int>();
@@ -80,7 +80,7 @@ public class Map : MonoBehaviour {
 				var ord = FirstStep [i].GetComponent<Hex> ().y;
 				GameObject land_go = FirstStep [i];
 
-				if (rand.Next (1, 101) <= 30) {
+				if (rand.Next (1, 101) <= 50) {
 					unitycord = FirstStep [i].transform.position;
 					Destroy (FirstStep [i]);
 					land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
@@ -100,7 +100,7 @@ public class Map : MonoBehaviour {
 
 				for (int j = 0; j < NextNeighbours.Count; j++) {
 					//if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
-					if (rand.Next (1, 101) <= 15) {
+					if (rand.Next (1, 101) <= 25) {
 						int NextAbs = NextNeighbours [j].GetComponent<Hex> ().x;
 						int NextOrd = NextNeighbours [j].GetComponent<Hex> ().y;
 						unitycord = NextNeighbours [j].transform.position;
@@ -156,47 +156,7 @@ public class Map : MonoBehaviour {
 		}
 	}
 
-	public List<Node> getNodesNeighbours(int x, int y){
-		List<Node> neighbours = new List<Node>();
-		if (x-1 >= 0) neighbours.Add (graph [x-1, y]);
-		if (x+1 < width) neighbours.Add (graph [x+1, y]);
-		if (y % 2 == 0) {
-			if (x-1 >= 0 && y+1 < height) neighbours.Add (graph [x - 1, y + 1]);
-			if (y+1 < height) neighbours.Add (graph [x, y+1]);
-			if (x-1 >= 0 && y-1 >= 0) neighbours.Add (graph [x-1, y-1]);
-			if (y-1 >= 0) neighbours.Add (graph [x, y-1]);
-		} else {
-			if (y+1 < height) neighbours.Add (graph [x, y+1]);
-			if (x+1 < width && y+1 < height) neighbours.Add (graph [x+1, y+1]);
-			if ( y-1 >= 0) neighbours.Add (graph [x, y-1]);
-			if (x+1 < width && y-1 >= 0) neighbours.Add (graph [x+1, y-1]);
-		}
-		return neighbours;
-	}
 
-	public List<Node> getSeaNodesNeighbours(int x, int y){
-		List<Node> neighbours = getNodesNeighbours(x, y);
-		List<Node> seaNeighbours = new List<Node>();
-		foreach (Node node in neighbours) {
-			// if it is a sea, we add it to a new list
-			if (node.type == "sea") {
-				seaNeighbours.Add (node);
-			}
-		}
-		return seaNeighbours;
-	}
-
-	public List<Node> getLandNodesNeighbours(int x, int y){
-		List<Node> neighbours = getNodesNeighbours(x, y);
-		List<Node> landNeighbours = new List<Node>();
-		foreach (Node node in neighbours) {
-			// if it is a land, we add it to a new list
-			if (node.type == "land") {
-				landNeighbours.Add (node);
-			}
-		}
-		return landNeighbours;
-	}
 
 	// Add the neighbours to each node, for each node AFTER the land generation
 	void AddNeighboursToNodes(){
