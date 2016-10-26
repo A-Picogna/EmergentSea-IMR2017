@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 
 public class Map : MonoBehaviour {
 
@@ -27,6 +28,7 @@ public class Map : MonoBehaviour {
 	List<int> ordonnes = new List<int>();
 	List<GameObject> FirstStep = new List<GameObject>();
 	Vector3 unitycord = new Vector3(0,0,0);
+	public Material lineMat;
 
 	// Use this for initialization
 	void Start () {
@@ -39,7 +41,15 @@ public class Map : MonoBehaviour {
 		// Add neighbours
 		AddNeighboursToNodes ();
 
+		Vector3 start = new Vector3 (0, 0, -1);
+		Vector3 end = new Vector3 (1, 0, -1);
 
+		GL.Begin(GL.LINES);
+		lineMat.SetPass(0);
+		GL.Color(new Color(0f, 0f, 0f, 1f));
+		GL.Vertex3(-1f, 0f, 0f);
+		GL.Vertex3(-1f, 0f, 1f);
+		GL.End();
 	}
 
 	// Update is called once per frame
@@ -156,9 +166,9 @@ public class Map : MonoBehaviour {
 				hex_go.transform.SetParent (this.transform);
 
 				hex_go.isStatic = true;
-		
+
 				LineRenderer lineRenderer = hex_go.AddComponent<LineRenderer> (); // Add or get LineRenderer component to game object
-				lineRenderer.SetWidth(0.1f, 0.1f);
+				lineRenderer.SetWidth(0.01f, 0.01f);
 				lineRenderer.material.color = Color.black;
 				lineRenderer.SetVertexCount(7);  // 6+1 since vertex 6 has to connect to vertex 1
 				for (int i = 0; i < 7; i++) {
@@ -202,5 +212,7 @@ public class Map : MonoBehaviour {
 		res[1] = y + 0.5f * Mathf.Sin (angle_rad);
 		return res;
 	}
+
+
 
 }

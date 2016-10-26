@@ -20,38 +20,54 @@ public class Map_Jihane : MonoBehaviour
     public int height = 20;
     float xOffset = 0.882f;
     float zOffset = 0.764f;
-    int nbCasesRemplinit = 10;
-    System.Random rand = new System.Random();
-    List<int> abcisses = new List<int>();
-    List<int> ordonnes = new List<int>();
-    List<GameObject> FirstStep = new List<GameObject>();
-    List<GameObject> GroupSea = new List<GameObject>();
-    List<GameObject> GroupNeighbours = new List<GameObject>();
-    Vector3 unitycord = new Vector3(0, 0, 0);
+    int nbCasesRemplinit;
+    System.Random rand;
+    List<int> abcisses;
+    List<int> ordonnes;
+    List<GameObject> FirstStep;
+    List<GameObject> GroupSea;
+    List<GameObject> GroupNeighbours;
+    Vector3 unitycord;
     GameObject land_go;
 	bool mapFausse = false;
+	int compt = 1;
 
     // Use this for initialization
     void Start()
 	{
+		nbCasesRemplinit = 10;
+		rand = new System.Random();
+		abcisses = new List<int>();
+		ordonnes = new List<int>();
+		FirstStep = new List<GameObject>();
+		GroupSea = new List<GameObject>();
+		GroupNeighbours = new List<GameObject>();
+		unitycord = new Vector3(0, 0, 0);
+
+
 		// RESPECT THIS STRIC ORDER
 		// Init map
 		initializeMap();
 		// Generate some lands
-		generateLand ();
+		generateLand();
 		// Add neighbours
 		AddNeighboursToNodes ();
 		// Check if there is no sea prisonner
         verifMap();
 		Debug.Log(mapFausse);
-		/*
-		while (mapfausse == true) 
+
+		if (mapFausse && compt >0) 
 		{
-			generateLand();
-			verifMap();
+			compt--;
+			Debug.Log ("je vais etre changee");
+			Restart();
 		}
-		*/
+	
     }
+	void Restart()
+	{
+		Start();
+	}
 
 	void initializeMap(){
 		graph = new Node[width, height];
@@ -150,7 +166,7 @@ public class Map_Jihane : MonoBehaviour
                 List<GameObject> NextNeighbours = land_go.GetComponent<Hex>().getNeighbours();
 
                 var k = 0;
-                while (k < 3)
+                while (k < 2)
                 {
                     if (NextNeighbours != null)
                     {
