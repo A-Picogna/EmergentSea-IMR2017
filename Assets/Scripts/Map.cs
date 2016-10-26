@@ -29,10 +29,11 @@ public class Map : MonoBehaviour {
 	List<GameObject> FirstStep = new List<GameObject>();
 	Vector3 unitycord = new Vector3(0,0,0);
 	public Material lineMat;
+	GameObject land_go;
 
 	// Use this for initialization
 	void Start () {
-
+		
 		// RESPECT THIS STRIC ORDER
 		// Init map
 		initializeMap();
@@ -41,98 +42,116 @@ public class Map : MonoBehaviour {
 		// Add neighbours
 		AddNeighboursToNodes ();
 
-		Vector3 start = new Vector3 (0, 0, -1);
-		Vector3 end = new Vector3 (1, 0, -1);
-
-		GL.Begin(GL.LINES);
-		lineMat.SetPass(0);
-		GL.Color(new Color(0f, 0f, 0f, 1f));
-		GL.Vertex3(-1f, 0f, 0f);
-		GL.Vertex3(-1f, 0f, 1f);
-		GL.End();
 	}
-
 	// Update is called once per frame
 	void Update () {
 	
 	}
 
-	void generateLand(){
-		for (int k=0; k<nbCasesRemplinit ;k++){
+	public void generateLand(){
+
+		for (int k = 0; k < nbCasesRemplinit; k++){
+
 			int x = rand.Next(0, width);
 			int y = rand.Next(0, height);
-			//Debug.Log(x.ToString());
 			abcisses.Add(x);
 			ordonnes.Add(y);
 		}
 
 		// We stat to generate some land
-
-		//GameObject remplacable = GameObject.Find("Hex_" + x + "_" + y);
-
-		for (int a = 0; a < nbCasesRemplinit; a++) {
-			GameObject remplacable = GameObject.Find ("Hex_" + abcisses [a] + "_" + ordonnes [a]);
+		for (int a = 0; a < nbCasesRemplinit; a++){
+			GameObject remplacable = GameObject.Find("Hex_" + abcisses[a] + "_" + ordonnes[a]);
 			unitycord = remplacable.transform.position;
-			Destroy (remplacable);
+			Destroy(remplacable);
 
-			GameObject hex_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+			GameObject hex_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
 
 			// UPDATE NODES
 			Node node = graph [abcisses [a], ordonnes [a]];
 			graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
 
-			hex_go.name = "Hex_" + abcisses [a] + "_" + ordonnes [a];
-			hex_go.GetComponent<Land> ().x = abcisses [a];
-			hex_go.GetComponent<Land> ().y = ordonnes [a];
-			hex_go.transform.SetParent (this.transform);
+			// Add line to the edge of the Hex
+			drawEdgesLines(hex_go);
+
+			hex_go.name = "Hex_" + abcisses[a] + "_" + ordonnes[a];
+			hex_go.GetComponent<Hex>().x = abcisses[a];
+			hex_go.GetComponent<Hex>().y = ordonnes[a];
+			hex_go.transform.SetParent(this.transform);
 			hex_go.isStatic = true;
-			List<GameObject> Neighbours = hex_go.GetComponent<Hex> ().getNeighbours ();
+			List<GameObject> Neighbours = hex_go.GetComponent<Hex>().getNeighbours();
+
+			var nonremplacable = rand.Next(0, Neighbours.Count);
+			Neighbours.RemoveAt(nonremplacable);
 			FirstStep = Neighbours;
-			for (int i = 0; i < FirstStep.Count; i++) {
-				
-				var abs = FirstStep [i].GetComponent<Hex> ().x;
-				var ord = FirstStep [i].GetComponent<Hex> ().y;
-				GameObject land_go = FirstStep [i];
 
-				if (rand.Next (1, 101) <= 50) {
-					unitycord = FirstStep [i].transform.position;
-					Destroy (FirstStep [i]);
-					land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
-
+			for (int i = 0; i < FirstStep.Count; i++){
+				//(FirstStep[i].GetComponent<Hex>().Type.Equals("sea"))
+				var abs = FirstStep[i].GetComponent<Hex>().x;
+				var ord = FirstStep[i].GetComponent<Hex>().y;
+				if(graph[abs,ord].type.Equals("sea"))
+				{
+					unitycord = FirstStep[i].transform.position;
+					Destroy(FirstStep[i]);
+					land_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
 					// UPDATE NODES
 					node = graph [abs, ord];
 					graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
 
+					// Add line to the edge of the Hex
+					drawEdgesLines(land_go);
+
 					land_go.name = "Hex_" + abs + "_" + ord;
-					land_go.GetComponent<Land> ().x = abs;
-					land_go.GetComponent<Land> ().y = ord;
-					land_go.transform.SetParent (this.transform);
+					land_go.GetComponent<Hex>().x = abs;
+					land_go.GetComponent<Hex>().y = ord;
+
+					land_go.transform.SetParent(this.transform);
 					land_go.isStatic = true;
+					//NextNeigbours[i,] = land_go.GetComponent<Hex>().getNeighbours();
+					//Debug.Log(NextNeigbours);
 				}
+				List<GameObject> NextNeighbours = land_go.GetComponent<Hex>().getNeighbours();
 
-				List<GameObject> NextNeighbours = land_go.GetComponent<Hex> ().getNeighbours ();
+				int k = 0;
+				while (k < 2){
+					if (NextNeighbours != null)	{
+						var Nextnonremplacable = rand.Next(0, NextNeighbours.Count);
+						NextNeighbours.RemoveAt(Nextnonremplacable);
+					}
+					k = k + 1;
+				}
+				for (var j = 0; j < NextNeighbours.Count; j++){
+					//if (FirstStep[i].GetComponent<Hex>().Type.Equals("sea"))
+					var Nextabs = NextNeighbours[j].GetComponent<Hex>().x;
+					var Nextord = NextNeighbours[j].GetComponent<Hex>().y;
+					if(graph[Nextabs,Nextord].type.Equals("sea"))
+					{
 
-				for (int j = 0; j < NextNeighbours.Count; j++) {
-					//if (FirstStep[i] != LAAAND) { JE FAIS LA SUITE}
-					if (rand.Next (1, 101) <= 25) {
-						int NextAbs = NextNeighbours [j].GetComponent<Hex> ().x;
-						int NextOrd = NextNeighbours [j].GetComponent<Hex> ().y;
-						unitycord = NextNeighbours [j].transform.position;
-						Destroy (NextNeighbours [j]);
-						GameObject Next_land_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
+						unitycord = NextNeighbours[j].transform.position;
+						Destroy(NextNeighbours[j]);
+						//Debug.Log(NextNeighbours[j].GetComponent<Hex>().gs_type);
 
+						GameObject Next_land_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
 						// UPDATE NODES
-						node = graph [NextAbs, NextOrd];
+						node = graph [Nextabs, Nextord];
 						graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
 
-						Next_land_go.name = "Hex_" + NextAbs + "_" + NextOrd;
-						Next_land_go.GetComponent<Land> ().x = NextAbs;
-						Next_land_go.GetComponent<Land> ().y = NextOrd;
-						Next_land_go.transform.SetParent (this.transform);
+						// Add line to the edge of the Hex
+						drawEdgesLines(Next_land_go);
+
+						Next_land_go.name = "Hex_" + Nextabs + "_" + Nextord;
+						Next_land_go.GetComponent<Hex>().x = Nextabs;
+						Next_land_go.GetComponent<Hex>().y = Nextord;
+
+
+						Next_land_go.transform.SetParent(this.transform);
 						Next_land_go.isStatic = true;
+
 					}
+
 				}
+
 			}
+
 		}
 	}
 
@@ -155,6 +174,9 @@ public class Map : MonoBehaviour {
 				GameObject hex_go = (GameObject)Instantiate (seaPrefab, worldPosition, Quaternion.identity);
 				graph [x, y] = new Node (x, y, worldPosition, true, "sea");
 
+				// Add line to the edge of the Hex
+				drawEdgesLines(hex_go);
+
 				// Name the hex according to the grid coordinates
 				hex_go.name = "Hex_" + x + "_" + y;
 
@@ -167,20 +189,26 @@ public class Map : MonoBehaviour {
 
 				hex_go.isStatic = true;
 
-				LineRenderer lineRenderer = hex_go.AddComponent<LineRenderer> (); // Add or get LineRenderer component to game object
-				lineRenderer.SetWidth(0.01f, 0.01f);
-				lineRenderer.material.color = Color.black;
-				lineRenderer.SetVertexCount(7);  // 6+1 since vertex 6 has to connect to vertex 1
-				for (int i = 0; i < 7; i++) {
-					Vector3 pos = new Vector3(hex_corner(worldPosition.x, worldPosition.z, i)[0], 0, hex_corner(worldPosition.x, worldPosition.z, i)[1]) ; // Positions of hex vertices
-					lineRenderer.SetPosition(i, pos);
-				}
+
 
 			}
 		}
 	}
 
-
+	void drawEdgesLines(GameObject go){
+		Vector3 worldPosition = go.transform.position;
+		LineRenderer lineRenderer = go.AddComponent<LineRenderer> (); // Add or get LineRenderer component to game object
+		lineRenderer.SetWidth(0.01f, 0.01f);
+		lineRenderer.SetVertexCount(7);  // 6+1 since vertex 6 has to connect to vertex 1
+		lineRenderer.SetColors(Color.black, Color.black);
+		//lineRenderer.material.color = Color.black;
+		lineRenderer.material = new Material (Shader.Find("Sprites/Default"));
+		for (int i = 0; i < 7; i++) {
+			// Note for unknown reason, the y value have to set to 0.06f to be align with the hex
+			Vector3 pos = new Vector3(hex_corner(worldPosition.x, worldPosition.z, i)[0], 0.06f, hex_corner(worldPosition.x, worldPosition.z, i)[1]) ; // Positions of hex vertices
+			lineRenderer.SetPosition(i, pos);
+		}
+	}
 
 	// Add the neighbours to each node, for each node AFTER the land generation
 	void AddNeighboursToNodes(){
