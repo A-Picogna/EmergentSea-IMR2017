@@ -148,7 +148,7 @@ public class MapManager : MonoBehaviour {
 
 	private void initWorld() {
 		Map worldMap = initMap ();
-		GameObject mouseSettings = GameObject.Find ("mouseManager");
+		GameObject mouseSettings = GameObject.Find ("MouseManager");
 		((MouseManager)mouseSettings.GetComponent<MouseManager> ()).map = worldMap;
 	}
 
