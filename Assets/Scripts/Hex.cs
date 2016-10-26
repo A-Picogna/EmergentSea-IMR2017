@@ -13,7 +13,6 @@ public class Hex : MonoBehaviour{
 
     // Coordinates in the grid (not unity unit)
 	public float movementCost;
-    private bool tag = false;
 
     public GameObject[] getNeighboursOld(){
         GameObject[] Neighbours = new GameObject[6];
@@ -79,15 +78,11 @@ public class Hex : MonoBehaviour{
         return Neighbours;
     }
 
-    public string gs_type{
+    public string Type{
 		get { return type; }
 		set { type = value; }
     }
-
-	public bool gs_tag{
-		get { return tag; }
-		set { tag = value; }
-	}    
+		
 
 	public bool IsWalkable{
 		get { return isWalkable; }

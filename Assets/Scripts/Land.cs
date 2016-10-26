@@ -10,6 +10,7 @@ public class Land : Hex
 	{
 		isWalkable = false;
 		movementCost = Mathf.Infinity;
+		type = "land";
     }
 
     // Update is called once per frame

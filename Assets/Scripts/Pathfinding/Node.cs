@@ -12,13 +12,16 @@ public class Node {
 	public Node parent;
 	public List<Node> neighbours;
 	public Vector3 worldPos;
+	public bool tag;
 
-	public Node(int _x, int _y, Vector3 _worldPos, bool _isWalkable, string type) {
+	public Node(int _x, int _y, Vector3 _worldPos, bool _isWalkable, string _type) {
 		neighbours = new List<Node> ();
 		x = _x;
 		y = _y;
 		worldPos = _worldPos;
 		isWalkable = _isWalkable;
+		type = _type;
+		tag = false;
 	}
 
 	public float DistanceTo(Node n){

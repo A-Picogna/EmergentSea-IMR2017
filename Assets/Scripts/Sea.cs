@@ -12,6 +12,7 @@ public class Sea : Hex
 	{
 		isWalkable = true;
 		movementCost = 1;
+		type = "sea";
     }
 
     // Update is called once per frame
