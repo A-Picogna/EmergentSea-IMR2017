@@ -60,9 +60,16 @@ public class Map_Jihane : MonoBehaviour
 		{
 			compt--;
 			Debug.Log ("je vais etre changee");
-			Restart();
-		}
-	
+            var children = new List<GameObject>();
+            foreach (Transform child in this.transform)
+            {
+                children.Add(child.gameObject);
+            }
+            children.ForEach(child => Destroy(child));
+
+            Restart();
+        }
+
     }
 	void Restart()
 	{
