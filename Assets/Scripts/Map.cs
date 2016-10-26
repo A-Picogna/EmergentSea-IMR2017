@@ -32,7 +32,7 @@ public class Map : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		/*
+		
 		// RESPECT THIS STRIC ORDER
 		// Init map
 		initializeMap();
@@ -40,7 +40,7 @@ public class Map : MonoBehaviour {
 		generateLand ();
 		// Add neighbours
 		AddNeighboursToNodes ();
-		*/
+
 
 
 
@@ -74,6 +74,9 @@ public class Map : MonoBehaviour {
 			Node node = graph [abcisses [a], ordonnes [a]];
 			graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
 
+			// Add line to the edge of the Hex
+			drawEdgesLines(hex_go);
+
 			hex_go.name = "Hex_" + abcisses [a] + "_" + ordonnes [a];
 			hex_go.GetComponent<Land> ().x = abcisses [a];
 			hex_go.GetComponent<Land> ().y = ordonnes [a];
@@ -96,6 +99,9 @@ public class Map : MonoBehaviour {
 					node = graph [abs, ord];
 					graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
 
+					// Add line to the edge of the Hex
+					drawEdgesLines(land_go);
+
 					land_go.name = "Hex_" + abs + "_" + ord;
 					land_go.GetComponent<Land> ().x = abs;
 					land_go.GetComponent<Land> ().y = ord;
@@ -117,6 +123,9 @@ public class Map : MonoBehaviour {
 						// UPDATE NODES
 						node = graph [NextAbs, NextOrd];
 						graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
+
+						// Add line to the edge of the Hex
+						drawEdgesLines(Next_land_go);
 
 						Next_land_go.name = "Hex_" + NextAbs + "_" + NextOrd;
 						Next_land_go.GetComponent<Land> ().x = NextAbs;
@@ -148,6 +157,9 @@ public class Map : MonoBehaviour {
 				GameObject hex_go = (GameObject)Instantiate (seaPrefab, worldPosition, Quaternion.identity);
 				graph [x, y] = new Node (x, y, worldPosition, true, "sea");
 
+				// Add line to the edge of the Hex
+				drawEdgesLines(hex_go);
+
 				// Name the hex according to the grid coordinates
 				hex_go.name = "Hex_" + x + "_" + y;
 
@@ -160,20 +172,26 @@ public class Map : MonoBehaviour {
 
 				hex_go.isStatic = true;
 
-				LineRenderer lineRenderer = hex_go.AddComponent<LineRenderer> (); // Add or get LineRenderer component to game object
-				lineRenderer.SetWidth(0.01f, 0.01f);
-				lineRenderer.material.color = Color.black;
-				lineRenderer.SetVertexCount(7);  // 6+1 since vertex 6 has to connect to vertex 1
-				for (int i = 0; i < 7; i++) {
-					Vector3 pos = new Vector3(hex_corner(worldPosition.x, worldPosition.z, i)[0], 0, hex_corner(worldPosition.x, worldPosition.z, i)[1]) ; // Positions of hex vertices
-					lineRenderer.SetPosition(i, pos);
-				}
+
 
 			}
 		}
 	}
 
-
+	void drawEdgesLines(GameObject go){
+		Vector3 worldPosition = go.transform.position;
+		LineRenderer lineRenderer = go.AddComponent<LineRenderer> (); // Add or get LineRenderer component to game object
+		lineRenderer.SetWidth(0.01f, 0.01f);
+		lineRenderer.SetVertexCount(7);  // 6+1 since vertex 6 has to connect to vertex 1
+		lineRenderer.SetColors(Color.black, Color.black);
+		//lineRenderer.material.color = Color.black;
+		lineRenderer.material = new Material (Shader.Find("Sprites/Default"));
+		for (int i = 0; i < 7; i++) {
+			// Note for unknown reason, the y value have to set to 0.06f to be align with the hex
+			Vector3 pos = new Vector3(hex_corner(worldPosition.x, worldPosition.z, i)[0], 0.06f, hex_corner(worldPosition.x, worldPosition.z, i)[1]) ; // Positions of hex vertices
+			lineRenderer.SetPosition(i, pos);
+		}
+	}
 
 	// Add the neighbours to each node, for each node AFTER the land generation
 	void AddNeighboursToNodes(){
