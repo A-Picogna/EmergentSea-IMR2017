@@ -5,13 +5,14 @@ using System.Collections;
 
 public class Sea : Hex
 {
-    private int treasure, foodQuantity;
+	private int treasure, foodQuantity;
+
     // Use this for initialization
     void Start()
 	{
-		this.isWalkable = true;
-		this.movementCost = 1;
-
+		isWalkable = true;
+		movementCost = 1;
+		type = "sea";
     }
 
     // Update is called once per frame

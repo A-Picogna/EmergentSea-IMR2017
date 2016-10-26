@@ -8,9 +8,9 @@ public class Land : Hex
     // Use this for initialization
     void Start()
 	{
-		this.isWalkable = false;
-		this.movementCost = Mathf.Infinity;
-
+		isWalkable = false;
+		movementCost = Mathf.Infinity;
+		type = "land";
     }
 
     // Update is called once per frame

@@ -5,20 +5,20 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
-public class MouseManager : MonoBehaviour {
+public class JihaneMouseManager : MonoBehaviour {
 
 	public Ship selectedUnit;
-	public Map map;
+	public Map_Jihane map;
 	public Vector2 mousePos;
 
 	// Use this for initialization
 	void Start () {
-	
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 		// WITH 3D OBJECTS :
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hitInfo;
@@ -106,7 +106,7 @@ public class MouseManager : MonoBehaviour {
 			Node node = openSet[0];
 			for (int i = 1; i < openSet.Count; i ++) {
 				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
-						node = openSet[i];
+					node = openSet[i];
 				}
 			}
 
