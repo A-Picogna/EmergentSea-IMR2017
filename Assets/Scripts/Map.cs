@@ -17,8 +17,10 @@ public class Map : MonoBehaviour {
 	// size of map in terms of numer of hexagon
 	public int width = 20;
 	public int height = 20;
-	float xOffset = 0.892f;
-	float zOffset = 0.774f;
+	//float xOffset = 0.882f;
+	//float zOffset = 0.764f;
+	float xOffset = Mathf.Sqrt(3)/2;
+	float zOffset = 0.75f;
 	int nbCasesRemplinit = 10;
 	System.Random rand = new System.Random();
 	List<int> abcisses = new List<int>();
@@ -36,8 +38,10 @@ public class Map : MonoBehaviour {
 		generateLand ();
 		// Add neighbours
 		AddNeighboursToNodes ();
+
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 	
@@ -61,10 +65,10 @@ public class Map : MonoBehaviour {
 			unitycord = remplacable.transform.position;
 			Destroy (remplacable);
 
-			Node node = graph [abcisses [a], ordonnes [a]];
 			GameObject hex_go = (GameObject)Instantiate (landPrefab, unitycord, Quaternion.identity);
 
 			// UPDATE NODES
+			Node node = graph [abcisses [a], ordonnes [a]];
 			graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
 
 			hex_go.name = "Hex_" + abcisses [a] + "_" + ordonnes [a];
@@ -124,6 +128,7 @@ public class Map : MonoBehaviour {
 
 	void initializeMap(){
 		graph = new Node[width, height];
+		List<Vector3> V3LinesPositions = new List<Vector3>();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 
@@ -132,25 +137,34 @@ public class Map : MonoBehaviour {
 
 				// if we're an odd line, we need to reduce the offset by half
 				if (y % 2 == 1) {
-					xPos += xOffset/2f;
+					xPos += xOffset / 2f;
 				}
 
 				// Creation of a new hex
-				Vector3 worldPosition = new Vector3(xPos, 0, y * zOffset);
-				GameObject hex_go = (GameObject)Instantiate(seaPrefab, worldPosition, Quaternion.identity);
+				Vector3 worldPosition = new Vector3 (xPos, 0, y * zOffset);
+				GameObject hex_go = (GameObject)Instantiate (seaPrefab, worldPosition, Quaternion.identity);
 				graph [x, y] = new Node (x, y, worldPosition, true, "sea");
 
 				// Name the hex according to the grid coordinates
 				hex_go.name = "Hex_" + x + "_" + y;
 
 				// Store the grid coord in the hex itself
-				hex_go.GetComponent<Sea>().x = x;
-				hex_go.GetComponent<Sea>().y = y;
+				hex_go.GetComponent<Sea> ().x = x;
+				hex_go.GetComponent<Sea> ().y = y;
 
 				// set the hex in a parent component, parent this hex to the map object
 				hex_go.transform.SetParent (this.transform);
 
 				hex_go.isStatic = true;
+		
+				LineRenderer lineRenderer = hex_go.AddComponent<LineRenderer> (); // Add or get LineRenderer component to game object
+				lineRenderer.SetWidth(0.1f, 0.1f);
+				lineRenderer.material.color = Color.black;
+				lineRenderer.SetVertexCount(7);  // 6+1 since vertex 6 has to connect to vertex 1
+				for (int i = 0; i < 7; i++) {
+					Vector3 pos = new Vector3(hex_corner(worldPosition.x, worldPosition.z, i)[0], 0, hex_corner(worldPosition.x, worldPosition.z, i)[1]) ; // Positions of hex vertices
+					lineRenderer.SetPosition(i, pos);
+				}
 
 			}
 		}
@@ -178,6 +192,15 @@ public class Map : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	float[] hex_corner(float x, float y, int i){
+		int angle_deg = 60 * i   + 30;
+		float angle_rad = Mathf.PI / 180 * angle_deg;
+		float[] res = new float[2];
+		res[0] = x + 0.5f * Mathf.Cos (angle_rad);
+		res[1] = y + 0.5f * Mathf.Sin (angle_rad);
+		return res;
 	}
 
 }

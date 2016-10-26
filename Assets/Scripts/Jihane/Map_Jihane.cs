@@ -29,17 +29,21 @@ public class Map_Jihane : MonoBehaviour
     List<GameObject> GroupNeighbours = new List<GameObject>();
     Vector3 unitycord = new Vector3(0, 0, 0);
     GameObject land_go;
-	public bool mapfausse = false;
+	bool mapFausse = false;
 
     // Use this for initialization
     void Start()
 	{
-		//mapfausse = false;
-		initializeMap ();
-        generateLand();
-
+		// RESPECT THIS STRIC ORDER
+		// Init map
+		initializeMap();
+		// Generate some lands
+		generateLand ();
+		// Add neighbours
+		AddNeighboursToNodes ();
+		// Check if there is no sea prisonner
         verifMap();
-		Debug.Log(mapfausse);
+		Debug.Log(mapFausse);
 		/*
 		while (mapfausse == true) 
 		{
@@ -51,36 +55,31 @@ public class Map_Jihane : MonoBehaviour
 
 	void initializeMap(){
 		graph = new Node[width, height];
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 
-		for (int x = 0; x < width; x++)
-		{
-			for (int y = 0; y < height; y++)
-			{
-
+				// Use the loop for initialise de graph too, we save one loop with this
 				float xPos = x * xOffset;
 
 				// if we're an odd line, we need to reduce the offset by half
-				if (y % 2 == 1)
-				{
+				if (y % 2 == 1) {
 					xPos += xOffset / 2f;
 				}
 
 				// Creation of a new hex
-				Vector3 worldPosition = new Vector3(xPos, 0, y * zOffset);
-				GameObject hex_go = (GameObject)Instantiate(seaPrefab, worldPosition, Quaternion.identity);
-
+				Vector3 worldPosition = new Vector3 (xPos, 0, y * zOffset);
+				GameObject hex_go = (GameObject)Instantiate (seaPrefab, worldPosition, Quaternion.identity);
 				graph [x, y] = new Node (x, y, worldPosition, true, "sea");
-
 
 				// Name the hex according to the grid coordinates
 				hex_go.name = "Hex_" + x + "_" + y;
 
 				// Store the grid coord in the hex itself
-				hex_go.GetComponent<Hex>().x = x;
-				hex_go.GetComponent<Hex>().y = y;
+				hex_go.GetComponent<Sea> ().x = x;
+				hex_go.GetComponent<Sea> ().y = y;
 
 				// set the hex in a parent component, parent this hex to the map object
-				hex_go.transform.SetParent(this.transform);
+				hex_go.transform.SetParent (this.transform);
 
 				hex_go.isStatic = true;
 
@@ -240,7 +239,7 @@ public class Map_Jihane : MonoBehaviour
 
         while (l < width)
         {
-			mapfausse = false;
+			mapFausse = false;
             m = 0;
             while (m < height)
             {
@@ -248,13 +247,13 @@ public class Map_Jihane : MonoBehaviour
 				//Debug.Log (graph [l, m].tag);
 				if (graph[l,m].type.Equals("sea") & !graph[l,m].tag)
                 {
-					mapfausse = true;
+					mapFausse = true;
 					break;
 
                 }
             m=m+1;
             }
-			if (mapfausse) 
+			if (mapFausse) 
 			{
 				break;
 			}
@@ -262,5 +261,28 @@ public class Map_Jihane : MonoBehaviour
 
         }
     }
-    
+
+	// Add the neighbours to each node, for each node AFTER the land generation
+	// This function is only usefull for pathfinding, do not use anywhere else !!!!!!!
+	void AddNeighboursToNodes(){
+		// Creation of the graph with neighbours
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (x-1 >= 0) graph [x, y].neighbours.Add (graph [x-1, y]);
+				if (x+1 < width) graph [x, y].neighbours.Add (graph [x+1, y]);
+				if (y % 2 == 0) {
+					if (x-1 >= 0 && y+1 < height) graph [x, y].neighbours.Add (graph [x - 1, y + 1]);
+					if (y+1 < height) graph [x, y].neighbours.Add (graph [x, y+1]);
+					if (x-1 >= 0 && y-1 >= 0) graph [x, y].neighbours.Add (graph [x-1, y-1]);
+					if (y-1 >= 0) graph [x, y].neighbours.Add (graph [x, y-1]);
+				} else {
+					if (y+1 < height) graph [x, y].neighbours.Add (graph [x, y+1]);
+					if (x+1 < width && y+1 < height) graph [x, y].neighbours.Add (graph [x+1, y+1]);
+					if ( y-1 >= 0) graph [x, y].neighbours.Add (graph [x, y-1]);
+					if (x+1 < width && y-1 >= 0) graph [x, y].neighbours.Add (graph [x+1, y-1]);
+				}
+			}
+		}
+	}
+
 }
