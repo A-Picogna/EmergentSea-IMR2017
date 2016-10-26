@@ -32,7 +32,7 @@ public class Map : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+		/*
 		// RESPECT THIS STRIC ORDER
 		// Init map
 		initializeMap();
@@ -40,18 +40,11 @@ public class Map : MonoBehaviour {
 		generateLand ();
 		// Add neighbours
 		AddNeighboursToNodes ();
+		*/
 
-		Vector3 start = new Vector3 (0, 0, -1);
-		Vector3 end = new Vector3 (1, 0, -1);
 
-		GL.Begin(GL.LINES);
-		lineMat.SetPass(0);
-		GL.Color(new Color(0f, 0f, 0f, 1f));
-		GL.Vertex3(-1f, 0f, 0f);
-		GL.Vertex3(-1f, 0f, 1f);
-		GL.End();
+
 	}
-
 	// Update is called once per frame
 	void Update () {
 	
