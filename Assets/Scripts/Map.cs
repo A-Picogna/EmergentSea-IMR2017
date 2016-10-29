@@ -16,13 +16,13 @@ public class Map : MonoBehaviour {
 	public Node[,] graph;
 
 	// size of map in terms of numer of hexagon
-	public int width = 20;
-	public int height = 20;
+	public int width;
+	public int height;
 	//float xOffset = 0.882f;
 	//float zOffset = 0.764f;
 	float xOffset = Mathf.Sqrt(3)/2;
 	float zOffset = 0.75f;
-	int nbCasesRemplinit = 10;
+	int nbCasesRemplinit = 20;
 	System.Random rand = new System.Random();
 	List<int> abcisses = new List<int>();
 	List<int> ordonnes = new List<int>();

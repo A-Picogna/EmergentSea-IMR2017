@@ -46,7 +46,7 @@ public class MouseManager : MonoBehaviour {
 		}
 
 		if (Input.GetMouseButtonUp (0)) {
-			if (Vector2.Distance (mousePos, Input.mousePosition) < 0.1f) {
+			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 				selectedUnit = null;
 			}
 		}
