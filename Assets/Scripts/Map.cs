@@ -19,6 +19,7 @@ public class Map : MonoBehaviour {
 	// size of map in terms of numer of hexagon
 	public int width;
 	public int height;
+	public int size;
 	//float xOffset = 0.882f;
 	//float zOffset = 0.764f;
 	float xOffset = Mathf.Sqrt(3)/2;
@@ -34,7 +35,7 @@ public class Map : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		size = width * height;
 		// RESPECT THIS STRIC ORDER
 		// Init map
 		initializeMap();
@@ -258,6 +259,9 @@ public class Map : MonoBehaviour {
 		return res;
 	}
 
+	public int Size{
+		get{ return size; }
+	}
 
 
 }

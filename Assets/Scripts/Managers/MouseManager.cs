@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 public class MouseManager : MonoBehaviour {
 
@@ -105,6 +106,10 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	public void AstarPathfindingTo(int x, int y){
+
+		Stopwatch sw = new Stopwatch ();
+		sw.Start ();
+
 		Node startNode = map.graph [
 			selectedUnit.GetComponent<Ship> ().ShipX,
 			selectedUnit.GetComponent<Ship> ().ShipY
@@ -113,22 +118,17 @@ public class MouseManager : MonoBehaviour {
 			x,
 			y
 		];
-		List<Node> openSet = new List<Node>();
+		Heap<Node> openSet = new Heap<Node>(map.Size);
 		HashSet<Node> closedSet = new HashSet<Node>();
 		openSet.Add(startNode);
 
 		while (openSet.Count > 0) {
-			Node node = openSet[0];
-			for (int i = 1; i < openSet.Count; i ++) {
-				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
-						node = openSet[i];
-				}
-			}
-
-			openSet.Remove(node);
+			Node node = openSet.RemoveFirst();
 			closedSet.Add(node);
 
 			if (node == targetNode) {
+				sw.Stop ();
+				print("Path found: " + sw.ElapsedMilliseconds + " ms");
 				RetracePath(startNode,targetNode);
 				return;
 			}
@@ -144,8 +144,10 @@ public class MouseManager : MonoBehaviour {
 					neighbour.hCost = neighbour.DistanceTo (targetNode);
 					neighbour.parent = node;
 
-					if (!openSet.Contains(neighbour))
-						openSet.Add(neighbour);
+					if (!openSet.Contains (neighbour))
+						openSet.Add (neighbour);
+					else
+						openSet.UpdateItem (neighbour);
 				}
 			}
 		}

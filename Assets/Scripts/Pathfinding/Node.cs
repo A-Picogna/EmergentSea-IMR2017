@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Node {
+public class Node : IHeapItem<Node>{
 	public int x;
 	public int y;
 	public float gCost;
@@ -13,6 +13,7 @@ public class Node {
 	public List<Node> neighbours;
 	public Vector3 worldPos;
 	public bool tag;
+	int heapIndex;
 
 	public Node(int _x, int _y, Vector3 _worldPos, bool _isWalkable, string _type) {
 		neighbours = new List<Node> ();
@@ -85,4 +86,16 @@ public class Node {
 		return landNeighbours;
 	}
 
+	public int HeapIndex{
+		get{ return heapIndex; }
+		set{heapIndex = value;}
+	}
+
+	public int CompareTo(Node nodeToCompare){
+		int compare = fCost.CompareTo (nodeToCompare.fCost);
+		if (compare == 0) {
+			compare = hCost.CompareTo (nodeToCompare.hCost);
+		}
+		return -compare;
+	}
 }
