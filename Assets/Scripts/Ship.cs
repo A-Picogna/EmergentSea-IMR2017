@@ -25,6 +25,7 @@ public class Ship : MonoBehaviour {
 		gold = 100;
 		//Let's put the ship's hp to 2000 if there is a lp notion for the ship
 		//hp = 2000;
+		destination = transform.position;
 	}
 
 	// Update is called once per frame
@@ -42,13 +43,13 @@ public class Ship : MonoBehaviour {
 			}
 			*/
 			if (Vector3.Distance (transform.position, destination) < 0.1f){
-				MoveInPath();
+				MoveShip();
 			}	
 		}
 		transform.position = Vector3.Lerp(transform.position, destination, 5f * Time.deltaTime);
 	}
 
-	public void MoveInPath(){
+	public void MoveShip(){
 		// here we control the remaining energy quantity before moving
 		if(currentPath==null)
 			return;

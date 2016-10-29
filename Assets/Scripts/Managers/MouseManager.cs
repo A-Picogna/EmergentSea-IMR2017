@@ -30,13 +30,28 @@ public class MouseManager : MonoBehaviour {
 			} else if (ourHitObject.GetComponent<Ship> () != null) {
 				MouseOver_Unit (ourHitObject);
 			}
-		}	
+		} else {
+			MouseOver_Nothing ();
+		}
+
 		if (selectedUnit != null) {
 			GameObject.Find ("Projector").transform.position = selectedUnit.transform.position + new Vector3 (0, 5f, 0);
 		} else {
 			GameObject.Find ("Projector").transform.position = new Vector3 (0, -5f, 0);
 		}
 
+	}
+
+	void MouseOver_Nothing(){
+		if (Input.GetMouseButtonDown (0)) {
+			mousePos = Input.mousePosition;
+		}
+
+		if (Input.GetMouseButtonUp (0)) {
+			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
+				selectedUnit = null;
+			}
+		}
 	}
 
 	void MouseOver_Hex(GameObject ourHitObject) {
