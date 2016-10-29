@@ -7,7 +7,7 @@ public class Ship : MonoBehaviour {
 	private List<Node> currentPath = null;
 	private int food, gold, hp, energyQuantity, shipX, shipY;
 	private string shipName;
-	private ArrayList crew = new ArrayList();
+	private List<CrewMember> crew = new List<CrewMember>();
 	public Vector3 destination;
 	public bool moving = false;
 	float speed = 2;
@@ -170,7 +170,7 @@ public class Ship : MonoBehaviour {
 		set { energyQuantity = value; }
 	}
 
-	public ArrayList Crew
+	public List<CrewMember> Crew
 	{
 		get { return crew; }
 		set { crew = value; }
