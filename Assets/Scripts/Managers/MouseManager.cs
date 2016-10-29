@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 public class MouseManager : MonoBehaviour {
 
@@ -106,10 +105,6 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	public void AstarPathfindingTo(int x, int y){
-
-		Stopwatch sw = new Stopwatch ();
-		sw.Start ();
-
 		Node startNode = map.graph [
 			selectedUnit.GetComponent<Ship> ().ShipX,
 			selectedUnit.GetComponent<Ship> ().ShipY
@@ -127,8 +122,6 @@ public class MouseManager : MonoBehaviour {
 			closedSet.Add(node);
 
 			if (node == targetNode) {
-				sw.Stop ();
-				print("Path found: " + sw.ElapsedMilliseconds + " ms");
 				RetracePath(startNode,targetNode);
 				return;
 			}
@@ -165,85 +158,5 @@ public class MouseManager : MonoBehaviour {
 
 		selectedUnit.GetComponent<Ship> ().CurrentPath = path;
 	}
-
-	/*
-	public void DijkstraPathfindingTo(int x, int y){
-		selectedUnit.GetComponent<Ship>().CurrentPath = null;
-		List<Node> currentPath = null;
-
-		Dictionary<Node, float> dist = new Dictionary<Node, float> ();
-		Dictionary<Node, Node> prev = new Dictionary<Node, Node> ();
-
-		List<Node> unvisited = new List<Node> ();
-
-		Node source = map.graph [
-			selectedUnit.GetComponent<Ship> ().ShipX,
-			selectedUnit.GetComponent<Ship> ().ShipY
-		];
-
-		Node target = map.graph [
-			x,
-			y
-		];
-		dist [source] = 0;
-		prev [source] = null;
-
-		// Initialize everything with infinity distance
-		foreach (Node v in map.graph) {
-			if (v != source) {
-				dist [v] = Mathf.Infinity;
-				prev [v] = null;
-			}
-			unvisited.Add (v);
-		}
-
-		while (unvisited.Count > 0) {
-
-			// u is going to be the unvisited node with the smallest distance
-			Node u = null;
-
-			foreach (Node possibleU in unvisited) {
-				if (u == null || dist[possibleU] < dist[u]) {
-					u = possibleU;
-				}
-			}
-
-			if (u == target) {
-				break; // Exit the loop!
-			}
-
-			unvisited.Remove (u);
-
-			foreach(Node v in u.neighbours){
-				//float alt = dist [u] + u.DistanceTo (v);
-				float alt = dist [u] + costToEnterTile(v.x,v.y);
-				if (alt < dist [v]) {
-					dist [v] = alt;
-					prev [v] = u;
-				}
-			}
-		}
-
-		// when we're here, we found the shortest route or there is no route at all
-
-		if (prev [target] == null) {
-			// No route!
-			return;
-		}
-
-		currentPath = new List<Node> ();
-
-		Node curr = target;
-
-		while (curr != null) {
-			currentPath.Add (curr);
-			curr = prev [curr];
-		}
-
-		currentPath.Reverse ();
-
-		selectedUnit.GetComponent<Ship>().CurrentPath = currentPath;
-	}
-	*/
 
 }
