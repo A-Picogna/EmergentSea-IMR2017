@@ -52,6 +52,8 @@ public class MapEditor : MonoBehaviour {
 				sea_go.name = "Hex_" + x + "_" + y;
 				sea_go.GetComponent<Sea> ().x = x;
 				sea_go.GetComponent<Sea> ().y = y;
+				sea_go.transform.SetParent(this.transform);
+				sea_go.isStatic = true;
 				DrawEdgesLines(sea_go);
 				break;
 			case "land":
@@ -61,6 +63,8 @@ public class MapEditor : MonoBehaviour {
 				land_go.name = "Hex_" + x + "_" + y;
 				land_go.GetComponent<Land> ().x = x;
 				land_go.GetComponent<Land> ().y = y;
+				land_go.transform.SetParent(this.transform);
+				land_go.isStatic = true;
 				DrawEdgesLines(land_go);
 				break;
 			case "harbor":
@@ -70,6 +74,8 @@ public class MapEditor : MonoBehaviour {
 				//harbor_go.name = "Hex_" + x + "_" + y;
 				//harbor_go.GetComponent<Harbor> ().x = x;
 				//harbor_go.GetComponent<Harbor> ().y = y;
+				//harbor_go.transform.SetParent(this.transform);
+				//harbor_go.isStatic = true;
 				//drawEdgesLines(harbor_go);
 				break;
 			case "ship":

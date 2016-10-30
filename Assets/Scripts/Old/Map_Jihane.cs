@@ -7,12 +7,11 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 
-public class Map : MonoBehaviour {
+public class Map_Jihane : MonoBehaviour {
 
 	public GameObject hexPrefab;
 	public GameObject landPrefab;
 	public GameObject seaPrefab;
-	public GameObject shipPrefab;
 
 	// Map in graph to calculate pathfinding
 	public Node[,] graph;
@@ -67,17 +66,15 @@ public class Map : MonoBehaviour {
 
 		// Add neighbours
 		AddNeighboursToNodes ();
-		// Add some ship
-		AddSomeTestShip ();
 
 	}
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 
 	public void GenerateLand(){
-		
+
 		for (int k = 0; k < nbCasesRemplinit; k++){
 			int x = rand.Next(0, width);
 			int y = rand.Next(0, height);
@@ -115,7 +112,7 @@ public class Map : MonoBehaviour {
 				int abs = FirstStep[i].GetComponent<Hex>().x;
 				int ord = FirstStep[i].GetComponent<Hex>().y;
 				if(graph[abs,ord].type.Equals("sea")){
-					
+
 					worldCoord = FirstStep[i].transform.position;
 					Destroy(FirstStep[i]);
 					land_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
@@ -202,22 +199,6 @@ public class Map : MonoBehaviour {
 				hex_go.transform.SetParent (this.transform);
 				hex_go.isStatic = true;
 
-			}
-		}
-	}
-
-	void AddSomeTestShip(){
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if (graph [x, y].type == "sea") {
-					if (rand.Next (0, 1000) < 5) {
-						GameObject ship_go = (GameObject)Instantiate (shipPrefab, graph [x, y].worldPos, Quaternion.identity);
-						ship_go.name = "Ship_" + x + "_" + y;
-						ship_go.GetComponent<Ship> ().ShipX = x;
-						ship_go.GetComponent<Ship> ().ShipY = y;
-						ship_go.GetComponent<Ship> ().ShipName = (rand.Next (0, 1000000000)).ToString ();
-					}
-				}
 			}
 		}
 	}
