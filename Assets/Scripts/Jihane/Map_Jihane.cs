@@ -30,7 +30,6 @@ public class Map_Jihane : MonoBehaviour
     Vector3 unitycord;
     GameObject land_go;
 	bool mapFausse = false;
-	int compt = 1;
 
     // Use this for initialization
     void Start()
@@ -54,12 +53,10 @@ public class Map_Jihane : MonoBehaviour
 		// Add neighbours
 		AddNeighboursToNodes ();
 		// Check if there is no sea prisonner
-        verifMap();
+        mapFausse = verifMap();
 		Debug.Log(mapFausse);
-
-		if (mapFausse && compt >0) 
+		if (mapFausse) 
 		{
-			compt--;
 			Debug.Log ("je vais etre changee");
 
             var children = new List<GameObject>();
@@ -69,50 +66,11 @@ public class Map_Jihane : MonoBehaviour
                 children.Add(child.gameObject);
             }
 			children.ForEach(child => Destroy(child));
-
-			reinitialisation();
+			Application.LoadLevel(3);
+			//reinitialisation();
         }
 
     }
-	void reinitialisation()
-	{
-		//graph = new Node[width, height];
-		nbCasesRemplinit = 10;
-		rand = new System.Random();
-		abcisses = new List<int>();
-		ordonnes = new List<int>();
-		FirstStep = new List<GameObject>();
-		GroupSea = new List<GameObject>();
-		GroupNeighbours = new List<GameObject>();
-		unitycord = new Vector3(0, 0, 0);
-
-
-		// RESPECT THIS STRIC ORDER
-		// Init map
-		initializeMap();
-		// Generate some lands
-		generateLand();
-		// Add neighbours
-		AddNeighboursToNodes ();
-		// Check if there is no sea prisonner
-		verifMap();
-		Debug.Log(mapFausse);
-		if (mapFausse && compt >0)
-		{
-			compt--;
-			Debug.Log ("je vais etre changee");
-			var children = new List<GameObject>();
-			foreach (Transform child in this.transform)
-			{
-				children.Add(child.gameObject);
-			}
-			children.ForEach(child => Destroy(child));
-
-			reinitialisation();
-		}
-
-	}
-
 	void initializeMap(){
 		graph = new Node[width, height];
 		for (int x = 0; x < width; x++) {
@@ -180,7 +138,6 @@ public class Map_Jihane : MonoBehaviour
             Neighbours.RemoveAt(nonremplacable);
 
             FirstStep = Neighbours;
-			Debug.Log (FirstStep);
 			for (int i = 0; i < Neighbours.Count; i++)
 			{
 				//(FirstStep[i].GetComponent<Hex>().Type.Equals("sea"))
@@ -255,7 +212,7 @@ public class Map_Jihane : MonoBehaviour
     }//fin générationland
     //Vérification Map
 
-    public void verifMap()
+    public bool verifMap()
     {
         var verif = false;
         var l = 0;
@@ -323,6 +280,7 @@ public class Map_Jihane : MonoBehaviour
             l=l+1;
 
         }
+		return mapFausse;
     }
 
 	// Add the neighbours to each node, for each node AFTER the land generation
