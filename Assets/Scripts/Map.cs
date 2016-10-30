@@ -38,9 +38,9 @@ public class Map : MonoBehaviour {
 		size = width * height;
 		// RESPECT THIS STRIC ORDER
 		// Init map
-		initializeMap();
+		InitializeMap();
 		// Generate some lands
-		generateLand ();
+		GenerateLand ();
 		// Add neighbours
 		AddNeighboursToNodes ();
 		// Add some test ship
@@ -52,7 +52,7 @@ public class Map : MonoBehaviour {
 	
 	}
 
-	public void generateLand(){
+	public void GenerateLand(){
 
 		for (int k = 0; k < nbCasesRemplinit; k++){
 
@@ -159,7 +159,7 @@ public class Map : MonoBehaviour {
 		}
 	}
 
-	void initializeMap(){
+	void InitializeMap(){
 		graph = new Node[width, height];
 		List<Vector3> V3LinesPositions = new List<Vector3>();
 		for (int x = 0; x < width; x++) {

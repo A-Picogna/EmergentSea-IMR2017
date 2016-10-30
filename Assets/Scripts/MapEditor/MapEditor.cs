@@ -17,11 +17,11 @@ public class MapEditor : MonoBehaviour {
 	private float zOffset = 0.75f;
 	private GameObject newHex;
 	private Vector3 mousePos;
-	private string selectedType;
+	private string selectedType = "sea";
 
 	void Start () {
 		size = width * height;
-		initializeMap();
+		InitializeMap();
 	
 	}
 
@@ -31,33 +31,55 @@ public class MapEditor : MonoBehaviour {
 		}
 		if (Input.GetMouseButtonUp (0)) {
 			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
-				Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-				RaycastHit hitInfo;
-				if (Physics.Raycast (ray, out hitInfo)) {			
-					GameObject ourHitObject = hitInfo.collider.transform.parent.gameObject;
-					selectedType = "sea";
-					Vector3 worldCoord = ourHitObject.transform.position;
-					Destroy (ourHitObject);		
-					switch (selectedType) {
-					case "sea":
-						GameObject sea_go = (GameObject)Instantiate (seaPrefab, worldCoord, Quaternion.identity);
-						break;
-					case "land":
-						GameObject land_go = (GameObject)Instantiate (landPrefab, worldCoord, Quaternion.identity);
-						break;
-					case "harbor":
-						GameObject harbor_go;
-						break;
-					case "ship":
-						GameObject ship_go = (GameObject)Instantiate (shipPrefab, worldCoord, Quaternion.identity);
-						break;
-					}
-				}
+				ReplaceElement (selectedType);
 			}
 		}
 	}
 
-	void initializeMap(){
+	void ReplaceElement(string newElementType){
+		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		RaycastHit hitInfo;
+		if (Physics.Raycast (ray, out hitInfo)) {			
+			GameObject ourHitObject = hitInfo.collider.transform.parent.gameObject;
+			Vector3 worldPos = ourHitObject.transform.position;	
+			int x = ourHitObject.GetComponent<Hex> ().x;
+			int y = ourHitObject.GetComponent<Hex> ().y;
+			switch (newElementType) {
+			case "sea":
+				Destroy (ourHitObject);	
+				GameObject sea_go = (GameObject)Instantiate (seaPrefab, worldPos, Quaternion.identity);
+				graph [x,y] = new Node (x, y, worldPos, true, "sea");
+				sea_go.name = "Hex_" + x + "_" + y;
+				sea_go.GetComponent<Sea> ().x = x;
+				sea_go.GetComponent<Sea> ().y = y;
+				DrawEdgesLines(sea_go);
+				break;
+			case "land":
+				Destroy (ourHitObject);	
+				GameObject land_go = (GameObject)Instantiate (landPrefab, worldPos, Quaternion.identity);
+				graph [x,y] = new Node (x, y, worldPos, false, "sea");
+				land_go.name = "Hex_" + x + "_" + y;
+				land_go.GetComponent<Land> ().x = x;
+				land_go.GetComponent<Land> ().y = y;
+				DrawEdgesLines(land_go);
+				break;
+			case "harbor":
+				Destroy (ourHitObject);	
+				GameObject harbor_go;
+				graph [x,y] = new Node (x, y, worldPos, false, "harbor");
+				//harbor_go.name = "Hex_" + x + "_" + y;
+				//harbor_go.GetComponent<Harbor> ().x = x;
+				//harbor_go.GetComponent<Harbor> ().y = y;
+				//drawEdgesLines(harbor_go);
+				break;
+			case "ship":
+				GameObject ship_go = (GameObject)Instantiate (shipPrefab, worldPos, Quaternion.identity);
+				break;
+			}
+		}		
+	}
+
+	void InitializeMap(){
 		graph = new Node[width, height];
 		List<Vector3> V3LinesPositions = new List<Vector3>();
 		for (int x = 0; x < width; x++) {
@@ -68,8 +90,8 @@ public class MapEditor : MonoBehaviour {
 				}
 				Vector3 worldPosition = new Vector3 (xPos, 0, y * zOffset);
 				GameObject hex_go = (GameObject)Instantiate (hexPrefab, worldPosition, Quaternion.identity);
-				graph [x, y] = new Node (x, y, worldPosition, true, "sea");
-				drawEdgesLines(hex_go);
+				graph [x, y] = new Node (x, y, worldPosition, false, "hex");
+				DrawEdgesLines(hex_go);
 				hex_go.name = "Hex_" + x + "_" + y;
 				hex_go.GetComponent<Hex> ().x = x;
 				hex_go.GetComponent<Hex> ().y = y;
@@ -79,7 +101,7 @@ public class MapEditor : MonoBehaviour {
 		}
 	}
 
-	void drawEdgesLines(GameObject go){
+	void DrawEdgesLines(GameObject go){
 		Vector3 worldPosition = go.transform.position;
 		LineRenderer lineRenderer = go.AddComponent<LineRenderer> (); // Add or get LineRenderer component to game object
 		lineRenderer.SetWidth(0.01f, 0.01f);
@@ -89,12 +111,12 @@ public class MapEditor : MonoBehaviour {
 		lineRenderer.material = new Material (Shader.Find("Sprites/Default"));
 		for (int i = 0; i < 7; i++) {
 			// Note for unknown reason, the y value have to set to 0.06f to be align with the hex
-			Vector3 pos = new Vector3(hex_corner(worldPosition.x, worldPosition.z, i)[0], 0.06f, hex_corner(worldPosition.x, worldPosition.z, i)[1]) ; // Positions of hex vertices
+			Vector3 pos = new Vector3(Hex_corner(worldPosition.x, worldPosition.z, i)[0], 0.06f, Hex_corner(worldPosition.x, worldPosition.z, i)[1]) ; // Positions of hex vertices
 			lineRenderer.SetPosition(i, pos);
 		}
 	}
 
-	float[] hex_corner(float x, float y, int i){
+	float[] Hex_corner(float x, float y, int i){
 		int angle_deg = 60 * i   + 30;
 		float angle_rad = Mathf.PI / 180 * angle_deg;
 		float[] res = new float[2];
