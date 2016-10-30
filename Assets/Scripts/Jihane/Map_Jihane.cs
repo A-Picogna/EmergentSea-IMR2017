@@ -35,6 +35,7 @@ public class Map_Jihane : MonoBehaviour
     // Use this for initialization
     void Start()
 	{
+		//graph = new Node[width, height];
 		nbCasesRemplinit = 10;
 		rand = new System.Random();
 		abcisses = new List<int>();
@@ -60,20 +61,56 @@ public class Map_Jihane : MonoBehaviour
 		{
 			compt--;
 			Debug.Log ("je vais etre changee");
+
             var children = new List<GameObject>();
-            foreach (Transform child in this.transform)
+            
+			foreach (Transform child in this.transform)
             {
                 children.Add(child.gameObject);
             }
-            children.ForEach(child => Destroy(child));
+			children.ForEach(child => Destroy(child));
 
-            Restart();
+			reinitialisation();
         }
 
     }
-	void Restart()
+	void reinitialisation()
 	{
-		Start();
+		//graph = new Node[width, height];
+		nbCasesRemplinit = 10;
+		rand = new System.Random();
+		abcisses = new List<int>();
+		ordonnes = new List<int>();
+		FirstStep = new List<GameObject>();
+		GroupSea = new List<GameObject>();
+		GroupNeighbours = new List<GameObject>();
+		unitycord = new Vector3(0, 0, 0);
+
+
+		// RESPECT THIS STRIC ORDER
+		// Init map
+		initializeMap();
+		// Generate some lands
+		generateLand();
+		// Add neighbours
+		AddNeighboursToNodes ();
+		// Check if there is no sea prisonner
+		verifMap();
+		Debug.Log(mapFausse);
+		if (mapFausse && compt >0)
+		{
+			compt--;
+			Debug.Log ("je vais etre changee");
+			var children = new List<GameObject>();
+			foreach (Transform child in this.transform)
+			{
+				children.Add(child.gameObject);
+			}
+			children.ForEach(child => Destroy(child));
+
+			reinitialisation();
+		}
+
 	}
 
 	void initializeMap(){
@@ -103,7 +140,6 @@ public class Map_Jihane : MonoBehaviour
 
 				// set the hex in a parent component, parent this hex to the map object
 				hex_go.transform.SetParent (this.transform);
-
 				hex_go.isStatic = true;
 
 			}
@@ -122,16 +158,13 @@ public class Map_Jihane : MonoBehaviour
             ordonnes.Add(y);
         }
 
-
         // We stat to generate some land
         for (int a = 0; a < nbCasesRemplinit; a++)
         {
             GameObject remplacable = GameObject.Find("Hex_" + abcisses[a] + "_" + ordonnes[a]);
             unitycord = remplacable.transform.position;
-            Destroy(remplacable);
-
+			GameObject.Destroy(remplacable);
             GameObject hex_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
-
 			// UPDATE NODES
 			Node node = graph [abcisses [a], ordonnes [a]];
 			graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
@@ -145,9 +178,10 @@ public class Map_Jihane : MonoBehaviour
 
             var nonremplacable = rand.Next(0, Neighbours.Count);
             Neighbours.RemoveAt(nonremplacable);
-            FirstStep = Neighbours;
 
-            for (int i = 0; i < FirstStep.Count; i++)
+            FirstStep = Neighbours;
+			Debug.Log (FirstStep);
+			for (int i = 0; i < Neighbours.Count; i++)
 			{
 				//(FirstStep[i].GetComponent<Hex>().Type.Equals("sea"))
 				var abs = FirstStep[i].GetComponent<Hex>().x;
@@ -155,8 +189,10 @@ public class Map_Jihane : MonoBehaviour
 				if(graph[abs,ord].type.Equals("sea"))
                 {
                     unitycord = FirstStep[i].transform.position;
-                    Destroy(FirstStep[i]);
+					GameObject.Destroy(FirstStep[i]);
+					//FirstStep.RemoveAt(i);
                     land_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
+					//FirstStep.Insert(i, land_go);
 					// UPDATE NODES
 					node = graph [abs, ord];
 					graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
@@ -191,7 +227,7 @@ public class Map_Jihane : MonoBehaviour
                     {
                         
                         unitycord = NextNeighbours[j].transform.position;
-                        Destroy(NextNeighbours[j]);
+						GameObject.Destroy(NextNeighbours[j]);
                         //Debug.Log(NextNeighbours[j].GetComponent<Hex>().gs_type);
 
                         GameObject Next_land_go = (GameObject)Instantiate(landPrefab, unitycord, Quaternion.identity);
@@ -225,6 +261,7 @@ public class Map_Jihane : MonoBehaviour
         var l = 0;
         var m = 0;
         var r = 0;
+		var compteur = 0;
 
         while (verif != true && l < width)
         {
@@ -258,7 +295,6 @@ public class Map_Jihane : MonoBehaviour
                 }
             }
         }
-        Debug.Log(GroupSea.Count);
 
         while (l < width)
         {
@@ -271,12 +307,16 @@ public class Map_Jihane : MonoBehaviour
 				if (graph[l,m].type.Equals("sea") & !graph[l,m].tag)
                 {
 					mapFausse = true;
-					break;
+					compteur++;
+					if (compteur > 3 | (graph[l,m].x==0 & graph[l,m].y==0))  {
+						break;
+					}
+
 
                 }
             m=m+1;
             }
-			if (mapFausse) 
+			if (mapFausse & compteur>3) 
 			{
 				break;
 			}
