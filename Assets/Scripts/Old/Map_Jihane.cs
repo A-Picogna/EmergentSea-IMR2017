@@ -61,7 +61,7 @@ public class Map_Jihane : MonoBehaviour {
 				children.Add(child.gameObject);
 			}
 			children.ForEach(child => Destroy(child));
-			Application.LoadLevel("map");
+			Application.LoadLevel("map_Jihane");
 		}
 
 		// Add neighbours
