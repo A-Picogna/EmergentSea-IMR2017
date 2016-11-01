@@ -57,11 +57,6 @@ public class Map : MonoBehaviour {
 		Debug.Log(SceneManager.GetActiveScene().name);
 		if (mapFausse){
 			Debug.Log ("je vais etre changee");
-			List<GameObject> children = new List<GameObject>();
-			foreach (Transform child in this.transform){
-				children.Add(child.gameObject);
-			}
-			children.ForEach(child => Destroy(child));
 			Application.LoadLevel("map");
 		}
 
@@ -241,18 +236,28 @@ public class Map : MonoBehaviour {
 		bool verif = false;
 		int l = 0;
 		int m = 0;
+		int f = 0;
+		int g = 0;
 		int compteur = 0;
 
 		// We get the first sea we found
-		while (verif != true && l < width){
-			m = 0;
-			while (verif != true && m < height){
-				if(graph[l,m].type.Equals("sea")){
-					graph[l,m].tag = true;
-					GroupSea.Add(graph[l,m]);
+		while (f < width){
+			g = 0;
+			while (g < height){
+				if(graph[f,g].type.Equals("sea"))
+				{
+					graph[f,g].tag = true;
+					GroupSea.Add(graph[f,g]);
 					verif = true;
+					break;
 				}
+				g = g + 1;
 			}
+			f = f + 1;
+			if (verif) {
+				break;
+			}
+
 		}
 
 		// We find all sea connected to this first sea
