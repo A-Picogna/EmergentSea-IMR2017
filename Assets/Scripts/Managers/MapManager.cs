@@ -23,8 +23,8 @@ public class MapManager : MonoBehaviour {
 	public int GroundFrequencyParameter = 2;
 	public int PortFrequencyParameter = 2;
 	public int TreasureFrequencyParameter = 2;
-	int MapX = 0;
-	int MapY = 0;
+	public int MapX = 0;
+	public int MapY = 0;
 	//public int Parameter =;
 	//public int Parameter =;
 	public GameObject hexPrefab;
@@ -37,10 +37,13 @@ public class MapManager : MonoBehaviour {
 	// Use this before initialization (and between loading Maps)
 	void Awake() {
 		//Check if instance already exists
-		if (instance == null)
-
+		if (instance == null) {
 			//if not, set instance to this
 			instance = this;
+			//And force the default parameters
+			MapWidthDropdownCallback(MapWidthParameter);
+		}
+			
 
 		//If instance already exists and it's not this:
 		else if (instance != this)
@@ -92,8 +95,7 @@ public class MapManager : MonoBehaviour {
 			MapY = 80;
 			break;
 		case 6:
-			MapX = 5;
-			MapY = 5;
+			//Géré par NewPlayUI
 			break;
 		}
 	}
@@ -130,6 +132,17 @@ public class MapManager : MonoBehaviour {
 		TreasureFrequencyParameter = TreasureFrequencyType;
 	}
 
+	public void MapXSliderCallBack(float MapX) {
+		if (MapWidthParameter == 6) {
+			this.MapX = Mathf.FloorToInt (MapX);
+		}
+	}
+
+	public void MapYSliderCallBack(float MapY) {
+		if (MapWidthParameter == 6) {
+			this.MapY = Mathf.FloorToInt (MapY);
+		}
+	}
 
 	private Map initMap() {
 		GameObject newObject = Instantiate(mapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
