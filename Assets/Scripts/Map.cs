@@ -24,7 +24,7 @@ public class Map : MonoBehaviour {
 	int nbCasesRemplinit;
 	float xOffset = Mathf.Sqrt(3)/2;
 	float zOffset = 0.75f;
-	bool mapFausse = false;
+	bool mapFausse;
 	List<int> abcisses;
 	List<int> ordonnes;
 	List<GameObject> FirstStep;
@@ -46,6 +46,7 @@ public class Map : MonoBehaviour {
 		GroupSea = new List<Node>();
 		GroupNeighbours = new List<Node>();
 		worldCoord = new Vector3(0, 0, 0);
+		mapFausse = false;
 
 		// Init map
 		InitializeMap();
@@ -54,12 +55,19 @@ public class Map : MonoBehaviour {
 		// Check if there is no sea prisonner
 		mapFausse = VerifMap();
 		Debug.Log(mapFausse);
-		Debug.Log(SceneManager.GetActiveScene().name);
+
 		if (mapFausse){
 			Debug.Log ("je vais etre changee");
-			Application.LoadLevel("map");
+			/*
+			List<GameObject> children = new List<GameObject>();
+			foreach (Transform child in this.transform){
+				children.Add(child.gameObject);
+			}
+			children.ForEach(child => Destroy(child));
+			*/
+			Application.LoadLevel ("map");
 		}
-
+		mapFausse = false;
 		// Add neighbours
 		AddNeighboursToNodes ();
 		// Add some ship
@@ -244,8 +252,7 @@ public class Map : MonoBehaviour {
 		while (f < width){
 			g = 0;
 			while (g < height){
-				if(graph[f,g].type.Equals("sea"))
-				{
+				if(graph[f,g].type.Equals("sea")){
 					graph[f,g].tag = true;
 					GroupSea.Add(graph[f,g]);
 					verif = true;
