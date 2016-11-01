@@ -43,6 +43,19 @@ public class MainCamera : MonoBehaviour {
 		}
 		*/
 
+		if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
+			this.transform.position += new Vector3(speed * Time.deltaTime, 0, 0); // move on +X axis
+		}
+		if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.LeftArrow)){
+			this.transform.position -= new Vector3(speed * Time.deltaTime, 0, 0); // move on -X axis
+		}
+		if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.UpArrow)){
+			this.transform.position += new Vector3(0, 0, speed * Time.deltaTime); // move on +Z axis
+		}
+		if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)){
+			this.transform.position -= new Vector3(0, 0, speed * Time.deltaTime); // move on -Z axis
+		}
+
 		if (Input.GetMouseButton (0)) {
 			if (Input.GetAxis ("Mouse X") > 0) {
 				transform.position -= new Vector3 (Input.GetAxisRaw ("Mouse X") * Time.deltaTime * DragSpeed, 

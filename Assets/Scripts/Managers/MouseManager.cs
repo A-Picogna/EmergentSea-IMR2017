@@ -30,13 +30,28 @@ public class MouseManager : MonoBehaviour {
 			} else if (ourHitObject.GetComponent<Ship> () != null) {
 				MouseOver_Unit (ourHitObject);
 			}
-		}	
+		} else {
+			MouseOver_Nothing ();
+		}
+
 		if (selectedUnit != null) {
 			GameObject.Find ("Projector").transform.position = selectedUnit.transform.position + new Vector3 (0, 5f, 0);
 		} else {
 			GameObject.Find ("Projector").transform.position = new Vector3 (0, -5f, 0);
 		}
 
+	}
+
+	void MouseOver_Nothing(){
+		if (Input.GetMouseButtonDown (0)) {
+			mousePos = Input.mousePosition;
+		}
+
+		if (Input.GetMouseButtonUp (0)) {
+			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
+				selectedUnit = null;
+			}
+		}
 	}
 
 	void MouseOver_Hex(GameObject ourHitObject) {
@@ -46,7 +61,7 @@ public class MouseManager : MonoBehaviour {
 		}
 
 		if (Input.GetMouseButtonUp (0)) {
-			if (Vector2.Distance (mousePos, Input.mousePosition) < 0.1f) {
+			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 				selectedUnit = null;
 			}
 		}
@@ -98,19 +113,12 @@ public class MouseManager : MonoBehaviour {
 			x,
 			y
 		];
-		List<Node> openSet = new List<Node>();
+		Heap<Node> openSet = new Heap<Node>(map.Size);
 		HashSet<Node> closedSet = new HashSet<Node>();
 		openSet.Add(startNode);
 
 		while (openSet.Count > 0) {
-			Node node = openSet[0];
-			for (int i = 1; i < openSet.Count; i ++) {
-				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost) {
-						node = openSet[i];
-				}
-			}
-
-			openSet.Remove(node);
+			Node node = openSet.RemoveFirst();
 			closedSet.Add(node);
 
 			if (node == targetNode) {
@@ -129,8 +137,10 @@ public class MouseManager : MonoBehaviour {
 					neighbour.hCost = neighbour.DistanceTo (targetNode);
 					neighbour.parent = node;
 
-					if (!openSet.Contains(neighbour))
-						openSet.Add(neighbour);
+					if (!openSet.Contains (neighbour))
+						openSet.Add (neighbour);
+					else
+						openSet.UpdateItem (neighbour);
 				}
 			}
 		}
@@ -148,85 +158,5 @@ public class MouseManager : MonoBehaviour {
 
 		selectedUnit.GetComponent<Ship> ().CurrentPath = path;
 	}
-
-	/*
-	public void DijkstraPathfindingTo(int x, int y){
-		selectedUnit.GetComponent<Ship>().CurrentPath = null;
-		List<Node> currentPath = null;
-
-		Dictionary<Node, float> dist = new Dictionary<Node, float> ();
-		Dictionary<Node, Node> prev = new Dictionary<Node, Node> ();
-
-		List<Node> unvisited = new List<Node> ();
-
-		Node source = map.graph [
-			selectedUnit.GetComponent<Ship> ().ShipX,
-			selectedUnit.GetComponent<Ship> ().ShipY
-		];
-
-		Node target = map.graph [
-			x,
-			y
-		];
-		dist [source] = 0;
-		prev [source] = null;
-
-		// Initialize everything with infinity distance
-		foreach (Node v in map.graph) {
-			if (v != source) {
-				dist [v] = Mathf.Infinity;
-				prev [v] = null;
-			}
-			unvisited.Add (v);
-		}
-
-		while (unvisited.Count > 0) {
-
-			// u is going to be the unvisited node with the smallest distance
-			Node u = null;
-
-			foreach (Node possibleU in unvisited) {
-				if (u == null || dist[possibleU] < dist[u]) {
-					u = possibleU;
-				}
-			}
-
-			if (u == target) {
-				break; // Exit the loop!
-			}
-
-			unvisited.Remove (u);
-
-			foreach(Node v in u.neighbours){
-				//float alt = dist [u] + u.DistanceTo (v);
-				float alt = dist [u] + costToEnterTile(v.x,v.y);
-				if (alt < dist [v]) {
-					dist [v] = alt;
-					prev [v] = u;
-				}
-			}
-		}
-
-		// when we're here, we found the shortest route or there is no route at all
-
-		if (prev [target] == null) {
-			// No route!
-			return;
-		}
-
-		currentPath = new List<Node> ();
-
-		Node curr = target;
-
-		while (curr != null) {
-			currentPath.Add (curr);
-			curr = prev [curr];
-		}
-
-		currentPath.Reverse ();
-
-		selectedUnit.GetComponent<Ship>().CurrentPath = currentPath;
-	}
-	*/
 
 }
