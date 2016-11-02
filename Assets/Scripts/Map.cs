@@ -65,7 +65,7 @@ public class Map : MonoBehaviour {
 			}
 			children.ForEach(child => Destroy(child));
 			*/
-			Application.LoadLevel ("map");
+			SceneManager.LoadScene ("map");
 		}
 		mapFausse = false;
 		// Add neighbours
