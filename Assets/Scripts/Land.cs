@@ -3,8 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Land : Hex
-{
+public class Land : Hex {
     // Use this for initialization
     void Start()
 	{

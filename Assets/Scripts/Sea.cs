@@ -3,8 +3,8 @@
 using UnityEngine;
 using System.Collections;
 
-public class Sea : Hex
-{
+public class Sea : Hex {
+	
 	private int treasure, foodQuantity;
 	public Ship shipContained;
 

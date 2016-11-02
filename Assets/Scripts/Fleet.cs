@@ -3,8 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Fleet : MonoBehaviour
-{
+public class Fleet : MonoBehaviour {
 
     // Use this for initialization
     void Start()

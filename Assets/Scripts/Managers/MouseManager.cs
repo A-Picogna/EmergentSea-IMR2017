@@ -7,8 +7,12 @@ using System.Collections.Generic;
 
 public class MouseManager : MonoBehaviour {
 
-	public Ship selectedUnit;
+	// GameObjects
 	public Map map;
+	public Ship selectedUnit;
+	private GameObject ourHitObject;
+
+	// Attributes
 	public Vector2 mousePos;
 
 	// Use this for initialization
@@ -18,8 +22,20 @@ public class MouseManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-		// WITH 3D OBJECTS :
+
+		if (Input.GetMouseButtonDown (0) || Input.GetMouseButtonUp (0) || Input.GetMouseButtonUp (1)) {
+			RayCast ();
+		}
+
+		if (selectedUnit != null) {
+			GameObject.Find ("Projector").transform.position = selectedUnit.transform.position + new Vector3 (0, 5f, 0);
+		} else {
+			GameObject.Find ("Projector").transform.position = new Vector3 (0, -5f, 0);
+		}
+
+	}
+
+	void RayCast(){
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hitInfo;
 
@@ -33,13 +49,6 @@ public class MouseManager : MonoBehaviour {
 		} else {
 			MouseOver_Nothing ();
 		}
-
-		if (selectedUnit != null) {
-			GameObject.Find ("Projector").transform.position = selectedUnit.transform.position + new Vector3 (0, 5f, 0);
-		} else {
-			GameObject.Find ("Projector").transform.position = new Vector3 (0, -5f, 0);
-		}
-
 	}
 
 	void MouseOver_Nothing(){
@@ -55,7 +64,6 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_Hex(GameObject ourHitObject) {
-		//Debug.Log("Raycast hit: " + ourHitObject.name );
 		if (Input.GetMouseButtonDown (0)) {
 			mousePos = Input.mousePosition;
 		}
@@ -66,27 +74,15 @@ public class MouseManager : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetMouseButton (1)) {
-			// Check if we get the rights Neighbours
-			GameObject[] Neighbours = ourHitObject.GetComponent<Hex> ().getNeighboursOld();
-			for (int i = 0; i < Neighbours.Length; i++) {
-				if (Neighbours[i] != null) {
-					//Debug.Log (Neighbours[i].name);
-				}
-			}
-
-			MeshRenderer mr = ourHitObject.GetComponentInChildren<MeshRenderer> ();
-			/*
-			if (mr.material.color == Color.red) {
-				mr.material.color = Color.white;
-			} else {
-				mr.material.color = Color.red;
-			}
-			*/
-
-
+		if (Input.GetMouseButtonUp (1)) {
 			if (selectedUnit != null && ourHitObject.GetComponent<Hex> ().IsWalkable) {
-				AstarPathfindingTo(ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y);
+				Debug.Log (map.graph [ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y].isWalkable);
+				int x = selectedUnit.GetComponent<Ship> ().ShipX;
+				int y = selectedUnit.GetComponent<Ship> ().ShipY;
+				bool pathExist = AstarPathfindingTo(ourHitObject.GetComponent<Hex> ().x, ourHitObject.GetComponent<Hex> ().y);
+				if (pathExist) {
+					map.graph [x, y].isWalkable = true;
+				}
 			}
 		}
 
@@ -100,11 +96,7 @@ public class MouseManager : MonoBehaviour {
 		}
 	}
 
-	float costToEnterTile(int x, int y){
-		return GameObject.Find ("Hex_" + x + "_" + y).GetComponent<Hex>().movementCost;
-	}
-
-	public void AstarPathfindingTo(int x, int y){
+	public bool AstarPathfindingTo(int x, int y){
 		Node startNode = map.graph [
 			selectedUnit.GetComponent<Ship> ().ShipX,
 			selectedUnit.GetComponent<Ship> ().ShipY
@@ -123,7 +115,7 @@ public class MouseManager : MonoBehaviour {
 
 			if (node == targetNode) {
 				RetracePath(startNode,targetNode);
-				return;
+				return true;
 			}
 
 			float newCostToNeighbour;
@@ -144,6 +136,7 @@ public class MouseManager : MonoBehaviour {
 				}
 			}
 		}
+		return false;
 	}
 
 	void RetracePath(Node startNode, Node endNode) {
@@ -155,7 +148,6 @@ public class MouseManager : MonoBehaviour {
 			currentNode = currentNode.parent;
 		}
 		path.Reverse();
-
 		selectedUnit.GetComponent<Ship> ().CurrentPath = path;
 	}
 

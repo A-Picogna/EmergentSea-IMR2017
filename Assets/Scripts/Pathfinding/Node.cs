@@ -59,8 +59,6 @@ public class Node : IHeapItem<Node>{
 	}
 
 	public List<Node> getSeaNodesNeighbours(Node[,] graph){
-		int width = graph.GetLength (0);
-		int height = graph.GetLength (1);
 		List<Node> neighbours = getNodesNeighbours(graph);
 		List<Node> seaNeighbours = new List<Node>();
 		foreach (Node node in neighbours) {
@@ -73,8 +71,6 @@ public class Node : IHeapItem<Node>{
 	}
 
 	public List<Node> getLandNodesNeighbours(Node[,] graph){
-		int width = graph.GetLength (0);
-		int height = graph.GetLength (1);
 		List<Node> neighbours = getNodesNeighbours(graph);
 		List<Node> landNeighbours = new List<Node>();
 		foreach (Node node in neighbours) {

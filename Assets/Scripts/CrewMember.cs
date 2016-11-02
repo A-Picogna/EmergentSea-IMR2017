@@ -3,7 +3,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class CrewMember : MonoBehaviour
+public class CrewMember
 {
     private int lp, lpmax, energyQuantity, xp, recruitmentCost, atk;
 
