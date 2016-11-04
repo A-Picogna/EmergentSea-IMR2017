@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Node : IHeapItem<Node>{
+	
 	public int x;
 	public int y;
 	public float gCost;

@@ -41,9 +41,7 @@ public class GameManager : MonoBehaviour {
 		foreach(Player player in players){
 			if (player.Fleet != null && player.Fleet.Count > 0) {
 				foreach (Ship ship in player.Fleet) {
-					if (Vector3.Distance (ship.transform.position, ship.destination) < 0.1f){
-						mouseManager.map.graph [ship.ShipX, ship.ShipY].isWalkable = false;
-					}
+					
 				}
 			}
 		}
@@ -63,7 +61,10 @@ public class GameManager : MonoBehaviour {
 					ship_go.GetComponent<Ship> ().ShipY = y;
 					ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + count.ToString ();
 					ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
+					Ship ship = ship_go.GetComponent<Ship> ();
+					player.Fleet.Add (ship);
 					mouseManager.map.graph [x, y].isWalkable = false;
+					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
 					count++;
 				}
 			}

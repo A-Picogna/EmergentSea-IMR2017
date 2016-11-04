@@ -14,7 +14,6 @@ public class Ship : MonoBehaviour {
 	private string shipName;
 	private List<CrewMember> crew = new List<CrewMember>();
 	public Vector3 destination;
-	public bool moving = false;
 	float speed = 2;
 	int currNode = 0;
 
@@ -37,10 +36,8 @@ public class Ship : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {		
 		if (currentPath != null) {
-			moving = true;
-			currNode = 0;
-			if (Vector3.Distance (transform.position, destination) < 0.1f){
-				MoveShipToNextHex();
+			if (Vector3.Distance (transform.position, destination) < 0.1f) {
+				MoveShipToNextHex ();
 			}
 		}
 		transform.position = Vector3.Lerp(transform.position, destination, 5f * Time.deltaTime);

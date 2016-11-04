@@ -14,7 +14,7 @@ public class Player : MonoBehaviour {
 		type = _type;
 		color = _color;
 		name = _name;
-		fleet = null;
+		fleet = new List<Ship> ();
 	}
 
 

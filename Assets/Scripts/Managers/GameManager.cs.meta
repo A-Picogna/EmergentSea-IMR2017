@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 76443389fe7619e4f8294d9733f42213
-timeCreated: 1478105768
+timeCreated: 1478246388
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
@@ -10,6 +10,12 @@ MonoImporter:
   - shipPrefab: {fileID: 114000010162100550, guid: c3f720dc7a5e5754da5d9b2e16c6b447,
       type: 2}
   - mapPrefab: {fileID: 114000012706802184, guid: e3607fb328ec72c4e819a09db52c8edd,
+      type: 2}
+  - hexPrefab: {fileID: 1000010504522814, guid: 1150ea01c78a67549a1138aed4d3694f,
+      type: 2}
+  - landPrefab: {fileID: 1000012402954830, guid: 5554117dfba8e10479ef2235fd533672,
+      type: 2}
+  - seaPrefab: {fileID: 1000011908614764, guid: 0dde0cea85f9cc845a983d172e8f7cce,
       type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
