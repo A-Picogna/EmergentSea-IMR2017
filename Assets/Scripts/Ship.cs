@@ -5,11 +5,15 @@ using System.Collections.Generic;
 public class Ship : MonoBehaviour {
 
 	private List<Node> currentPath = null;
-	private int food, gold, hp, energyQuantity, shipX, shipY;
+	private int food;
+	private int gold;
+	private int hp;
+	private int energyQuantity;
+	private int shipX = -1;
+	private int shipY = -1;
 	private string shipName;
 	private List<CrewMember> crew = new List<CrewMember>();
 	public Vector3 destination;
-	public bool moving = false;
 	float speed = 2;
 	int currNode = 0;
 
@@ -19,8 +23,9 @@ public class Ship : MonoBehaviour {
 		Admiral admiral = new Admiral();
 		addCrewMember(admiral);
 
+		//Let's make the ship start with 20 energy
+		energyQuantity = 100000000;
 		//Let's make the ship start with 100 gold and food
-		energyQuantity = 10000000;
 		food = 100;
 		gold = 100;
 		//Let's put the ship's hp to 2000 if there is a lp notion for the ship
@@ -31,25 +36,14 @@ public class Ship : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {		
 		if (currentPath != null) {
-			moving = true;
-			currNode = 0;
-			// DEBUG PATHINFINDING
-			/*
-			while (currNode < currentPath.Count - 1) {
-				Vector3 start = (GameObject.Find("Hex_" + currentPath[currNode].x + "_" + currentPath[currNode].y).transform.position)+new Vector3(0,0.5f,0);
-				Vector3 end = (GameObject.Find("Hex_" + currentPath[currNode+1].x + "_" + currentPath[currNode+1].y).transform.position)+new Vector3(0,0.5f,0);
-				Debug.DrawLine (start, end, Color.red);
-				currNode++;
+			if (Vector3.Distance (transform.position, destination) < 0.1f) {
+				MoveShipToNextHex ();
 			}
-			*/
-			if (Vector3.Distance (transform.position, destination) < 0.1f){
-				MoveShip();
-			}	
 		}
 		transform.position = Vector3.Lerp(transform.position, destination, 5f * Time.deltaTime);
 	}
 
-	public void MoveShip(){
+	public void MoveShipToNextHex(){
 		// here we control the remaining energy quantity before moving
 		if(currentPath==null)
 			return;
@@ -58,7 +52,6 @@ public class Ship : MonoBehaviour {
 			return;
 		
 		if (currentPath.Count > 0) {
-			transform.position = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
 			energyQuantity -= 1;
 			shipX = currentPath [0].x;
 			shipY = currentPath [0].y;

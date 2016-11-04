@@ -3,10 +3,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class Sea : Hex
-{
+public class Sea : Hex {
+	
 	private int treasure, foodQuantity;
-	public Ship shipContained;
+	private Ship shipContained;
 
     // Use this for initialization
     void Start()
@@ -14,7 +14,6 @@ public class Sea : Hex
 		isWalkable = true;
 		movementCost = 1;
 		type = "sea";
-		shipContained = null;
     }
 
     // Update is called once per frame

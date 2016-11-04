@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Node : IHeapItem<Node>{
+	
 	public int x;
 	public int y;
 	public float gCost;
@@ -14,6 +15,7 @@ public class Node : IHeapItem<Node>{
 	public Vector3 worldPos;
 	public bool tag;
 	int heapIndex;
+    public int idGroupLand;
 
 	public Node(int _x, int _y, Vector3 _worldPos, bool _isWalkable, string _type) {
 		neighbours = new List<Node> ();
@@ -23,6 +25,7 @@ public class Node : IHeapItem<Node>{
 		isWalkable = _isWalkable;
 		type = _type;
 		tag = false;
+        idGroupLand = -1;
 	}
 
 	public float DistanceTo(Node n){
@@ -59,8 +62,6 @@ public class Node : IHeapItem<Node>{
 	}
 
 	public List<Node> getSeaNodesNeighbours(Node[,] graph){
-		int width = graph.GetLength (0);
-		int height = graph.GetLength (1);
 		List<Node> neighbours = getNodesNeighbours(graph);
 		List<Node> seaNeighbours = new List<Node>();
 		foreach (Node node in neighbours) {
@@ -73,8 +74,6 @@ public class Node : IHeapItem<Node>{
 	}
 
 	public List<Node> getLandNodesNeighbours(Node[,] graph){
-		int width = graph.GetLength (0);
-		int height = graph.GetLength (1);
 		List<Node> neighbours = getNodesNeighbours(graph);
 		List<Node> landNeighbours = new List<Node>();
 		foreach (Node node in neighbours) {
