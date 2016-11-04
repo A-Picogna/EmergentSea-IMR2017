@@ -17,9 +17,11 @@ public class GameManager : MonoBehaviour {
 	public GameObject hexPrefab;
 	public GameObject landPrefab;
 	public GameObject seaPrefab;
+    public GameObject harborPrefab;
+    public GameObject coastPrefab;
 
-	// Attributes
-	Player currentPlayer;
+    // Attributes
+    Player currentPlayer;
 	List<Player> players;
 	int turnNumber;
 	System.Random rand;
