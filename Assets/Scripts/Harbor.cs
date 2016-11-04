@@ -10,7 +10,7 @@ public class Harbor : Land
     // Use this for initialization
     void Start()
     {
-
+        type = "harbor";
     }
 
     // Update is called once per frame

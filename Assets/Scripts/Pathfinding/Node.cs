@@ -15,6 +15,7 @@ public class Node : IHeapItem<Node>{
 	public Vector3 worldPos;
 	public bool tag;
 	int heapIndex;
+    public int idGroupLand;
 
 	public Node(int _x, int _y, Vector3 _worldPos, bool _isWalkable, string _type) {
 		neighbours = new List<Node> ();
@@ -24,6 +25,7 @@ public class Node : IHeapItem<Node>{
 		isWalkable = _isWalkable;
 		type = _type;
 		tag = false;
+        idGroupLand = -1;
 	}
 
 	public float DistanceTo(Node n){
