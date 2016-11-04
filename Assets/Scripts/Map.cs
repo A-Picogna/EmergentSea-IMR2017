@@ -12,6 +12,8 @@ public class Map : MonoBehaviour {
 	public GameObject hexPrefab;
 	public GameObject landPrefab;
 	public GameObject seaPrefab;
+    public GameObject coastPrefab;
+    public GameObject harborPrefab;
 
 	// Map in graph to calculate pathfinding
 	public Node[,] graph;
@@ -32,9 +34,11 @@ public class Map : MonoBehaviour {
 	Vector3 worldCoord;
 	GameObject land_go;
 	System.Random rand;
+    List<Node> GroupLand;
+    List<List<Node>> GroupListPossibleHarbor;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
 		nbCasesRemplinit = 10;
 		size = width * height;
@@ -44,7 +48,9 @@ public class Map : MonoBehaviour {
 		FirstStep = new List<GameObject>();
 		GroupSea = new List<Node>();
 		GroupNeighbours = new List<Node>();
-		worldCoord = new Vector3(0, 0, 0);
+        GroupLand = new List<Node>();
+        GroupListPossibleHarbor = new List<List<Node>>();
+        worldCoord = new Vector3(0, 0, 0);
 		mapFausse = false;
 
 		// Init map
@@ -66,7 +72,10 @@ public class Map : MonoBehaviour {
 			*/
 			SceneManager.LoadScene ("map");
 		}
-		mapFausse = false;
+        //Generate coast and harbor
+        generateHarbor();
+
+        mapFausse = false;
 		// Add neighbours
 		AddNeighboursToNodes ();
 	}
@@ -170,7 +179,100 @@ public class Map : MonoBehaviour {
 		}
 	}
 
-	void InitializeMap(){
+    public void generateHarbor()
+    {
+        // We start to generate some harbor
+        int idGroupLand = 0;
+        for (int a = 0; a < nbCasesRemplinit; a++)
+        {
+            //Get the neighbours
+            Node nodeHarbor = graph[abcisses[a], ordonnes[a]];
+
+            //If we haven't see this land before
+            if (nodeHarbor.idGroupLand == -1)
+            {
+                List<Node> ListPossibleHarbor = new List<Node>();
+                GroupLand.Add(nodeHarbor);
+                while (GroupLand.Count > 0)
+                {
+                    if (GroupLand[0].idGroupLand == -1)
+                    {
+                        List<Node> Neighbours = GroupLand[0].getLandNodesNeighbours(graph);
+                        GroupLand.AddRange(Neighbours);
+                        //Set the idGroupLand
+                        GroupLand[0].idGroupLand = idGroupLand;
+
+                        //Check if the node have sea neighbours
+                        List<Node> SeaNeighbours = GroupLand[0].getSeaNodesNeighbours(graph);
+                        //If yes we change the prefab
+                        if (SeaNeighbours.Count != 0)
+                        {
+                            //maybe check if the sea isn't alone surrunded by land (put the SeaNeighbours.Count != 0 to SeaNeighbours.Count > 1 ?)
+                            //Destroy doesn't work !
+                            GameObject remplacable = GameObject.Find("Hex_" + GroupLand[0].x + "_" + GroupLand[0].y);
+                            worldCoord = remplacable.transform.position;
+                            Destroy(remplacable);
+
+                            //Change this for the coast prefab !
+                            GameObject hex_go = (GameObject)Instantiate(coastPrefab, worldCoord, Quaternion.identity);
+
+                            hex_go.name = "Hex_" + GroupLand[0].x + "_" + GroupLand[0].y;
+                            hex_go.GetComponent<Hex>().x = GroupLand[0].x;
+                            hex_go.GetComponent<Hex>().y = GroupLand[0].y;
+                            hex_go.transform.SetParent(this.transform);
+                            hex_go.isStatic = true;
+
+                            //Add it to the list of possible harbor
+                            ListPossibleHarbor.Add(GroupLand[0]);
+                        }
+                    }
+                    GroupLand.Remove(GroupLand[0]);
+                }
+                //Add the list of possible harbor to the grouplist of possible harbor
+                GroupListPossibleHarbor.Add(ListPossibleHarbor);
+                idGroupLand++;
+            }
+        }
+
+        //idGroupLand-1 = number of island in the map !
+        //Debug.Log(idGroupLand);
+
+        /*Maybe later: if the number of possible harbor for a group of land is higher than the medium number of possible harbor we can create 2 harbor instead of 1
+        int moy = 0;
+        for (int test=0;test<idGroupLand;test++)
+        {
+            moy += GroupListPossibleHarbor[test].Count;
+            Debug.Log("Groupe de terre "+test+" possede "+GroupListPossibleHarbor[test].Count+" plages (nb ports possibles)");
+        }
+        Debug.Log("Moyenne du nombre de ports possible par groupe de terre : " + moy / (idGroupLand - 1));
+         */
+
+        //Create an harbor for a group of land
+        /*for (int island = 0; island < idGroupLand; island++)
+        {
+            int NodeHarbor = rand.Next(0, GroupListPossibleHarbor[island].Count);
+            Debug.Log("Ile : " + island + " port en x : " + GroupListPossibleHarbor[island][NodeHarbor].x + " en y : " + GroupListPossibleHarbor[island][NodeHarbor].y);
+            
+            //Destroy doesn't work !
+            GameObject remplacable = GameObject.Find("Hex_" + GroupListPossibleHarbor[island][NodeHarbor].x + "_" + GroupListPossibleHarbor[island][NodeHarbor].y);
+            unitycord = remplacable.transform.position;
+            Destroy(remplacable);
+
+            //Change this for the harbor prefab !
+            /*GameObject hex_go = (GameObject)Instantiate(hexPrefab, unitycord, Quaternion.identity);
+
+            hex_go.name = "Hex_" + GroupListPossibleHarbor[island][NodeHarbor].x + "_" + GroupListPossibleHarbor[island][NodeHarbor].y;
+            hex_go.GetComponent<Hex>().x = GroupListPossibleHarbor[island][NodeHarbor].x;
+            hex_go.GetComponent<Hex>().y = GroupListPossibleHarbor[island][NodeHarbor].y;
+            hex_go.transform.SetParent(this.transform);
+            hex_go.isStatic = true;
+
+            //Update the graph
+            graph[GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].y] = new Node(GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].worldPos, false, "harbor");*/
+        //}
+    }
+
+    void InitializeMap(){
 		graph = new Node[width, height];
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {

@@ -31,6 +31,8 @@ public class MapManager : MonoBehaviour {
 	public GameObject landPrefab;
 	public GameObject seaPrefab;
 	public GameObject mapPrefab;
+    public GameObject harborPrefab;
+    public GameObject coastPrefab;
 
 
 
@@ -152,8 +154,10 @@ public class MapManager : MonoBehaviour {
 		mapSettings.hexPrefab = hexPrefab;
 		mapSettings.landPrefab = landPrefab;
 		mapSettings.seaPrefab = seaPrefab;
+        mapSettings.harborPrefab = harborPrefab;
+        mapSettings.coastPrefab = coastPrefab;
 
-		mapSettings.height = MapX;
+        mapSettings.height = MapX;
 		mapSettings.width = MapY;
 
 		return mapSettings;
