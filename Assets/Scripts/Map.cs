@@ -94,12 +94,16 @@ public class Map : MonoBehaviour {
 		}
 
 		// We stat to generate some land
+        //Only sea now
 		for (int a = 0; a < nbCasesRemplinit; a++){
+            //Destroy first land
 			GameObject remplacable = GameObject.Find("Hex_" + abcisses[a] + "_" + ordonnes[a]);
 			worldCoord = remplacable.transform.position;
+            remplacable.name = remplacable.name + "_trash";
 			Destroy(remplacable);
+            remplacable = null;
 
-			GameObject hex_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
+            GameObject hex_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
 
 			// UPDATE NODES
 			Node node = graph [abcisses [a], ordonnes [a]];
@@ -125,8 +129,11 @@ public class Map : MonoBehaviour {
 				if(graph[abs,ord].type.Equals("sea")){
 					
 					worldCoord = FirstStep[i].transform.position;
-					Destroy(FirstStep[i]);
-					land_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
+                    FirstStep[i].name = FirstStep[i].name + "_trash";
+                    //Destroy first neighbours
+                    Destroy(FirstStep[i]);
+                    FirstStep[i] = null;
+                    land_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
 
 					// UPDATE NODES
 					node = graph [abs, ord];
@@ -156,9 +163,12 @@ public class Map : MonoBehaviour {
 					int Nextord = NextNeighbours[j].GetComponent<Hex>().y;
 					if(graph[Nextabs,Nextord].type.Equals("sea")){
 						worldCoord = NextNeighbours[j].transform.position;
-						Destroy(NextNeighbours[j]);
+                        NextNeighbours[j].name = NextNeighbours[j].name + "_trash";
+                        //Destroy 2nd neighbours
+                        Destroy(NextNeighbours[j]);
+                        NextNeighbours[j] = null;
 
-						GameObject Next_land_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
+                        GameObject Next_land_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
 
 						// UPDATE NODES
 						node = graph [Nextabs, Nextord];
@@ -206,24 +216,38 @@ public class Map : MonoBehaviour {
                         List<Node> SeaNeighbours = GroupLand[0].getSeaNodesNeighbours(graph);
                         //If yes we change the prefab
                         if (SeaNeighbours.Count != 0)
+                        //put the SeaNeighbours.Count != 0 to SeaNeighbours.Count > 1 ?
                         {
-                            //maybe check if the sea isn't alone surrunded by land (put the SeaNeighbours.Count != 0 to SeaNeighbours.Count > 1 ?)
-                            //Destroy doesn't work !
-                            GameObject remplacable = GameObject.Find("Hex_" + GroupLand[0].x + "_" + GroupLand[0].y);
-                            worldCoord = remplacable.transform.position;
-                            Destroy(remplacable);
+                            //check if the sea isn't alone surrunded by land
+                            bool okCoast = false;
+                            for(int nbSea=0; nbSea < SeaNeighbours.Count;nbSea++)
+                            {
+                                if(SeaNeighbours[nbSea].tag)
+                                {
+                                    okCoast = true;
+                                    break;
+                                }
+                            }
+                            if (okCoast)
+                            {
+                                GameObject remplacable = GameObject.Find("Hex_" + GroupLand[0].x + "_" + GroupLand[0].y);
+                                worldCoord = remplacable.transform.position;
+                                remplacable.name = remplacable.name + "_trash";
+                                Destroy(remplacable);
 
-                            //Change this for the coast prefab !
-                            GameObject hex_go = (GameObject)Instantiate(coastPrefab, worldCoord, Quaternion.identity);
+                                //Change this for the coast prefab !
+                                GameObject hex_go = (GameObject)Instantiate(coastPrefab, worldCoord, Quaternion.identity);
 
-                            hex_go.name = "Hex_" + GroupLand[0].x + "_" + GroupLand[0].y;
-                            hex_go.GetComponent<Hex>().x = GroupLand[0].x;
-                            hex_go.GetComponent<Hex>().y = GroupLand[0].y;
-                            hex_go.transform.SetParent(this.transform);
-                            hex_go.isStatic = true;
+                                hex_go.name = "Hex_" + GroupLand[0].x + "_" + GroupLand[0].y;
+                                hex_go.GetComponent<Hex>().x = GroupLand[0].x;
+                                hex_go.GetComponent<Hex>().y = GroupLand[0].y;
+                                hex_go.transform.SetParent(this.transform);
+                                hex_go.isStatic = true;
 
-                            //Add it to the list of possible harbor
-                            ListPossibleHarbor.Add(GroupLand[0]);
+                                drawEdgesLines(hex_go);
+                                //Add it to the list of possible harbor
+                                ListPossibleHarbor.Add(GroupLand[0]);
+                            }
                         }
                     }
                     GroupLand.Remove(GroupLand[0]);
@@ -248,18 +272,19 @@ public class Map : MonoBehaviour {
          */
 
         //Create an harbor for a group of land
-        /*for (int island = 0; island < idGroupLand; island++)
+        for (int island = 0; island < idGroupLand; island++)
         {
             int NodeHarbor = rand.Next(0, GroupListPossibleHarbor[island].Count);
             Debug.Log("Ile : " + island + " port en x : " + GroupListPossibleHarbor[island][NodeHarbor].x + " en y : " + GroupListPossibleHarbor[island][NodeHarbor].y);
             
             //Destroy doesn't work !
             GameObject remplacable = GameObject.Find("Hex_" + GroupListPossibleHarbor[island][NodeHarbor].x + "_" + GroupListPossibleHarbor[island][NodeHarbor].y);
-            unitycord = remplacable.transform.position;
+            worldCoord = remplacable.transform.position;
+            remplacable.name = remplacable.name + "_trash";
             Destroy(remplacable);
 
             //Change this for the harbor prefab !
-            /*GameObject hex_go = (GameObject)Instantiate(hexPrefab, unitycord, Quaternion.identity);
+            GameObject hex_go = (GameObject)Instantiate(harborPrefab, worldCoord, Quaternion.identity);
 
             hex_go.name = "Hex_" + GroupListPossibleHarbor[island][NodeHarbor].x + "_" + GroupListPossibleHarbor[island][NodeHarbor].y;
             hex_go.GetComponent<Hex>().x = GroupListPossibleHarbor[island][NodeHarbor].x;
@@ -267,9 +292,10 @@ public class Map : MonoBehaviour {
             hex_go.transform.SetParent(this.transform);
             hex_go.isStatic = true;
 
+            drawEdgesLines(hex_go);
             //Update the graph
-            graph[GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].y] = new Node(GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].worldPos, false, "harbor");*/
-        //}
+            graph[GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].y] = new Node(GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].worldPos, false, "harbor");
+        }
     }
 
     void InitializeMap(){
