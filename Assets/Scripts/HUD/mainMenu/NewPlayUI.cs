@@ -30,11 +30,15 @@ public class NewPlayUI : MonoBehaviour {
 	}
 
 	public void OnMapXSlideValueChanged(float number) {
-		MapXFeedbackTextComponent.text = number.ToString ();
+		if(MapXFeedbackTextComponent != null){
+			MapXFeedbackTextComponent.text = number.ToString ();
+		}
 	}
 
 	public void OnMapYSlideValueChanged(float number) {
-		MapYFeedbackTextComponent.text = number.ToString ();
+		if (MapYFeedbackTextComponent != null) {
+			MapYFeedbackTextComponent.text = number.ToString ();
+		}
 	}
 
 	public void MapWidthDropdownCallback(int WidthType) {
