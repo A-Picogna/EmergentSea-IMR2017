@@ -44,16 +44,12 @@ public class Map : MonoBehaviour {
 		nbCasesRemplinit = 10;
 		size = width * height;
 		rand = new System.Random();
-		abcisses = new List<int>();
-		ordonnes = new List<int>();
-		FirstStep = new List<Node>();
-		GroupSea = new List<Node>();
-		GroupNeighbours = new List<Node>();
         GroupLand = new List<Node>();
         GroupListPossibleHarbor = new List<List<Node>>();
         worldCoord = new Vector3(0, 0, 0);
 		mapFausse = false;
 		regenerateCount = 1;
+
 		// Init map
 		InitializeMap();
 		// Generate some lands
@@ -62,8 +58,8 @@ public class Map : MonoBehaviour {
 		mapFausse = VerifMap();
 		//Debug.Log(mapFausse);
 
-		while (mapFausse && regenerateCount <= 1000){
-			Debug.Log ("Map fausse, changement n°"+regenerateCount);
+		while (mapFausse && regenerateCount <= 100){
+			//Debug.Log ("Map fausse, changement n°"+regenerateCount);
 			InitializeMap();
 			GenerateLand();
 			mapFausse = VerifMap();
@@ -85,6 +81,9 @@ public class Map : MonoBehaviour {
 	}
 
 	public void GenerateLand(){
+		abcisses = new List<int>();
+		ordonnes = new List<int>();
+		FirstStep = new List<Node>();
 		
 		for (int k = 0; k < nbCasesRemplinit; k++){
 			int x = rand.Next(0, width);
@@ -311,6 +310,7 @@ public class Map : MonoBehaviour {
 
 	public bool VerifMap(){
 		GroupSea = new List<Node>();
+		GroupNeighbours = new List<Node>();
 		bool verif = false;
 		int compteur = 0;
 
