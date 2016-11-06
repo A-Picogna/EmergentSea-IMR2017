@@ -11,6 +11,7 @@ public class Ship : MonoBehaviour {
 	private int energyQuantity;
 	private int shipX = -1;
 	private int shipY = -1;
+	bool playable;
 	private string shipName;
 	private List<CrewMember> crew = new List<CrewMember>();
 	public Vector3 destination;
@@ -196,6 +197,12 @@ public class Ship : MonoBehaviour {
 	{
 		get { return currentPath; }
 		set { currentPath = value; }
+	}
+
+	public bool Playable
+	{
+		get { return playable; }
+		set { playable = value; }
 	}
 
 	// ====================

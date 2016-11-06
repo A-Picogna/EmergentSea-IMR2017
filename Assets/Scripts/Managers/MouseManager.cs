@@ -84,7 +84,7 @@ public class MouseManager : MonoBehaviour {
 		}
 
 		if (Input.GetMouseButtonUp (1)) {
-			if (selectedUnit != null) {
+			if (selectedUnit != null && selectedUnit.Playable) {
 				pathfinder.PathRequest (selectedUnit, ourHitObject);
 			}
 		}
