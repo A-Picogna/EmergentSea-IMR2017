@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour {
 
 
 	// Use this for initialization
+
 	void Start () {
 		rand = new System.Random();
 		turnNumber = 1;
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 	}
+
 
 	void AddSomeTestShip(){
 		foreach (Player player in players) {
