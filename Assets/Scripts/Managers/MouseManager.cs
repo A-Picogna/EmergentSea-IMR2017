@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class MouseManager : MonoBehaviour {
 
@@ -26,7 +27,9 @@ public class MouseManager : MonoBehaviour {
 	void Update () {
 
 		if (Input.GetMouseButtonDown (0) || Input.GetMouseButtonUp (0) || Input.GetMouseButtonUp (1)) {
-			RayCast ();
+			if (!EventSystem.current.IsPointerOverGameObject ()) {
+				RayCast ();
+			}
 		}
 
 		if (selectedUnit != null) {
