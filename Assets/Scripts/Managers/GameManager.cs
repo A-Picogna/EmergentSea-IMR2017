@@ -4,12 +4,14 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
 	// GameObjects
 	public MouseManager mouseManager;
 	public Map map;
+	public Button endTurnButton;
 
 	// Prefabs
 	public GameObject shipPrefab;
@@ -20,31 +22,61 @@ public class GameManager : MonoBehaviour {
     public GameObject harborPrefab;
     public GameObject coastPrefab;
 
-    // Attributes
-    Player currentPlayer;
+	// Attributes
+	Player currentPlayer;
+	int currentPlayerNumber;
 	List<Player> players;
 	int turnNumber;
 	System.Random rand;
 
 
 	// Use this for initialization
+
 	void Start () {
 		rand = new System.Random();
 		turnNumber = 1;
 		players = new List<Player>();
 		players.Add (new Player ("Humain", Color.red, "Player1"));
 		players.Add (new Player ("IA", Color.blue, "Player2"));
-		currentPlayer = players [0];
+		currentPlayerNumber = 0;
+		currentPlayer = players [currentPlayerNumber];
+		endTurnButton.onClick.AddListener(() => EndTurn());
 		AddSomeTestShip ();
+		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.Playable = true;
+			}
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		foreach(Player player in players){
-			if (player.Fleet != null && player.Fleet.Count > 0) {
-				foreach (Ship ship in player.Fleet) {
-					
-				}
+			if ( (player.Fleet == null || player.Fleet.Count == 0) && (player.Harbors == null || player.Harbors.Count == 0)) {
+				GameOver ();
+			}
+		}
+	}
+
+	void GameOver(){
+
+	}
+
+	void EndTurn(){
+		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.Playable = false;
+			}
+		}
+		currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
+		if (currentPlayerNumber == 0)
+			turnNumber++;
+		currentPlayer = players [currentPlayerNumber];
+		Debug.Log("Its turn of player : "+currentPlayer.Name);
+		Debug.Log("Turn number : "+turnNumber);
+		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.Playable = true;
 			}
 		}
 	}

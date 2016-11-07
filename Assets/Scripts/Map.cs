@@ -28,7 +28,7 @@ public class Map : MonoBehaviour {
 	bool mapFausse;
 	List<int> abcisses;
 	List<int> ordonnes;
-	List<GameObject> FirstStep;
+	List<Node> FirstStep;
 	List<Node> GroupSea;
 	List<Node> GroupNeighbours;
 	Vector3 worldCoord;
@@ -36,6 +36,7 @@ public class Map : MonoBehaviour {
 	System.Random rand;
     List<Node> GroupLand;
     List<List<Node>> GroupListPossibleHarbor;
+	int regenerateCount;
 
     // Use this for initialization
     void Start () {
@@ -43,15 +44,11 @@ public class Map : MonoBehaviour {
 		nbCasesRemplinit = 10;
 		size = width * height;
 		rand = new System.Random();
-		abcisses = new List<int>();
-		ordonnes = new List<int>();
-		FirstStep = new List<GameObject>();
-		GroupSea = new List<Node>();
-		GroupNeighbours = new List<Node>();
         GroupLand = new List<Node>();
         GroupListPossibleHarbor = new List<List<Node>>();
         worldCoord = new Vector3(0, 0, 0);
 		mapFausse = false;
+		regenerateCount = 1;
 
 		// Init map
 		InitializeMap();
@@ -61,21 +58,20 @@ public class Map : MonoBehaviour {
 		mapFausse = VerifMap();
 		//Debug.Log(mapFausse);
 
-		if (mapFausse){
-			//Debug.Log ("je vais etre changee");
-			/*
-			List<GameObject> children = new List<GameObject>();
-			foreach (Transform child in this.transform){
-				children.Add(child.gameObject);
-			}
-			children.ForEach(child => Destroy(child));
-			*/
-			SceneManager.LoadScene ("map");
+		while (mapFausse && regenerateCount <= 100){
+			//Debug.Log ("Map fausse, changement n°"+regenerateCount);
+			InitializeMap();
+			GenerateLand();
+			mapFausse = VerifMap();
+			regenerateCount++;
 		}
+		mapFausse = false;
+
+		InstantiateMap ();
+
         //Generate coast and harbor
         generateHarbor();
 
-        mapFausse = false;
 		// Add neighbours
 		AddNeighboursToNodes ();
 	}
@@ -85,6 +81,9 @@ public class Map : MonoBehaviour {
 	}
 
 	public void GenerateLand(){
+		abcisses = new List<int>();
+		ordonnes = new List<int>();
+		FirstStep = new List<Node>();
 		
 		for (int k = 0; k < nbCasesRemplinit; k++){
 			int x = rand.Next(0, width);
@@ -96,92 +95,46 @@ public class Map : MonoBehaviour {
 		// We stat to generate some land
         //Only sea now
 		for (int a = 0; a < nbCasesRemplinit; a++){
-            //Destroy first land
-			GameObject remplacable = GameObject.Find("Hex_" + abcisses[a] + "_" + ordonnes[a]);
-			worldCoord = remplacable.transform.position;
-            remplacable.name = remplacable.name + "_trash";
-			Destroy(remplacable);
-            remplacable = null;
-
-            GameObject hex_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
-
+			
+			worldCoord = graph[abcisses[a], ordonnes[a]].worldPos;
 			// UPDATE NODES
 			Node node = graph [abcisses [a], ordonnes [a]];
 			graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
 
-			// Add line to the edge of the Hex
-			drawEdgesLines(hex_go);
-
-			hex_go.name = "Hex_" + abcisses[a] + "_" + ordonnes[a];
-			hex_go.GetComponent<Hex>().x = abcisses[a];
-			hex_go.GetComponent<Hex>().y = ordonnes[a];
-			hex_go.transform.SetParent(this.transform);
-			hex_go.isStatic = true;
-
-			List<GameObject> Neighbours = hex_go.GetComponent<Hex>().getNeighbours();
+			List<Node> Neighbours = graph [node.x, node.y].getNodesNeighbours(graph);
 			int nonRemplacable = rand.Next(0, Neighbours.Count);
 			Neighbours.RemoveAt(nonRemplacable);
 			FirstStep = Neighbours;
 
 			for (int i = 0; i < FirstStep.Count; i++){
-				int abs = FirstStep[i].GetComponent<Hex>().x;
-				int ord = FirstStep[i].GetComponent<Hex>().y;
+				int abs = FirstStep [i].x;
+				int ord = FirstStep [i].y;
 				if(graph[abs,ord].type.Equals("sea")){
 					
-					worldCoord = FirstStep[i].transform.position;
-                    FirstStep[i].name = FirstStep[i].name + "_trash";
-                    //Destroy first neighbours
-                    Destroy(FirstStep[i]);
-                    FirstStep[i] = null;
-                    land_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
-
+					worldCoord = FirstStep[i].worldPos;
 					// UPDATE NODES
 					node = graph [abs, ord];
 					graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
-
-					// Add line to the edge of the Hex
-					drawEdgesLines(land_go);
-
-					land_go.name = "Hex_" + abs + "_" + ord;
-					land_go.GetComponent<Hex>().x = abs;
-					land_go.GetComponent<Hex>().y = ord;
-					land_go.transform.SetParent(this.transform);
-					land_go.isStatic = true;
 				}
-				List<GameObject> NextNeighbours = land_go.GetComponent<Hex>().getNeighbours();
+				List<Node> NextNeighbours = graph [node.x, node.y].getNodesNeighbours(graph);
 
 				int k = 0;
 				while (k < 2){
-					if (NextNeighbours != null)	{
+					if (NextNeighbours.Count > 0)	{
 						int Nextnonremplacable = rand.Next(0, NextNeighbours.Count);
 						NextNeighbours.RemoveAt(Nextnonremplacable);
 					}
 					k = k + 1;
 				}
 				for (int j = 0; j < NextNeighbours.Count; j++){
-					int Nextabs = NextNeighbours[j].GetComponent<Hex>().x;
-					int Nextord = NextNeighbours[j].GetComponent<Hex>().y;
+					int Nextabs = NextNeighbours[j].x;
+					int Nextord = NextNeighbours[j].y;
 					if(graph[Nextabs,Nextord].type.Equals("sea")){
-						worldCoord = NextNeighbours[j].transform.position;
-                        NextNeighbours[j].name = NextNeighbours[j].name + "_trash";
-                        //Destroy 2nd neighbours
-                        Destroy(NextNeighbours[j]);
-                        NextNeighbours[j] = null;
-
-                        GameObject Next_land_go = (GameObject)Instantiate(landPrefab, worldCoord, Quaternion.identity);
+						worldCoord = NextNeighbours[j].worldPos;
 
 						// UPDATE NODES
 						node = graph [Nextabs, Nextord];
 						graph [node.x, node.y] = new Node (node.x, node.y, node.worldPos, false, "land");
-
-						// Add line to the edge of the Hex
-						drawEdgesLines(Next_land_go);
-
-						Next_land_go.name = "Hex_" + Nextabs + "_" + Nextord;
-						Next_land_go.GetComponent<Hex>().x = Nextabs;
-						Next_land_go.GetComponent<Hex>().y = Nextord;
-						Next_land_go.transform.SetParent(this.transform);
-						Next_land_go.isStatic = true;
 
 					}
 				}
@@ -311,23 +264,31 @@ public class Map : MonoBehaviour {
 					xPos += xOffset / 2f;
 				}
 
-				// Creation of a new hex
 				Vector3 worldPosition = new Vector3 (xPos, 0, y * zOffset);
-				GameObject hex_go = (GameObject)Instantiate (seaPrefab, worldPosition, Quaternion.identity);
 				graph [x, y] = new Node (x, y, worldPosition, true, "sea");
+			}
+		}
+	}
 
-				// Add line to the edge of the Hex
+	void InstantiateMap(){
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				string hexType = graph [x, y].type;
+				GameObject hex_go = null;
+				switch (hexType) {
+				case "sea":
+					hex_go = (GameObject)Instantiate (seaPrefab, graph [x, y].worldPos, Quaternion.identity);
+					break;
+				case "land":
+					hex_go = (GameObject)Instantiate (landPrefab, graph [x, y].worldPos, Quaternion.identity);
+					break;
+				}
 				drawEdgesLines(hex_go);
-
-				// Name the hex according to the grid coordinates
 				hex_go.name = "Hex_" + x + "_" + y;
-				// Store the grid coord in the hex itself
-				hex_go.GetComponent<Sea> ().x = x;
-				hex_go.GetComponent<Sea> ().y = y;
-				// set the hex in a parent component, parent this hex to the map object
+				hex_go.GetComponent<Hex> ().x = x;
+				hex_go.GetComponent<Hex> ().y = y;
 				hex_go.transform.SetParent (this.transform);
 				hex_go.isStatic = true;
-
 			}
 		}
 	}
@@ -348,30 +309,24 @@ public class Map : MonoBehaviour {
 	}
 
 	public bool VerifMap(){
+		GroupSea = new List<Node>();
+		GroupNeighbours = new List<Node>();
 		bool verif = false;
-		int l = 0;
-		int m = 0;
-		int f = 0;
-		int g = 0;
 		int compteur = 0;
 
 		// We get the first sea we found
-		while (f < width){
-			g = 0;
-			while (g < height){
+		for (int f = 0; f < width; f++) {
+			for (int g = 0; g < height; g++) {
 				if(graph[f,g].type.Equals("sea")){
 					graph[f,g].tag = true;
 					GroupSea.Add(graph[f,g]);
 					verif = true;
 					break;
 				}
-				g = g + 1;
 			}
-			f = f + 1;
 			if (verif) {
 				break;
 			}
-
 		}
 
 		// We find all sea connected to this first sea
@@ -387,10 +342,9 @@ public class Map : MonoBehaviour {
 			}
 		}
 
-		while (l < width){
+		for (int l = 0; l < width; l++) {
 			mapFausse = false;
-			m = 0;
-			while (m < height){
+			for (int m = 0; m < height; m++) {
 				if (graph[l,m].type.Equals("sea") & !graph[l,m].tag){
 					mapFausse = true;
 					compteur++;
@@ -398,12 +352,10 @@ public class Map : MonoBehaviour {
 						break;
 					}
 				}
-				m=m+1;
 			}
 			if (mapFausse & compteur > 3){
 				break;
 			}
-			l=l+1;
 		}
 		return mapFausse;
 	}

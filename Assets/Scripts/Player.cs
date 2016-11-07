@@ -9,6 +9,7 @@ public class Player : MonoBehaviour {
     private string type, name;
 	private Color color;
 	private List<Ship> fleet;
+	private List<Harbor> harbors;
     
 	public Player(string _type, Color _color, string _name){
 		type = _type;
@@ -52,5 +53,11 @@ public class Player : MonoBehaviour {
 	{
 		get { return fleet; }
 		set { fleet = value; }
+	}
+
+	public List<Harbor> Harbors
+	{
+		get { return harbors; }
+		set { harbors = value; }
 	}
 }
