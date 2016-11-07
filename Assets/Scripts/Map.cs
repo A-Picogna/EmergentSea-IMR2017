@@ -14,6 +14,8 @@ public class Map : MonoBehaviour {
 	public GameObject seaPrefab;
     public GameObject coastPrefab;
     public GameObject harborPrefab;
+	public GameObject foodPrefab;
+	public GameObject treasurePrefab;
 
 	// Map in graph to calculate pathfinding
 	public Node[,] graph;
@@ -37,11 +39,19 @@ public class Map : MonoBehaviour {
     List<Node> GroupLand;
     List<List<Node>> GroupListPossibleHarbor;
 	int regenerateCount;
+	public int nombreCasesTreasure;
+	public int nombreCasesFood;
+	Vector3 worldCoordFood;
+	Vector3 worldCoordTreasure;
+	public int tresorMin;
+	public int tresorMax;
+	public int foodQuantityMax;
+	public int foodQuantityMin;
 
     // Use this for initialization
     void Start () {
 
-		nbCasesRemplinit = 10;
+		nbCasesRemplinit = 25;
 		size = width * height;
 		rand = new System.Random();
         GroupLand = new List<Node>();
@@ -49,6 +59,14 @@ public class Map : MonoBehaviour {
         worldCoord = new Vector3(0, 0, 0);
 		mapFausse = false;
 		regenerateCount = 1;
+		worldCoordFood = new Vector3(0, 0, 0);
+		worldCoordTreasure = new Vector3(0, 0, 0);
+		nombreCasesTreasure = 50;
+		nombreCasesFood = 1400;
+		tresorMin = 200;
+		tresorMax = 1000;
+		foodQuantityMax = 50;
+		foodQuantityMin = 20;
 
 		// Init map
 		InitializeMap();
@@ -72,8 +90,12 @@ public class Map : MonoBehaviour {
         //Generate coast and harbor
         generateHarbor();
 
+		generateFood ();
+		generateTreasure ();
+
 		// Add neighbours
 		AddNeighboursToNodes ();
+
 	}
 	// Update is called once per frame
 	void Update () {
@@ -380,6 +402,42 @@ public class Map : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+
+	public void generateFood()
+	{
+		for (int d = 0; d < nombreCasesFood; d++) {
+			int absFood = rand.Next(0, width);
+			int ordFood = rand.Next(0, height);
+			if (graph [absFood, ordFood].type.Equals ("sea") & graph [absFood, ordFood].tag == true) {
+				worldCoordFood = graph [absFood, ordFood].worldPos;
+				GameObject caseFood = GameObject.Find ("Hex_" + absFood + "_" + ordFood);
+				caseFood.GetComponent<Sea> ().FoodQuantity = rand.Next (foodQuantityMin, foodQuantityMax);
+				Instantiate (foodPrefab, worldCoordFood, Quaternion.identity);
+			} else {
+				d--;
+
+			}
+		}
+	}
+	public void generateTreasure()
+	{
+		for (int c = 0; c < nombreCasesTreasure; c++) {
+			int abs = rand.Next(0, width);
+			int ord = rand.Next(0, height);
+			if (graph [abs, ord].type.Equals ("sea") & graph [abs, ord].tag == true) {
+				worldCoordTreasure = graph [abs, ord].worldPos;
+				graph [abs, ord].isWalkable = false;
+				GameObject caseTreasure = GameObject.Find ("Hex_" + abs + "_" + ord);
+				caseTreasure.GetComponent<Sea> ().Treasure = rand.Next (tresorMin, tresorMax);
+				Instantiate (treasurePrefab, worldCoordTreasure, Quaternion.identity);
+			} else {
+				c--;
+
+			}
+		}
+
 	}
 
 	float[] hex_corner(float x, float y, int i){
