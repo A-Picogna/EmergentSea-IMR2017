@@ -17,8 +17,6 @@ public class MainCamera : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		theScreenWidth = Screen.width;
-		theScreenHeight = Screen.height;
 		cameraDistance = this.transform.position.y;
 	}
 	
