@@ -407,17 +407,14 @@ public class Map : MonoBehaviour {
 
 	public void generateFood()
 	{
-		for (int d = 0; d < nombreCasesFood; d++) {
-			int absFood = rand.Next(0, width);
-			int ordFood = rand.Next(0, height);
-			if (graph [absFood, ordFood].type.Equals ("sea") & graph [absFood, ordFood].tag == true) {
-				worldCoordFood = graph [absFood, ordFood].worldPos;
-				GameObject caseFood = GameObject.Find ("Hex_" + absFood + "_" + ordFood);
-				caseFood.GetComponent<Sea> ().FoodQuantity = rand.Next (foodQuantityMin, foodQuantityMax);
-				Instantiate (foodPrefab, worldCoordFood, Quaternion.identity);
-			} else {
-				d--;
-
+		for (int absFood = 0; absFood < width; absFood++) {
+			for (int ordFood = 0; ordFood < height; ordFood++) {
+				if (graph [absFood, ordFood].type.Equals ("sea") & graph [absFood, ordFood].tag == true) {
+					worldCoordFood = graph [absFood, ordFood].worldPos;
+					GameObject caseFood = GameObject.Find ("Hex_" + absFood + "_" + ordFood);
+					caseFood.GetComponent<Sea> ().FoodQuantity = rand.Next (foodQuantityMin, foodQuantityMax);
+					Instantiate (foodPrefab, worldCoordFood, Quaternion.identity);
+				}
 			}
 		}
 	}
