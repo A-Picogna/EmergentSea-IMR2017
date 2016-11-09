@@ -49,11 +49,11 @@ public class NewPlayUI : MonoBehaviour {
 			MapYDescGroup.gameObject.SetActive (true);
 			MapYInputGroup.gameObject.SetActive (true);
 
-			MapXFeedbackTextComponent.text = MapManager.instance.MapX.ToString ();
-			MapYFeedbackTextComponent.text = MapManager.instance.MapY.ToString ();
+			MapXFeedbackTextComponent.text = LoadManager.instance.MapX.ToString ();
+			MapYFeedbackTextComponent.text = LoadManager.instance.MapY.ToString ();
 
-			MapXSliderComponent.value = MapManager.instance.MapX;
-			MapYSliderComponent.value = MapManager.instance.MapY;
+			MapXSliderComponent.value = LoadManager.instance.MapX;
+			MapYSliderComponent.value = LoadManager.instance.MapY;
 		} else {
 			
 			MapXDescGroup.gameObject.SetActive (false);
