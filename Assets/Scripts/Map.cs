@@ -413,7 +413,7 @@ public class Map : MonoBehaviour {
 					worldCoordFood = graph [absFood, ordFood].worldPos;
 					GameObject caseFood = GameObject.Find ("Hex_" + absFood + "_" + ordFood);
 					caseFood.GetComponent<Sea> ().FoodQuantity = rand.Next (foodQuantityMin, foodQuantityMax);
-					Instantiate (foodPrefab, worldCoordFood, Quaternion.identity);
+					//Instantiate (foodPrefab, worldCoordFood, Quaternion.identity);
 				}
 			}
 		}

@@ -11,10 +11,21 @@ public class Ship : MonoBehaviour {
 	private int energyQuantity;
 	private int shipX = -1;
 	private int shipY = -1;
+	/*
+	 * Orientation in degree
+	 * 0 : right
+	 * 60 : upper-right
+	 * 120 : upper-left
+	 * 180 : left
+	 * 240 : lower-left
+	 * 300 : lower-right
+	 */
+	private int orientation = 0;
 	bool playable;
 	private string shipName;
 	private List<CrewMember> crew = new List<CrewMember>();
 	public Vector3 destination;
+	public GameObject fireBolt;
 
 	// Use this for initialization
 	void Start () {
@@ -40,6 +51,7 @@ public class Ship : MonoBehaviour {
 			}
 		}
 		transform.position = Vector3.Lerp(transform.position, destination, 5f * Time.deltaTime);
+		transform.rotation = Quaternion.Euler(new Vector3(0, -orientation, 0));
 	}
 
 	public void MoveShipToNextHex(){
@@ -51,13 +63,87 @@ public class Ship : MonoBehaviour {
 			return;
 		
 		if (currentPath.Count > 0) {
+			Vector3 prevPos = transform.position;
 			energyQuantity -= 1;
 			shipX = currentPath [0].x;
 			shipY = currentPath [0].y;
 			currentPath.RemoveAt (0);
 			destination = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
+			orientation = Angle360RoundToNeareast60(prevPos, destination);
 		} else {
 			currentPath = null;
+		}
+	}
+
+	int Angle360RoundToNeareast60(Vector3 prev, Vector3 dest){		
+		Vector3 toOther = (prev - dest).normalized;
+		int angle = Mathf.RoundToInt((Mathf.Atan2(toOther.z, toOther.x) * Mathf.Rad2Deg + 180) / 60) * 60;
+		if (angle == 360) {
+			angle = 0;
+		}
+		return angle;
+	}
+
+	int Angle360(Vector3 prev, Vector3 dest){		
+		Vector3 toOther = (prev - dest).normalized;
+		int angle = Mathf.RoundToInt((Mathf.Atan2(toOther.z, toOther.x) * Mathf.Rad2Deg + 180));
+		return angle;
+	}
+
+
+	public bool AtFilibusterRange(Ship target){
+		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
+		// 1 Hex dist
+		if (distance < 1f) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public bool AtPowderMonkeyRange(Ship target){
+		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
+		Debug.Log (distance);
+		// 3 Hex dist
+		if (distance > 2.9f) {
+			return false;
+		} else {
+			bool result = false;
+			Node[,] tmpGraph = GameObject.Find ("Map").GetComponent<Map> ().graph;
+			Node originNode = tmpGraph [shipX, shipY];
+			Node targetNode = tmpGraph [target.ShipX, target.ShipY];
+			List<Node> neighbours = new List<Node> ();
+			List<Node> neighbours2 = new List<Node> ();
+			int angle = Angle360 (targetNode.worldPos, transform.position);
+			// oriented toward right or left
+			if (orientation == 0 || orientation == 180) {
+				if (angle >= 60 && angle <= 120 || angle >= 240 && angle <= 300) {
+					result = true;
+				}
+			}
+			// oriented toward upper right or lower left
+			if (orientation == 60 || orientation == 240) {
+				if (angle >= 120 && angle <= 180 || angle >= 300 && angle <= 360) {
+					result = true;
+				}
+			}
+			// oriented toward upper left or lower right
+			if (orientation == 120 || orientation == 300) {
+				if (angle >= 0 && angle <= 60 || angle >= 180 && angle <= 240) {
+					result = true;
+				}
+			}
+			return result;
+		}
+	}
+
+	public bool AtConjurerRange(Ship target){
+		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
+		// 2 Hex dist
+		if (distance < 2f) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -201,6 +287,12 @@ public class Ship : MonoBehaviour {
 	{
 		get { return playable; }
 		set { playable = value; }
+	}
+
+	public int Orientation
+	{
+		get { return orientation; }
+		set { orientation = value; }
 	}
 
 	// ====================
