@@ -1,31 +1,27 @@
-﻿// @author Yasmine Serot
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 [System.Serializable]
-public class ShipItem {
-	public string shipName;
-	public float percentageQE;
-	public int goldAmount;
-	public int foodAmount;
+public class CrewItem {
+	public Sprite type;
+	public string pvLabel;
+	public float percentagePV;
+	public string xpLabel;
+	public float percentageXP;
 }
 
-public class ShipScrollList : MonoBehaviour {
+public class CrewMemberList : MonoBehaviour {
 
-	public GameObject shipItemButton;
+	public GameObject crewItemButton;
 
-	public List<ShipItem> itemList;
+	public List<CrewItem> itemList;
 	public Transform contentPanel;
-	public Text fleetHeader;
-	private Lang lang;
 
+	// Use this for initialization
 	void Start () {
-		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
-		fleetHeader.text = lang.getString("fleet");
 		RefreshDisplay ();
 	}
 
@@ -33,11 +29,11 @@ public class ShipScrollList : MonoBehaviour {
 		RemoveButtons ();
 		AddButtons ();
 	}
-	
+
 	private void AddButtons() {
 		foreach (var item in itemList) {
-			GameObject newItemButton = Instantiate (shipItemButton) as GameObject;
-			ShipItemButton shipButton = newItemButton.GetComponent<ShipItemButton> ();
+			GameObject newItemButton = Instantiate (crewItemButton) as GameObject;
+			CrewItemButton shipButton = newItemButton.GetComponent<CrewItemButton> ();
 			shipButton.Setup (item);
 			newItemButton.transform.SetParent (contentPanel, false);
 		}
@@ -50,11 +46,11 @@ public class ShipScrollList : MonoBehaviour {
 		}
 	}
 
-	private void AddItem(ShipItem itemToAdd) {
+	private void AddItem(CrewItem itemToAdd) {
 		itemList.Add (itemToAdd);
 	}
 
-	private void RemoveItem(ShipItem itemToRemove) {
+	private void RemoveItem(CrewItem itemToRemove) {
 		for (int i = 0; i < itemList.Count; i++) {
 			if (itemList [i] == itemToRemove) {
 				itemList.RemoveAt (i);
@@ -62,4 +58,5 @@ public class ShipScrollList : MonoBehaviour {
 			}
 		}
 	}
+
 }

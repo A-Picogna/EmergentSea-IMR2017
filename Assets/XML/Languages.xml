@@ -26,6 +26,5 @@
         <string name="treasure_description">Un trésor renfermant de l'or.</string>
         <string name="harbor">Port</string>
         <string name="harbor_description">Le port permet de soigner son équipage, de recruter de nouveaux membres, de vendre de la nourriture, et de construire de nouveaux navires.</string>
-        <string name="quit">Quitter</string>
     </French>
 </languages>

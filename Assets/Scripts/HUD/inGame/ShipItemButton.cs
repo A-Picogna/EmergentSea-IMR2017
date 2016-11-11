@@ -10,21 +10,32 @@ public class ShipItemButton : MonoBehaviour {
 	public Text goldAmount;
 	public Text foodAmount;
 
-	private Item item;
-	private ShipScrollList scrollList;
+	private ShipItem item;
 
 	void Start() {
 		button.onClick.AddListener (HandleClick);
 	}
 
-	public void Setup (Item currentItem, ShipScrollList currentScrollList) {
+	public void Setup (ShipItem currentItem) {
 		item = currentItem;
 		shipName.text = item.shipName;
 		percentageQE.value = item.percentageQE;
-		goldAmount.text = item.goldAmount.ToString(); // Utility function to form correct numbers
-		foodAmount.text = item.foodAmount.ToString();
+		goldAmount.text = amountformatter(item.goldAmount); // Utility function to form correct numbers
+		foodAmount.text = amountformatter(item.foodAmount);
+	}
 
-		scrollList = currentScrollList;
+	private string amountformatter(int amount) {
+		if (amount < Mathf.Pow(10, 3)) { 
+			return amount.ToString();
+		} else if (amount < Mathf.Pow(10, 6)) {
+			return amount / (int)Mathf.Pow(10, 3) + "k";
+		} else if (amount < Mathf.Pow(10, 9)) {
+			return amount / (int)Mathf.Pow(10, 6) + "M";
+		} else if (amount < Mathf.Pow(10, 12)) {
+			return amount / (int)Mathf.Pow(10, 9) + "G";
+		} else {
+			return amount / (int)Mathf.Pow(10, 12) + "T";
+		}
 	}
 
 	public void HandleClick() {
