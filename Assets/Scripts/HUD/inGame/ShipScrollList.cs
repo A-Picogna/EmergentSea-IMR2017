@@ -6,19 +6,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-[System.Serializable]
-public class ShipItem {
-	public string shipName;
-	public float percentageQE;
-	public int goldAmount;
-	public int foodAmount;
-}
-
 public class ShipScrollList : MonoBehaviour {
 
 	public GameObject shipItemButton;
 
-	public List<ShipItem> itemList;
+	private List<Ship> itemList;
 	public Transform contentPanel;
 	public Text fleetHeader;
 	private Lang lang;
@@ -26,10 +18,11 @@ public class ShipScrollList : MonoBehaviour {
 	void Start () {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		fleetHeader.text = lang.getString("fleet");
+		itemList = new List<Ship> ();
 		RefreshDisplay ();
 	}
 
-	private void RefreshDisplay() {
+	public void RefreshDisplay() {
 		RemoveButtons ();
 		AddButtons ();
 	}
@@ -50,11 +43,11 @@ public class ShipScrollList : MonoBehaviour {
 		}
 	}
 
-	private void AddItem(ShipItem itemToAdd) {
+	public void AddItem(Ship itemToAdd) {
 		itemList.Add (itemToAdd);
 	}
 
-	private void RemoveItem(ShipItem itemToRemove) {
+	public void RemoveItem(Ship itemToRemove) {
 		for (int i = 0; i < itemList.Count; i++) {
 			if (itemList [i] == itemToRemove) {
 				itemList.RemoveAt (i);

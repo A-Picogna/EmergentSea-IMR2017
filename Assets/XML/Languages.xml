@@ -26,5 +26,17 @@
         <string name="treasure_description">Un trésor renfermant de l'or.</string>
         <string name="harbor">Port</string>
         <string name="harbor_description">Le port permet de soigner son équipage, de recruter de nouveaux membres, de vendre de la nourriture, et de construire de nouveaux navires.</string>
+        <string name="inn">Taverne</string>
+        <string name="inn_description">Restaure la vie de l'équipage</string>
+        <string name="storehouse">Réserve</string>
+        <string name="storehouse_description">Vendre ou acheter de la nourriture</string>
+        <string name="warehouse">Entrepôt</string>
+        <string name="warehouse_description">Engager un flibustier</string>
+        <string name="slums">Bas-fonds</string>
+        <string name="slums_description">Engager un artificier</string>
+        <string name="dark_arts_academy">Académie des arts obscurs</string>
+        <string name="dark_arts_academy_description">Engager un mage</string>
+        <string name="shipyard">Chantier naval</string>
+        <string name="shipyard_description">Construire un navire</string>
     </French>
 </languages>
