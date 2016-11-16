@@ -11,6 +11,8 @@ public class Ship : MonoBehaviour {
 	private int energyQuantity;
 	private int shipX = -1;
 	private int shipY = -1;
+	private int orientation = 0;
+	private Player owner;
 	/*
 	 * Orientation in degree
 	 * 0 : right
@@ -20,9 +22,9 @@ public class Ship : MonoBehaviour {
 	 * 240 : lower-left
 	 * 300 : lower-right
 	 */
-	private int orientation = 0;
 	bool playable;
 	bool isMoving;
+	bool dead;
 	private string shipName;
 	private List<CrewMember> crew = new List<CrewMember>();
 	public Vector3 destination;
@@ -32,7 +34,7 @@ public class Ship : MonoBehaviour {
 		//There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
 		addCrewMember(admiral);
-
+		dead = false;
 		energyQuantity = 100000000;
 		food = 100;
 		gold = 100;
@@ -41,18 +43,20 @@ public class Ship : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {		
-		if (currentPath != null) {
-			if (Vector3.Distance (transform.position, destination) < 0.1f) {
-				MoveShipToNextHex ();
+	void Update () {
+		if (!dead) {
+			if (currentPath != null) {
+				if (Vector3.Distance (transform.position, destination) < 0.1f) {
+					MoveShipToNextHex ();
+				}
+			} else {
+				if (Vector3.Distance (transform.position, destination) < 0.1f) {
+					isMoving = false;
+				}
 			}
-		} else {
-			if (Vector3.Distance (transform.position, destination) < 0.1f) {
-				isMoving = false;
-			}
+			transform.position = Vector3.Lerp(transform.position, destination, 5f * Time.deltaTime);
+			transform.rotation = Quaternion.Euler(new Vector3(0, -orientation, 0));
 		}
-		transform.position = Vector3.Lerp(transform.position, destination, 5f * Time.deltaTime);
-		transform.rotation = Quaternion.Euler(new Vector3(0, -orientation, 0));
 	}
 
 	public void MoveShipToNextHex(){
@@ -77,6 +81,22 @@ public class Ship : MonoBehaviour {
 		}
 	}
 
+	public void Die(){
+		dead = true;
+		StartCoroutine (Sink ());
+	}
+
+	IEnumerator Sink (){
+		Vector3 deathDestination = transform.position + new Vector3 (0, -1f, 0);
+		while (Vector3.Distance (transform.position, deathDestination) >= 0.2f){
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(transform.rotation.x, transform.rotation.y, -30), Time.deltaTime);
+			transform.position = Vector3.Lerp(transform.position, deathDestination, 0.1f * Time.deltaTime);
+			yield return new WaitForEndOfFrame();
+		}
+		yield return null;
+		Destroy (this.gameObject);
+	}
+
 	int Angle360RoundToNeareast60(Vector3 prev, Vector3 dest){		
 		Vector3 toOther = (prev - dest).normalized;
 		int angle = Mathf.RoundToInt((Mathf.Atan2(toOther.z, toOther.x) * Mathf.Rad2Deg + 180) / 60) * 60;
@@ -90,6 +110,29 @@ public class Ship : MonoBehaviour {
 		Vector3 toOther = (prev - dest).normalized;
 		int angle = Mathf.RoundToInt((Mathf.Atan2(toOther.z, toOther.x) * Mathf.Rad2Deg + 180));
 		return angle;
+	}
+
+	public void Interact(Ship target){
+		if (target.owner.Name.Equals (owner.Name)) {
+			Debug.Log ("It's a friend dammit! Don't Shoot!!!");
+			if (AtFilibusterRange (target)) {
+				Debug.Log ("Friendly ship at range, ready to trade !");
+				Trade ();
+			}
+		} else {
+			if (AtFilibusterRange(target)){
+				Debug.Log ("Filibusters at range, ready to aboard !");
+				Attack ("Filibuster", target);
+			}
+			if (AtConjurerRange(target)){
+				Debug.Log ("Conjurer at range, ready to cast !");
+				Attack ("Conjurer", target);
+			}
+			if (AtPowderMonkeyRange(target)){
+				Debug.Log ("Canon at range, ready to fire !");
+				Attack ("PowderMonkey", target);
+			}
+		}
 	}
 
 	public bool AtFilibusterRange(Ship target){
@@ -177,6 +220,10 @@ public class Ship : MonoBehaviour {
 			return false;
 		}
 	}
+		
+	public void Trade(){
+
+	}
 
 	public void Attack(string crewUsed, Ship target){
 		int attackValue = 0;
@@ -207,7 +254,8 @@ public class Ship : MonoBehaviour {
 		Debug.Log ("Ouch! I've lost " + attackValue + ", I have only " + target.Hp + " left!");
 		GameObject dmgBubble = GameObject.Find ("ShipFloatingInfo");
 		dmgBubble.transform.position = target.transform.position + new Vector3 (0, 0.7f, 0);
-		dmgBubble.GetComponent<TextMesh> ().text = "-" + attackValue+" HP";
+		dmgBubble.GetComponent<TextMesh> ().color = Color.red;
+		dmgBubble.GetComponent<TextMesh> ().text = "-" + attackValue + " HP";
 	}
 
 	public int calculateEQmax()
@@ -362,6 +410,12 @@ public class Ship : MonoBehaviour {
 	{
 		get { return isMoving; }
 		set { isMoving = value; }
+	}
+
+	public Player Owner
+	{
+		get { return owner; }
+		set { owner = value; }
 	}
 
 	// ====================

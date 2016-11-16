@@ -25,8 +25,8 @@ public class GameManager : MonoBehaviour {
 
 	// Attributes
 	Player currentPlayer;
-	int currentPlayerNumber;
 	List<Player> players;
+	int currentPlayerNumber;
 	int turnNumber;
 	System.Random rand;
 
@@ -56,7 +56,29 @@ public class GameManager : MonoBehaviour {
 			if ( (player.Fleet == null || player.Fleet.Count == 0) && (player.Harbors == null || player.Harbors.Count == 0)) {
 				GameOver ();
 			}
+			CheckShipsToDestroy (player);
 		}
+	}
+
+	void CheckShipsToDestroy(Player player){
+		Ship shipToDestroy = null;
+		foreach (Ship ship in player.Fleet) {
+			if (ship.Hp <= 0) {
+				shipToDestroy = ship;
+			}
+		}
+		if (shipToDestroy != null){
+			player.Fleet.Remove (shipToDestroy);
+			DestroyShip (shipToDestroy);
+		}
+	}
+
+	void DestroyShip(Ship ship){
+		GameObject.Find ("Hex_" + ship.ShipX + "_" + ship.ShipY).GetComponent<Sea> ().RemoveShip ();
+		mouseManager.map.graph [ship.ShipX, ship.ShipY].isWalkable = true;
+		ship.name = ship.name + rand.Next (1000000000);
+		ship.Die ();
+		//GameObject.DestroyObject (ship.gameObject);
 	}
 
 	void GameOver(){
@@ -84,9 +106,7 @@ public class GameManager : MonoBehaviour {
 
 	void AddShips(int n){
 		foreach (Player player in players) {
-			int count = 1;
-			// We create 3 ship for each player
-			while (count <= n) {
+			for (int count = 1; count <= n; count++) {
 				int x = rand.Next (1, mouseManager.map.width);
 				int y = rand.Next (1, mouseManager.map.height);
 				if (mouseManager.map.graph [x, y].type == "sea" && mouseManager.map.graph [x, y].tag && mouseManager.map.graph [x, y].isWalkable) {
@@ -97,6 +117,7 @@ public class GameManager : MonoBehaviour {
 					ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + count.ToString ();
 					ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 					Ship ship = ship_go.GetComponent<Ship> ();
+					ship.Owner = player;
 					ship.addCrewMember(new Conjurer());
 					ship.addCrewMember(new Conjurer());
 					ship.addCrewMember(new Filibuster());
@@ -106,7 +127,6 @@ public class GameManager : MonoBehaviour {
 					player.Fleet.Add (ship);
 					mouseManager.map.graph [x, y].isWalkable = false;
 					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
-					count++;
 				}
 			}
 		}
