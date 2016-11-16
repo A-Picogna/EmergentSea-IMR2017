@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 00d9a9f978ed3d243ab2de51dddb1d0c
-timeCreated: 1477825774
+timeCreated: 1479301552
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
@@ -11,9 +11,14 @@ MonoImporter:
       type: 2}
   - seaPrefab: {fileID: 1000011516354870, guid: 42351b9f573ead14dbd6b887335f3942,
       type: 2}
-  - shipPrefab: {fileID: 1000013210916046, guid: c3f720dc7a5e5754da5d9b2e16c6b447,
+  - coastPrefab: {fileID: 1000014118047014, guid: 3bfb42b51d3191f43b739061af1e6a59,
       type: 2}
-  - lineMat: {instanceID: 0}
+  - harborPrefab: {fileID: 1000011102713828, guid: 73477217413aa5a4187098a63bbe4a06,
+      type: 2}
+  - foodPrefab: {fileID: 1000014212927614, guid: 260a90cae67c43644ae80a605a513e09,
+      type: 2}
+  - treasurePrefab: {fileID: 1000013007713540, guid: e4c7647d0a6cdf247bafcc2f4371b36e,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
