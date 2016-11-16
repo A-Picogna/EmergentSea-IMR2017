@@ -5,7 +5,7 @@ using System.Collections;
 
 public class CrewMember
 {
-    private int lp, lpmax, energyQuantity, xp, recruitmentCost, atk;
+	private int lp, lpmax, energyQuantity, xp, recruitmentCost, atk;
 
     // Use this for initialization
     void Start()
@@ -17,13 +17,13 @@ public class CrewMember
     void Update()
     {
 
-    }
+	}
 
 	public int Lp
-    {
-        get { return lp; }
-        set { lp = value; }
-    }
+	{
+		get { return lp; }
+		set { lp = value; }
+	}
 
 	public int Lpmax
     {

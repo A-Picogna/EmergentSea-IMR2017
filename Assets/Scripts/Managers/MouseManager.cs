@@ -85,14 +85,18 @@ public class MouseManager : MonoBehaviour {
 
 		if (Input.GetMouseButtonUp (1)) {
 			if (ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().ShipContained != null) {
-				if (selectedUnit.AtFilibusterRange(ourHitObject.GetComponent<Sea> ().ShipContained)){
+				Ship target = ourHitObject.GetComponent<Sea> ().ShipContained;
+				if (selectedUnit.AtFilibusterRange(target)){
 					Debug.Log ("Filibusters at range, ready to aboard !");
+					selectedUnit.Attack ("Filibuster", target);
 				}
-				if (selectedUnit.AtConjurerRange(ourHitObject.GetComponent<Sea> ().ShipContained)){
+				if (selectedUnit.AtConjurerRange(target)){
 					Debug.Log ("Conjurer at range, ready to cast !");
+					selectedUnit.Attack ("Conjurer", target);
 				}
-				if (selectedUnit.AtPowderMonkeyRange(ourHitObject.GetComponent<Sea> ().ShipContained)){
+				if (selectedUnit.AtPowderMonkeyRange(target)){
 					Debug.Log ("Canon at range, ready to fire !");
+					selectedUnit.Attack ("PowderMonkey", target);
 				}
 			} else { 
 				if (selectedUnit != null && selectedUnit.Playable) {
@@ -110,14 +114,18 @@ public class MouseManager : MonoBehaviour {
 		}
 
 		if (Input.GetMouseButtonUp (1)) {
-			if (selectedUnit.AtFilibusterRange(ourHitObject.GetComponent<Ship> ())){
+			Ship target = ourHitObject.GetComponent<Ship> ();
+			if (selectedUnit.AtFilibusterRange(target)){
 				Debug.Log ("Filibusters at range, ready to aboard !");
+				selectedUnit.Attack ("Filibuster", target);
 			}
-			if (selectedUnit.AtConjurerRange(ourHitObject.GetComponent<Ship> ())){
+			if (selectedUnit.AtConjurerRange(target)){
 				Debug.Log ("Conjurer at range, ready to cast !");
+				selectedUnit.Attack ("Conjurer", target);
 			}
-			if (selectedUnit.AtPowderMonkeyRange(ourHitObject.GetComponent<Ship> ())){
+			if (selectedUnit.AtPowderMonkeyRange(target)){
 				Debug.Log ("Canon at range, ready to fire !");
+				selectedUnit.Attack ("PowderMonkey", target);
 			}
 		}
 	}

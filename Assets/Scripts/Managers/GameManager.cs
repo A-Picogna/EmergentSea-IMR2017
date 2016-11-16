@@ -19,8 +19,9 @@ public class GameManager : MonoBehaviour {
 	public GameObject hexPrefab;
 	public GameObject landPrefab;
 	public GameObject seaPrefab;
-    public GameObject harborPrefab;
-    public GameObject coastPrefab;
+	public GameObject harborPrefab;
+	public GameObject coastPrefab;
+	public GameObject shipFloatingPanel;
 
 	// Attributes
 	Player currentPlayer;
@@ -41,7 +42,7 @@ public class GameManager : MonoBehaviour {
 		currentPlayerNumber = 0;
 		currentPlayer = players [currentPlayerNumber];
 		endTurnButton.onClick.AddListener(() => EndTurn());
-		AddSomeTestShip ();
+		AddShips (10);
 		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = true;
@@ -81,14 +82,14 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	void AddSomeTestShip(){
+	void AddShips(int n){
 		foreach (Player player in players) {
 			int count = 1;
 			// We create 3 ship for each player
-			while (count <= 3) {
+			while (count <= n) {
 				int x = rand.Next (1, mouseManager.map.width);
 				int y = rand.Next (1, mouseManager.map.height);
-				if (mouseManager.map.graph [x, y].type == "sea" && mouseManager.map.graph [x, y].tag) {
+				if (mouseManager.map.graph [x, y].type == "sea" && mouseManager.map.graph [x, y].tag && mouseManager.map.graph [x, y].isWalkable) {
 					GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [x, y].worldPos, Quaternion.identity);
 					ship_go.name = "Ship_" + x + "_" + y;
 					ship_go.GetComponent<Ship> ().ShipX = x;
@@ -96,6 +97,12 @@ public class GameManager : MonoBehaviour {
 					ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + count.ToString ();
 					ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 					Ship ship = ship_go.GetComponent<Ship> ();
+					ship.addCrewMember(new Conjurer());
+					ship.addCrewMember(new Conjurer());
+					ship.addCrewMember(new Filibuster());
+					ship.addCrewMember(new PowderMonkey());
+					ship.addCrewMember(new PowderMonkey());
+					ship.addCrewMember(new PowderMonkey());
 					player.Fleet.Add (ship);
 					mouseManager.map.graph [x, y].isWalkable = false;
 					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;

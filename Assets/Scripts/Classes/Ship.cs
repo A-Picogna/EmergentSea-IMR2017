@@ -22,10 +22,10 @@ public class Ship : MonoBehaviour {
 	 */
 	private int orientation = 0;
 	bool playable;
+	bool isMoving;
 	private string shipName;
 	private List<CrewMember> crew = new List<CrewMember>();
 	public Vector3 destination;
-	public GameObject fireBolt;
 
 	// Use this for initialization
 	void Start () {
@@ -33,13 +33,10 @@ public class Ship : MonoBehaviour {
 		Admiral admiral = new Admiral();
 		addCrewMember(admiral);
 
-		//Let's make the ship start with 20 energy
 		energyQuantity = 100000000;
-		//Let's make the ship start with 100 gold and food
 		food = 100;
 		gold = 100;
-		//Let's put the ship's hp to 2000 if there is a lp notion for the ship
-		//hp = 2000;
+		hp = 2000;
 		destination = transform.position;
 	}
 
@@ -48,6 +45,10 @@ public class Ship : MonoBehaviour {
 		if (currentPath != null) {
 			if (Vector3.Distance (transform.position, destination) < 0.1f) {
 				MoveShipToNextHex ();
+			}
+		} else {
+			if (Vector3.Distance (transform.position, destination) < 0.1f) {
+				isMoving = false;
 			}
 		}
 		transform.position = Vector3.Lerp(transform.position, destination, 5f * Time.deltaTime);
@@ -63,6 +64,7 @@ public class Ship : MonoBehaviour {
 			return;
 		
 		if (currentPath.Count > 0) {
+			isMoving = true;
 			Vector3 prevPos = transform.position;
 			energyQuantity -= 1;
 			shipX = currentPath [0].x;
@@ -90,8 +92,16 @@ public class Ship : MonoBehaviour {
 		return angle;
 	}
 
-
 	public bool AtFilibusterRange(Ship target){
+		bool found = false;
+		foreach (CrewMember c in crew) {
+			if (c is Filibuster) {
+				found = true;
+			}
+		}
+		if (!found) {
+			return false;
+		}
 		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
 		// 1 Hex dist
 		if (distance < 1f) {
@@ -102,8 +112,16 @@ public class Ship : MonoBehaviour {
 	}
 
 	public bool AtPowderMonkeyRange(Ship target){
+		bool found = false;
+		foreach (CrewMember c in crew) {
+			if (c is PowderMonkey) {
+				found = true;
+			}
+		}
+		if (!found) {
+			return false;
+		}
 		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
-		Debug.Log (distance);
 		// 3 Hex dist
 		if (distance > 2.9f) {
 			return false;
@@ -123,12 +141,16 @@ public class Ship : MonoBehaviour {
 			}
 			// oriented toward upper right or lower left
 			if (orientation == 60 || orientation == 240) {
+				if (angle == 0)
+					angle = 360;
 				if (angle >= 120 && angle <= 180 || angle >= 300 && angle <= 360) {
 					result = true;
 				}
 			}
 			// oriented toward upper left or lower right
 			if (orientation == 120 || orientation == 300) {
+				if (angle == 360)
+					angle = 0;
 				if (angle >= 0 && angle <= 60 || angle >= 180 && angle <= 240) {
 					result = true;
 				}
@@ -138,6 +160,15 @@ public class Ship : MonoBehaviour {
 	}
 
 	public bool AtConjurerRange(Ship target){
+		bool found = false;
+		foreach (CrewMember c in crew) {
+			if (c is Conjurer) {
+				found = true;
+			}
+		}
+		if (!found) {
+			return false;
+		}
 		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
 		// 2 Hex dist
 		if (distance < 2f) {
@@ -145,6 +176,38 @@ public class Ship : MonoBehaviour {
 		} else {
 			return false;
 		}
+	}
+
+	public void Attack(string crewUsed, Ship target){
+		int attackValue = 0;
+		switch (crewUsed) {
+		case "Filibuster":
+			foreach (CrewMember c in crew) {
+				if (c is Filibuster) {
+					attackValue += c.Atk;
+				}
+			}
+			break;
+		case "Conjurer":
+			foreach (CrewMember c in crew) {
+				if (c is Conjurer) {
+					attackValue += c.Atk;
+				}
+			}
+			break;
+		case "PowderMonkey":
+			foreach (CrewMember c in crew) {
+				if (c is PowderMonkey) {
+					attackValue += c.Atk;
+				}
+			}
+			break;
+		}
+		target.Hp -= attackValue;
+		Debug.Log ("Ouch! I've lost " + attackValue + ", I have only " + target.Hp + " left!");
+		GameObject dmgBubble = GameObject.Find ("ShipFloatingInfo");
+		dmgBubble.transform.position = target.transform.position + new Vector3 (0, 0.7f, 0);
+		dmgBubble.GetComponent<TextMesh> ().text = "-" + attackValue+" HP";
 	}
 
 	public int calculateEQmax()
@@ -293,6 +356,12 @@ public class Ship : MonoBehaviour {
 	{
 		get { return orientation; }
 		set { orientation = value; }
+	}
+
+	public bool IsMoving
+	{
+		get { return isMoving; }
+		set { isMoving = value; }
 	}
 
 	// ====================
