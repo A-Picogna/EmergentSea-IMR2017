@@ -4,17 +4,26 @@ using System.Collections;
 public class FloatingText : MonoBehaviour {
 
 	bool move = false;
+	Coroutine co;
 
 	// Use this for initialization
 	void Start () {
-	
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (GetComponent<TextMesh> ().text != "" && !move) {
 			move = true;
-			StartCoroutine (FadingPanel(transform.position, transform.position+ new Vector3(0, 0.5f, 0), 2f));
+			co = StartCoroutine (FadingPanel(transform.position, transform.position+ new Vector3(0, 0.5f, 0), 2f));
+		}
+	}
+
+	public void Reinit(){
+		if (co != null) {
+			GetComponent<TextMesh> ().text = "";
+			move = false;
+			StopCoroutine (co);
+			co = null;
 		}
 	}
 

@@ -83,6 +83,7 @@ public class Ship : MonoBehaviour {
 
 	public void Die(){
 		dead = true;
+		Destroy (this.GetComponentInChildren<MeshCollider> ());
 		StartCoroutine (Sink ());
 	}
 
@@ -253,6 +254,7 @@ public class Ship : MonoBehaviour {
 		target.Hp -= attackValue;
 		Debug.Log ("Ouch! I've lost " + attackValue + ", I have only " + target.Hp + " left!");
 		GameObject dmgBubble = GameObject.Find ("ShipFloatingInfo");
+		dmgBubble.GetComponent<FloatingText> ().Reinit ();
 		dmgBubble.transform.position = target.transform.position + new Vector3 (0, 0.7f, 0);
 		dmgBubble.GetComponent<TextMesh> ().color = Color.red;
 		dmgBubble.GetComponent<TextMesh> ().text = "-" + attackValue + " HP";
