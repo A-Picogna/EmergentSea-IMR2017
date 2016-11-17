@@ -23,6 +23,9 @@ public class GameManager : MonoBehaviour {
 	public GameObject coastPrefab;
 	public GameObject shipFloatingPanel;
 
+	// UI
+	public PanelHandler panelHandler;
+
 	// Attributes
 	Player currentPlayer;
 	List<Player> players;
@@ -57,6 +60,14 @@ public class GameManager : MonoBehaviour {
 				GameOver ();
 			}
 			CheckShipsToDestroy (player);
+		}
+		if (mouseManager.selectedUnit == null) {
+			panelHandler.hidePanelUnkown ();
+			panelHandler.hidePanelShip ();
+		} else if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.GetType() == typeof(Ship) && mouseManager.selectedUnit.Playable) {
+			panelHandler.hidePanelUnkown ();
+		} else if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.GetType() == typeof(Ship) && !mouseManager.selectedUnit.Playable) {
+			panelHandler.initPanelEnnemyShip ();
 		}
 	}
 

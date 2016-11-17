@@ -10,18 +10,18 @@ public class ShipItemButton : MonoBehaviour {
 	public Text goldAmount;
 	public Text foodAmount;
 
-	private ShipItem item;
+	private Ship item;
 
 	void Start() {
 		button.onClick.AddListener (HandleClick);
 	}
 
-	public void Setup (ShipItem currentItem) {
+	public void Setup (Ship currentItem) {
 		item = currentItem;
-		shipName.text = item.shipName;
-		percentageQE.value = item.percentageQE;
-		goldAmount.text = amountformatter(item.goldAmount); // Utility function to form correct numbers
-		foodAmount.text = amountformatter(item.foodAmount);
+		shipName.text = item.ShipName;
+		percentageQE.value = item.EnergyQuantity;
+		goldAmount.text = amountformatter(item.Gold); // Utility function to form correct numbers
+		foodAmount.text = amountformatter(item.Food);
 	}
 
 	private string amountformatter(int amount) {
