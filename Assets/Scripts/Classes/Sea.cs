@@ -56,6 +56,7 @@ public class Sea : Hex {
 		treasure_go = null;
 		treasure = 0;
 		isWalkable = true;
+		GameObject.Find ("Map").GetComponent<Map> ().graph [x, y].isWalkable = true;
 	}
 
 	public void AddTreasure(int val, GameObject tres){

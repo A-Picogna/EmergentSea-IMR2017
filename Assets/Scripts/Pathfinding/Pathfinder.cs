@@ -38,9 +38,9 @@ public class Pathfinder : MonoBehaviour {
 			// if the unit was moving, we free the previous destination spot and we lock the new one
 			} else {
 				map.graph [prevPath.Last().x, prevPath.Last().x].isWalkable = true;
-				GameObject.Find ("Hex_" + prevPath.Last ().x + "_" + prevPath.Last ().x).GetComponent<Sea> ().RemoveShip();
+				GameObject.Find ("Hex_" + prevPath.Last ().x + "_" + prevPath.Last ().y).GetComponent<Sea> ().RemoveShip();
 				map.graph [destX, destY].isWalkable = false;
-				GameObject.Find ("Hex_" + prevPath.Last ().x + "_" + prevPath.Last ().x).GetComponent<Sea> ().ShipContained = selectedUnit;
+				GameObject.Find ("Hex_" + prevPath.Last ().x + "_" + prevPath.Last ().y).GetComponent<Sea> ().ShipContained = selectedUnit;
 			}
 		}
 	}

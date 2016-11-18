@@ -280,7 +280,7 @@ public class Ship : MonoBehaviour {
 		//if enough energy
 		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
 		if (distance < 1f && energyQuantity >= 3){
-			displayFloatingInfo (Color.yellow, "+" + target.Treasure + " OR", transform.position);
+			displayFloatingInfo (Color.yellow, "+" + target.Treasure, transform.position);
 			gold += target.Treasure;
 			Destroy (target.Treasure_go);
 			target.RemoveTreasure();
