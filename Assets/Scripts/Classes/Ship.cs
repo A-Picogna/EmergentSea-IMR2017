@@ -114,6 +114,9 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void Interact(Ship target){
+		if (!this.playable) {
+			return;
+		}
 		if (target.owner.Name.Equals (owner.Name)) {
 			Debug.Log ("It's a friend dammit! Don't Shoot!!!");
 			if (AtFilibusterRange (target)) {
@@ -176,7 +179,7 @@ public class Ship : MonoBehaviour {
 			Node targetNode = tmpGraph [target.ShipX, target.ShipY];
 			List<Node> neighbours = new List<Node> ();
 			List<Node> neighbours2 = new List<Node> ();
-			int angle = Angle360 (targetNode.worldPos, transform.position);
+			int angle = Angle360 (targetNode.worldPos, destination);
 			// oriented toward right or left
 			if (orientation == 0 || orientation == 180) {
 				if (angle >= 60 && angle <= 120 || angle >= 240 && angle <= 300) {
@@ -252,16 +255,19 @@ public class Ship : MonoBehaviour {
 			break;
 		}
 		target.Hp -= attackValue;
+		displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
 		Debug.Log ("Ouch! I've lost " + attackValue + ", I have only " + target.Hp + " left!");
-		GameObject dmgBubble = GameObject.Find ("ShipFloatingInfo");
-		dmgBubble.GetComponent<FloatingText> ().Reinit ();
-		dmgBubble.transform.position = target.transform.position + new Vector3 (0, 0.7f, 0);
-		dmgBubble.GetComponent<TextMesh> ().color = Color.red;
-		dmgBubble.GetComponent<TextMesh> ().text = "-" + attackValue + " HP";
 	}
 
-	public int calculateEQmax()
-	{
+	public void displayFloatingInfo(Color color, string text, Vector3 pos){
+		GameObject dmgBubble = GameObject.Find ("ShipFloatingInfo");
+		dmgBubble.GetComponent<FloatingText> ().Reinit ();
+		dmgBubble.transform.position = pos + new Vector3 (0, 0.7f, 0);
+		dmgBubble.GetComponent<TextMesh> ().color = color;
+		dmgBubble.GetComponent<TextMesh> ().text = text;
+	}
+
+	public int calculateEQmax(){
 		int EQMax = 0;
 		foreach(CrewMember member in crew)
 		{
@@ -270,22 +276,20 @@ public class Ship : MonoBehaviour {
 		return EQMax;
 	}
 
-	public bool hoistTreasure()
-	{
+	public bool HoistTreasure(Sea target){
 		//if enough energy
-		if (energyQuantity >= 3)
-		{
-			//debug test of a treasure value of 100
-			gold += 100;
-
-			//to implement : remove treasure from the hex
-			//decrement quantiteEnergie, to check, debug value
+		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
+		if (distance < 1f && energyQuantity >= 3){
+			displayFloatingInfo (Color.yellow, "+" + target.Treasure + " OR", transform.position);
+			gold += target.Treasure;
+			Destroy (target.Treasure_go);
+			target.RemoveTreasure();
 			energyQuantity -= 3;
-
 			return true;
 		}
-		else
-		{ return false; }
+		else{
+			return false; 
+		}
 	}
 
 	public void harborDock()
@@ -293,18 +297,9 @@ public class Ship : MonoBehaviour {
 		//toCheck
 	}
 
-	/*public void interagirBateau()
-    {
-        //toCheck
-    }*/
-
-	//updateOr, updateNourriture seems useless
-
-	public bool fishing()
-	{
+	public bool fishing(){
 		//if enough energy
-		if(energyQuantity >= 5)
-		{
+		if(energyQuantity >= 5){
 			//debug test of fishing value of 100
 			food += 100;
 
@@ -315,17 +310,16 @@ public class Ship : MonoBehaviour {
 
 			return true;
 		}
-		else
-		{ return false; }
+		else{ 
+			return false; 
+		}
 	}
 
-	public void addCrewMember(CrewMember member)
-	{
+	public void addCrewMember(CrewMember member){
 		crew.Add(member);
 	}
 
-	public void removeCrewMember(CrewMember member)
-	{
+	public void removeCrewMember(CrewMember member){
 		crew.Remove(member);
 	}
 

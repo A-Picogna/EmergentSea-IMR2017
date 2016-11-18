@@ -424,11 +424,12 @@ public class Map : MonoBehaviour {
 				worldCoordTreasure = graph [abs, ord].worldPos;
 				graph [abs, ord].isWalkable = false;
 				GameObject caseTreasure = GameObject.Find ("Hex_" + abs + "_" + ord);
-				caseTreasure.GetComponent<Sea> ().Treasure = rand.Next (tresorMin, tresorMax);
-				Instantiate (treasurePrefab, worldCoordTreasure, Quaternion.identity);
+				GameObject tres = (GameObject) Instantiate (treasurePrefab, worldCoordTreasure, Quaternion.identity);
+				tres.name = caseTreasure.name+"_Treasure"+rand.Next(0,1000000000);
+				tres.transform.SetParent (caseTreasure.transform);
+				caseTreasure.GetComponent<Sea> ().AddTreasure (rand.Next (tresorMin, tresorMax), tres);
 			} else {
 				c--;
-
 			}
 		}
 

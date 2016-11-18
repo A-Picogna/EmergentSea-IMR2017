@@ -5,8 +5,10 @@ using System.Collections;
 
 public class Sea : Hex {
 	
-	private int treasure, foodQuantity;
-	private Ship shipContained;
+	private int treasure = 0;
+	private int foodQuantity = 0;
+	private GameObject treasure_go = null;
+	private Ship shipContained = null;
 
     // Use this for initialization
     void Start()
@@ -14,9 +16,6 @@ public class Sea : Hex {
 		isWalkable = true;
 		movementCost = 1;
 		type = "sea";
-		treasure = 0;
-		foodQuantity = 0;
-
     }
 
     // Update is called once per frame
@@ -27,7 +26,6 @@ public class Sea : Hex {
 
 	public int Treasure{
 		get { return treasure; }
-		set { treasure = value; }
 	}
 
 	public int FoodQuantity{
@@ -51,6 +49,23 @@ public class Sea : Hex {
 	public void RemoveShip(){
 		shipContained = null;
 		isWalkable = true;
+	}
+
+	// Remove the ship from the current hex
+	public void RemoveTreasure(){
+		treasure_go = null;
+		treasure = 0;
+		isWalkable = true;
+	}
+
+	public void AddTreasure(int val, GameObject tres){
+		treasure_go = tres;
+		treasure = val;
+		isWalkable = false;
+	}
+
+	public GameObject Treasure_go{
+		get { return treasure_go; }
 	}
 
     public void updateFoodQuantity(){
