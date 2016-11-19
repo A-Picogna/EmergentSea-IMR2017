@@ -84,7 +84,11 @@ public class MouseManager : MonoBehaviour {
 		}
 
 		if (Input.GetMouseButtonUp (1)) {
-			if (ourHitObject.GetComponent<Sea> () != null) {
+            if(ourHitObject.GetComponent<Harbor>() != null)
+            {
+                ourHitObject.GetComponent<Harbor>().Interact(selectedUnit,map.graph);
+            }
+			else if (ourHitObject.GetComponent<Sea> () != null) {
 				if (ourHitObject.GetComponent<Sea> ().ShipContained != null) {
 					Ship target = ourHitObject.GetComponent<Sea> ().ShipContained;
 					selectedUnit.Interact (target);

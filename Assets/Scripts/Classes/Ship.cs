@@ -33,12 +33,11 @@ public class Ship : MonoBehaviour {
 	void Start () {
 		//There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
-		addCrewMember(admiral);
-		dead = false;
+        addCrewMember(admiral);
+        dead = false;
 		energyQuantity = 100000000;
 		food = 100;
 		gold = 100;
-		hp = 2000;
 		destination = transform.position;
 	}
 
@@ -321,10 +320,13 @@ public class Ship : MonoBehaviour {
 
 	public void addCrewMember(CrewMember member){
 		crew.Add(member);
-	}
+        hp += member.Lp;
+        energyQuantity += member.EnergyQuantity;
+    }
 
 	public void removeCrewMember(CrewMember member){
 		crew.Remove(member);
+        hp -= member.Lp;
 	}
 
 
