@@ -16,6 +16,12 @@ public class LoadManager : MonoBehaviour {
 	public static LoadManager instance = null;
 	// The magic works here : You can use the singleton just by indicating nager.instance
 
+	// Object Enum
+	public enum state { Inactive, StartNewMap, StartLoadedMap }
+
+	// LoadManager Info
+	public state LoadManagerState;
+
 	// MAP INFORMATION
 	public int nbOfSharks = 0; // For testing purposes
 	public int MapWidthParameter = 2;
@@ -43,6 +49,7 @@ public class LoadManager : MonoBehaviour {
 			//if not, set instance to this
 			instance = this;
 			//And force the default parameters
+			LoadManagerState = state.Inactive;
 			MapWidthDropdownCallback(MapWidthParameter);
 		}
 			
@@ -177,8 +184,23 @@ public class LoadManager : MonoBehaviour {
 	}
 
 	void OnLevelWasLoaded() {
-		Debug.Log ("Chargement de la map....");
-		initWorld ();
+		switch (LoadManagerState) {
+		case state.Inactive:
+			Debug.Log ("PAS BON, mais on laisse passer");
+			initWorld ();
+			break;
+		case state.StartNewMap:
+			Debug.Log ("Génération de la map ;)");
+			initWorld ();
+			break;
+		case state.StartLoadedMap:
+			Debug.Log ("Chargement d'une map préfabriqué");
+			//loadWorld ();
+			break;
+		default:
+			Debug.LogError ("Ca ne devrait pas arriver.");
+			break;
+		}
 	}
 
 	private GameManager initGame(Map worldMap) {

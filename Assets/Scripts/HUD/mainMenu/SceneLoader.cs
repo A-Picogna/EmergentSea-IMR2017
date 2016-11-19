@@ -11,8 +11,8 @@ public class SceneLoader : MonoBehaviour {
 	[SerializeField]
 	private Text loadingText;
 
-	public void LoadMap() {
-
+	public void NewMap() {
+		LoadManager.instance.LoadManagerState = LoadManager.state.StartNewMap;
 		if (loadingAScene == false) {
 			loadingAScene = true;
 
@@ -45,7 +45,7 @@ public class SceneLoader : MonoBehaviour {
 
 	IEnumerator LoadMapCoroutine() {
 		// We wait just 3 seconds to feel the loading
-		yield return new WaitForSeconds (5);
+		yield return new WaitForSeconds (1);
 
 		// Start an ansync operation to load the scene
 		AsyncOperation async = SceneManager.LoadSceneAsync(1);
