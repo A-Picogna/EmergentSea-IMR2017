@@ -33,7 +33,7 @@ public class LoadManager : MonoBehaviour {
 	public GameObject mapPrefab;
     public GameObject harborPrefab;
     public GameObject coastPrefab;
-
+	public GameObject gameManagerPrefab;
 
 
 	// Use this before initialization (and between loading Maps)
@@ -160,6 +160,8 @@ public class LoadManager : MonoBehaviour {
         mapSettings.height = MapX;
 		mapSettings.width = MapY;
 
+
+
 		return mapSettings;
 	}
 
@@ -167,6 +169,11 @@ public class LoadManager : MonoBehaviour {
 		Map worldMap = initMap ();
 		GameObject mouseSettings = GameObject.Find ("MouseManager");
 		((MouseManager)mouseSettings.GetComponent<MouseManager> ()).map = worldMap;
+
+		GameManager gameManager = initGame (worldMap);
+
+		GameObject pathfinder = GameObject.Find ("Pathfinder");
+		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = worldMap;
 	}
 
 	void OnLevelWasLoaded() {
@@ -174,4 +181,16 @@ public class LoadManager : MonoBehaviour {
 		initWorld ();
 	}
 
+	private GameManager initGame(Map worldMap) {
+		GameObject newObject = Instantiate(gameManagerPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		GameManager gameSettings = newObject.GetComponent<GameManager> ();
+
+		gameSettings.mouseManager = (GameObject.Find ("MouseManager")).GetComponent<MouseManager> ();
+		gameSettings.endTurnButton = (GameObject.Find ("btn_roundEnd")).GetComponent<UnityEngine.UI.Button> ();
+		gameSettings.panelHandler = (GameObject.Find ("HUDCanvas")).GetComponent<PanelHandler> ();
+	
+		gameSettings.map = worldMap;
+
+		return gameSettings;
+	}
 }
