@@ -84,11 +84,22 @@ public class MouseManager : MonoBehaviour {
 		}
 
 		if (Input.GetMouseButtonUp (1)) {
-			if (selectedUnit != null && selectedUnit.Playable) {
-				pathfinder.PathRequest (selectedUnit, ourHitObject);
+			if (ourHitObject.GetComponent<Sea> () != null) {
+				if (ourHitObject.GetComponent<Sea> ().ShipContained != null) {
+					Ship target = ourHitObject.GetComponent<Sea> ().ShipContained;
+					selectedUnit.Interact (target);
+				} else {
+					if (ourHitObject.GetComponent<Sea> ().Treasure_go != null) {
+						Sea target = ourHitObject.GetComponent<Sea> ();
+						selectedUnit.HoistTreasure (target);
+					} else { 
+						if (selectedUnit != null && selectedUnit.Playable) {
+							pathfinder.PathRequest (selectedUnit, ourHitObject);
+						}
+					}
+				}
 			}
 		}
-
 	}
 
 	void MouseOver_Unit(GameObject ourHitObject) {
@@ -96,6 +107,11 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonUp(0)) {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
+		}
+
+		if (Input.GetMouseButtonUp (1)) {
+			Ship target = ourHitObject.GetComponent<Ship> ();
+			selectedUnit.Interact (target);
 		}
 	}
 

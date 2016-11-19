@@ -48,14 +48,22 @@ public class Node : IHeapItem<Node>{
 		if (x-1 >= 0) neighbours.Add (graph [x-1, y]);
 		if (x+1 < width) neighbours.Add (graph [x+1, y]);
 		if (y % 2 == 0) {
+			// UpperLeft
 			if (x-1 >= 0 && y+1 < height) neighbours.Add (graph [x - 1, y + 1]);
+			// UpperRight
 			if (y+1 < height) neighbours.Add (graph [x, y+1]);
+			// LowerLeft
 			if (x-1 >= 0 && y-1 >= 0) neighbours.Add (graph [x-1, y-1]);
+			// LowerRight
 			if (y-1 >= 0) neighbours.Add (graph [x, y-1]);
 		} else {
+			// UpperLeft
 			if (y+1 < height) neighbours.Add (graph [x, y+1]);
+			// UpperRight
 			if (x+1 < width && y+1 < height) neighbours.Add (graph [x+1, y+1]);
+			// LowerLeft
 			if ( y-1 >= 0) neighbours.Add (graph [x, y-1]);
+			// LowerRight
 			if (x+1 < width && y-1 >= 0) neighbours.Add (graph [x+1, y-1]);
 		}
 		return neighbours;
@@ -85,6 +93,48 @@ public class Node : IHeapItem<Node>{
 		return landNeighbours;
 	}
 
+	public List<Node> getSpecificsNeighbours(string[] wantedNeighbours, Node[,] graph){
+		int width = graph.GetLength (0);
+		int height = graph.GetLength (1);
+		List<Node> result = new List<Node> ();
+		foreach (string s in wantedNeighbours) {
+			switch (s) {
+			case "right":
+				if (x-1 >= 0) neighbours.Add (graph [x+1, y]);
+				break;
+			case "left":
+				if (x-1 >= 0) neighbours.Add (graph [x-1, y]);
+				break;
+			case "upperRight":
+				if (y % 2 == 0)	
+					if (y+1 < height) neighbours.Add (graph [x, y+1]);
+				else
+					if (x+1 < width && y+1 < height) neighbours.Add (graph [x+1, y+1]);	
+				break;
+			case "upperLeft":
+				if (y % 2 == 0)
+					if (x-1 >= 0 && y+1 < height) neighbours.Add (graph [x - 1, y + 1]);
+				else
+					if (y+1 < height) neighbours.Add (graph [x, y+1]);					
+				break;
+			case "lowerRight":
+				if (y % 2 == 0)
+					if (y-1 >= 0) neighbours.Add (graph [x, y-1]);
+				else
+					if (x+1 < width && y-1 >= 0) neighbours.Add (graph [x+1, y-1]);
+				break;
+			case "lowerLeft":
+				if (y % 2 == 0)
+					if (x-1 >= 0 && y-1 >= 0) neighbours.Add (graph [x-1, y-1]);
+				else
+					if ( y-1 >= 0) neighbours.Add (graph [x, y-1]);
+				break;
+			}
+		}
+		return result;
+	}
+		
+
 	public int HeapIndex{
 		get{ return heapIndex; }
 		set{heapIndex = value;}
@@ -96,5 +146,13 @@ public class Node : IHeapItem<Node>{
 			compare = hCost.CompareTo (nodeToCompare.hCost);
 		}
 		return -compare;
+	}
+
+	public bool CompareLocation(Node n){
+		if (x == n.x && y == n.y) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

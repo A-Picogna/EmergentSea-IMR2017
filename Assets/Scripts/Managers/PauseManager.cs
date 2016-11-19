@@ -7,7 +7,7 @@ using UnityEditor;
 
 public class PauseManager : MonoBehaviour {
 
-	Canvas canvas;
+	private Canvas canvas;
 
 	void Start()
 	{

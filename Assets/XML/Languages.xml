@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<languages>
+    <English>
+         <string name="app_name">Emergent-Sea</string>
+         <string name="end_turn">End turn</string>
+    </English>
+ 
+    <French>
+        <string name="app_name">Emergent-Sea</string>
+        <string name="end_turn">Fin de tour</string>
+        <string name="gold">Or</string>
+        <string name="food">Nourriture</string>
+        <string name="fishing">Pêcher</string>
+        <string name="pv">PV</string>
+        <string name="xp">XP</string>
+        <string name="fleet">Flotte</string>
+        <string name="menu">Menu</string>
+        <string name="resume">Reprendre</string>
+        <string name="save">Sauvegarder</string>
+        <string name="load">Charger</string>
+        <string name="options">Options</string>
+        <string name="quit">Quitter</string>
+        <string name="ennemy_ship">Navire ennemi</string>
+        <string name="ennemy_ship_description">Un navire ennemi. Sa force est inconnue.</string>
+        <string name="treasure">Trésor</string>
+        <string name="treasure_description">Un trésor renfermant de l'or.</string>
+        <string name="harbor">Port</string>
+        <string name="harbor_description">Le port permet de soigner son équipage, de recruter de nouveaux membres, de vendre de la nourriture, et de construire de nouveaux navires.</string>
+        <string name="inn">Taverne</string>
+        <string name="inn_description">Restaure la vie de l'équipage</string>
+        <string name="storehouse">Réserve</string>
+        <string name="storehouse_description">Vendre ou acheter de la nourriture</string>
+        <string name="warehouse">Entrepôt</string>
+        <string name="warehouse_description">Engager un flibustier</string>
+        <string name="slums">Bas-fonds</string>
+        <string name="slums_description">Engager un artificier</string>
+        <string name="dark_arts_academy">Académie des arts obscurs</string>
+        <string name="dark_arts_academy_description">Engager un mage</string>
+        <string name="shipyard">Chantier naval</string>
+        <string name="shipyard_description">Construire un navire</string>
+    </French>
+</languages>

@@ -19,13 +19,17 @@ public class GameManager : MonoBehaviour {
 	public GameObject hexPrefab;
 	public GameObject landPrefab;
 	public GameObject seaPrefab;
-    public GameObject harborPrefab;
-    public GameObject coastPrefab;
+	public GameObject harborPrefab;
+	public GameObject coastPrefab;
+	public GameObject shipFloatingPanel;
+
+	// UI
+	public PanelHandler panelHandler;
 
 	// Attributes
 	Player currentPlayer;
-	int currentPlayerNumber;
 	List<Player> players;
+	int currentPlayerNumber;
 	int turnNumber;
 	System.Random rand;
 
@@ -41,7 +45,7 @@ public class GameManager : MonoBehaviour {
 		currentPlayerNumber = 0;
 		currentPlayer = players [currentPlayerNumber];
 		endTurnButton.onClick.AddListener(() => EndTurn());
-		AddSomeTestShip ();
+		AddShips (10);
 		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = true;
@@ -55,7 +59,37 @@ public class GameManager : MonoBehaviour {
 			if ( (player.Fleet == null || player.Fleet.Count == 0) && (player.Harbors == null || player.Harbors.Count == 0)) {
 				GameOver ();
 			}
+			CheckShipsToDestroy (player);
 		}
+		if (mouseManager.selectedUnit == null) {
+			panelHandler.hidePanelUnkown ();
+			panelHandler.hidePanelShip ();
+		} else if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.GetType() == typeof(Ship) && mouseManager.selectedUnit.Playable) {
+			panelHandler.hidePanelUnkown ();
+		} else if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.GetType() == typeof(Ship) && !mouseManager.selectedUnit.Playable) {
+			panelHandler.initPanelEnnemyShip ();
+		}
+	}
+
+	void CheckShipsToDestroy(Player player){
+		Ship shipToDestroy = null;
+		foreach (Ship ship in player.Fleet) {
+			if (ship.Hp <= 0) {
+				shipToDestroy = ship;
+			}
+		}
+		if (shipToDestroy != null){
+			player.Fleet.Remove (shipToDestroy);
+			DestroyShip (shipToDestroy);
+		}
+	}
+
+	void DestroyShip(Ship ship){
+		GameObject.Find ("Hex_" + ship.ShipX + "_" + ship.ShipY).GetComponent<Sea> ().RemoveShip ();
+		mouseManager.map.graph [ship.ShipX, ship.ShipY].isWalkable = true;
+		ship.name = ship.name + rand.Next (1000000000);
+		ship.Die ();
+		//GameObject.DestroyObject (ship.gameObject);
 	}
 
 	void GameOver(){
@@ -81,14 +115,12 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	void AddSomeTestShip(){
+	void AddShips(int n){
 		foreach (Player player in players) {
-			int count = 1;
-			// We create 3 ship for each player
-			while (count <= 3) {
+			for (int count = 1; count <= n; count++) {
 				int x = rand.Next (1, mouseManager.map.width);
 				int y = rand.Next (1, mouseManager.map.height);
-				if (mouseManager.map.graph [x, y].type == "sea" && mouseManager.map.graph [x, y].tag) {
+				if (mouseManager.map.graph [x, y].type == "sea" && mouseManager.map.graph [x, y].tag && mouseManager.map.graph [x, y].isWalkable) {
 					GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [x, y].worldPos, Quaternion.identity);
 					ship_go.name = "Ship_" + x + "_" + y;
 					ship_go.GetComponent<Ship> ().ShipX = x;
@@ -96,10 +128,16 @@ public class GameManager : MonoBehaviour {
 					ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + count.ToString ();
 					ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 					Ship ship = ship_go.GetComponent<Ship> ();
+					ship.Owner = player;
+					ship.addCrewMember(new Conjurer());
+					ship.addCrewMember(new Conjurer());
+					ship.addCrewMember(new Filibuster());
+					ship.addCrewMember(new PowderMonkey());
+					ship.addCrewMember(new PowderMonkey());
+					ship.addCrewMember(new PowderMonkey());
 					player.Fleet.Add (ship);
 					mouseManager.map.graph [x, y].isWalkable = false;
 					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
-					count++;
 				}
 			}
 		}

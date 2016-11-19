@@ -23,35 +23,38 @@ public class Map : MonoBehaviour {
 	// size of map in terms of numer of hexagon
 	public int width;
 	public int height;
-	public int size;
-	int nbCasesRemplinit;
-	float xOffset = Mathf.Sqrt(3)/2;
-	float zOffset = 0.75f;
-	bool mapFausse;
-	List<int> abcisses;
-	List<int> ordonnes;
-	List<Node> FirstStep;
-	List<Node> GroupSea;
-	List<Node> GroupNeighbours;
-	Vector3 worldCoord;
-	GameObject land_go;
-	System.Random rand;
-    List<Node> GroupLand;
-    List<List<Node>> GroupListPossibleHarbor;
-	int regenerateCount;
+	public int nbCasesRemplinit;
 	public int nombreCasesTreasure;
 	public int nombreCasesFood;
-	Vector3 worldCoordFood;
-	Vector3 worldCoordTreasure;
 	public int tresorMin;
 	public int tresorMax;
 	public int foodQuantityMax;
 	public int foodQuantityMin;
 
+	int size;
+	int regenerateCount;
+	float xOffset = Mathf.Sqrt(3)/2;
+	float zOffset = 0.75f;
+	bool mapFausse;
+
+	List<int> abcisses;
+	List<int> ordonnes;
+	List<Node> FirstStep;
+	List<Node> GroupSea;
+	List<Node> GroupNeighbours;
+	List<Node> GroupLand;
+	List<List<Node>> GroupListPossibleHarbor;
+
+	Vector3 worldCoordFood;
+	Vector3 worldCoordTreasure;
+	Vector3 worldCoord;
+
+	GameObject land_go;
+	System.Random rand;
+
     // Use this for initialization
     void Start () {
 
-		nbCasesRemplinit = 25;
 		size = width * height;
 		rand = new System.Random();
         GroupLand = new List<Node>();
@@ -61,12 +64,6 @@ public class Map : MonoBehaviour {
 		regenerateCount = 1;
 		worldCoordFood = new Vector3(0, 0, 0);
 		worldCoordTreasure = new Vector3(0, 0, 0);
-		nombreCasesTreasure = 50;
-		nombreCasesFood = 1400;
-		tresorMin = 200;
-		tresorMax = 1000;
-		foodQuantityMax = 50;
-		foodQuantityMin = 20;
 
 		// Init map
 		InitializeMap();
@@ -407,17 +404,14 @@ public class Map : MonoBehaviour {
 
 	public void generateFood()
 	{
-		for (int d = 0; d < nombreCasesFood; d++) {
-			int absFood = rand.Next(0, width);
-			int ordFood = rand.Next(0, height);
-			if (graph [absFood, ordFood].type.Equals ("sea") & graph [absFood, ordFood].tag == true) {
-				worldCoordFood = graph [absFood, ordFood].worldPos;
-				GameObject caseFood = GameObject.Find ("Hex_" + absFood + "_" + ordFood);
-				caseFood.GetComponent<Sea> ().FoodQuantity = rand.Next (foodQuantityMin, foodQuantityMax);
-				Instantiate (foodPrefab, worldCoordFood, Quaternion.identity);
-			} else {
-				d--;
-
+		for (int absFood = 0; absFood < width; absFood++) {
+			for (int ordFood = 0; ordFood < height; ordFood++) {
+				if (graph [absFood, ordFood].type.Equals ("sea") & graph [absFood, ordFood].tag == true) {
+					worldCoordFood = graph [absFood, ordFood].worldPos;
+					GameObject caseFood = GameObject.Find ("Hex_" + absFood + "_" + ordFood);
+					caseFood.GetComponent<Sea> ().FoodQuantity = rand.Next (foodQuantityMin, foodQuantityMax);
+					//Instantiate (foodPrefab, worldCoordFood, Quaternion.identity);
+				}
 			}
 		}
 	}
@@ -430,11 +424,12 @@ public class Map : MonoBehaviour {
 				worldCoordTreasure = graph [abs, ord].worldPos;
 				graph [abs, ord].isWalkable = false;
 				GameObject caseTreasure = GameObject.Find ("Hex_" + abs + "_" + ord);
-				caseTreasure.GetComponent<Sea> ().Treasure = rand.Next (tresorMin, tresorMax);
-				Instantiate (treasurePrefab, worldCoordTreasure, Quaternion.identity);
+				GameObject tres = (GameObject) Instantiate (treasurePrefab, worldCoordTreasure, Quaternion.identity);
+				tres.name = caseTreasure.name+"_Treasure"+rand.Next(0,1000000000);
+				tres.transform.SetParent (caseTreasure.transform);
+				caseTreasure.GetComponent<Sea> ().AddTreasure (rand.Next (tresorMin, tresorMax), tres);
 			} else {
 				c--;
-
 			}
 		}
 
