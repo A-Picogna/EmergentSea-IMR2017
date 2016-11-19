@@ -124,17 +124,21 @@ public class Ship : MonoBehaviour {
 				Trade ();
 			}
 		} else {
+			int attackValue = 0;
 			if (AtFilibusterRange(target)){
 				Debug.Log ("Filibusters at range, ready to aboard !");
-				Attack ("Filibuster", target);
+				attackValue += Attack ("Filibuster", target);
 			}
 			if (AtConjurerRange(target)){
 				Debug.Log ("Conjurer at range, ready to cast !");
-				Attack ("Conjurer", target);
+				attackValue += Attack ("Conjurer", target);
 			}
 			if (AtPowderMonkeyRange(target)){
 				Debug.Log ("Canon at range, ready to fire !");
-				Attack ("PowderMonkey", target);
+				attackValue += Attack ("PowderMonkey", target);
+			}
+			if (attackValue > 0) {
+				displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
 			}
 		}
 	}
@@ -229,7 +233,7 @@ public class Ship : MonoBehaviour {
 
 	}
 
-	public void Attack(string crewUsed, Ship target){
+	public int Attack(string crewUsed, Ship target){
 		int attackValue = 0;
 		switch (crewUsed) {
 		case "Filibuster":
@@ -255,7 +259,7 @@ public class Ship : MonoBehaviour {
 			break;
 		}
 		target.Hp -= attackValue;
-		displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
+		return attackValue;
 		Debug.Log ("Ouch! I've lost " + attackValue + ", I have only " + target.Hp + " left!");
 	}
 
