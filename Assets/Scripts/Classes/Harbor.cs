@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Harbor : Land
 {
@@ -9,6 +10,12 @@ public class Harbor : Land
     private string ownerName;
     private float lpCost = 0.5f;
     private float changeFoodGold = 0.1f;
+    private int buildingTime = 2;
+    private bool building;
+    private int remainingBuildingTime;
+    private GameObject buildingShip;
+    private int buildingShipX;
+    private int buildingShipY;
 
     // Use this for initialization
     void Start()
@@ -16,6 +23,7 @@ public class Harbor : Land
         type = "harbor";
         owner = null;
         ownerName = null;
+        building = false;
     }
 
     // Update is called once per frame
@@ -36,13 +44,14 @@ public class Harbor : Land
         set { ownerName = value; }
     }
 
-    public void Interact(Ship selected, Node[,] graph)
+    public /*bool*/ void Interact(Ship selected, Map map)
     {
+        Node[,] graph = map.graph;
         //Check if we can iteract with the harbor
-        if(CanUse(selected))
+        if (CanUse(selected))
         {
             //Afficher panneau port
-
+            //return true;
             //debug start
             var select = "shipyard";
             /*System.Random rand = new System.Random();
@@ -65,6 +74,52 @@ public class Harbor : Land
             //debug end
 
             //Shipyard - new ship
+            if(select == "shipyard")
+            {
+                if (!building)
+                {
+                    Admiral admiral = new Admiral();
+                    /*if (admiral.RecruitmentCost > selected.Gold)
+                    {
+                        Debug.Log("Not enough money to build a new ship");
+                        selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
+                        admiral = null;
+                    }
+                    else
+                    {*/
+                        Node nodeHarbor = graph[this.x, this.y];
+                        List<Node> Neighbours = nodeHarbor.getSeaNodesNeighbours(graph);
+                        //Check if we can place the new ship
+                        bool placeable = false;
+                        foreach (Node node in Neighbours)
+                        {
+                            if (node.isWalkable)
+                            {
+                                placeable = true;
+                                GameObject ship_go = (GameObject)Instantiate(map.foodPrefab, node.worldPos, Quaternion.identity);
+                                ship_go.name = "Ship_" + owner.Name + "_" + owner.NbTotalShip;
+                                ship_go.GetComponentInChildren<MeshRenderer>().material.color = owner.Color;
+                                owner.NbTotalShip++;
+                                node.isWalkable = false;
+                                building = true;
+                                remainingBuildingTime = buildingTime;
+                                buildingShip = ship_go;
+                                buildingShipX = node.x;
+                                buildingShipY = node.y;
+                                break;
+                            }
+                        }
+                        if (!placeable)
+                        {
+                            selected.displayFloatingInfo(Color.magenta, "No place to build a ship !", selected.transform.position);
+                        }
+                    //}
+                }
+                else
+                {
+                    selected.displayFloatingInfo(Color.magenta, "Already building a ship !", selected.transform.position);
+                }
+            }
 
             //Store - Selling food
             if (select == "store")
@@ -73,6 +128,8 @@ public class Harbor : Land
                 selected.Gold += price;
                 Debug.Log("Sold " + price / changeFoodGold + " of food for " + price + " gold");
                 selected.Food = (int)(selected.Food - (price / changeFoodGold));
+                selected.displayFloatingInfo(Color.black, "-" + price / changeFoodGold, selected.transform.position);
+                selected.displayFloatingInfo(Color.yellow, "+" + price, selected.transform.position);
             }
 
             //Tavern - heal
@@ -104,6 +161,8 @@ public class Harbor : Land
 
                     Debug.Log("Healed : " + lpMissing);
                     Debug.Log("Cost : " + lpMissing * lpCost);
+                    selected.displayFloatingInfo(Color.yellow, "-" + lpMissing * lpCost, selected.transform.position);
+                    selected.displayFloatingInfo(Color.green, "+" + lpMissing, selected.transform.position);
                     selected.Gold -= (int)Mathf.Ceil(lpMissing * lpCost);
                     selected.Hp += lpMissing;
 
@@ -145,18 +204,21 @@ public class Harbor : Land
                     if(conjurer.RecruitmentCost > selected.Gold)
                     {
                         Debug.Log("Not enough money to recruit a conjurer");
+                        selected.displayFloatingInfo(Color.magenta, "Not enough money !" , selected.transform.position);
                         conjurer = null;
                     }
                     else
                     {
                         selected.addCrewMember(conjurer);
                         selected.Gold -= conjurer.RecruitmentCost;
+                        selected.displayFloatingInfo(Color.yellow, "-" + conjurer.RecruitmentCost, selected.transform.position);
                         Debug.Log("Conjurer recuited");
                     }
                 }
                 else
                 {
                     Debug.Log("Too many members in the crew");
+                    selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
                 }
                 Debug.Log("Nb member : " + selected.Crew.Count);
                 Debug.Log("Hp : " + selected.Hp);
@@ -176,6 +238,7 @@ public class Harbor : Land
                     if (PM.RecruitmentCost > selected.Gold)
                     {
                         Debug.Log("Not enough money to recruit a PowderMonkey");
+                        selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
                         PM = null;
                     }
                     else
@@ -183,11 +246,13 @@ public class Harbor : Land
                         selected.addCrewMember(PM);
                         selected.Gold -= PM.RecruitmentCost;
                         Debug.Log("PowderMonkey recuited");
+                        selected.displayFloatingInfo(Color.yellow, "-" + PM.RecruitmentCost, selected.transform.position);
                     }
                 }
                 else
                 {
                     Debug.Log("Too many members in the crew");
+                    selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
                 }
                 Debug.Log("Nb member : " + selected.Crew.Count);
                 Debug.Log("Hp : " + selected.Hp);
@@ -207,6 +272,7 @@ public class Harbor : Land
                     if (filibuster.RecruitmentCost > selected.Gold)
                     {
                         Debug.Log("Not enough money to recruit a filibuster");
+                        selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
                         filibuster = null;
                     }
                     else
@@ -214,16 +280,22 @@ public class Harbor : Land
                         selected.addCrewMember(filibuster);
                         selected.Gold -= filibuster.RecruitmentCost;
                         Debug.Log("filibuster recuited");
+                        selected.displayFloatingInfo(Color.yellow, "-" + filibuster.RecruitmentCost, selected.transform.position);
                     }
                 }
                 else
                 {
                     Debug.Log("Too many members in the crew");
+                    selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
                 }
                 Debug.Log("Nb member : " + selected.Crew.Count);
                 Debug.Log("Hp : " + selected.Hp);
                 Debug.Log("Gold : " + selected.Gold);
             }
+        }
+        else
+        {
+            //return false;
         }
     }
 
@@ -255,6 +327,7 @@ public class Harbor : Land
                     Debug.Log("No owner, taking it...");
                     owner = selected.Owner;
                     ownerName = selected.Owner.Name;
+                    owner.Harbors.Add(this);
                     return true;
                 }
             }
@@ -276,5 +349,35 @@ public class Harbor : Land
             }
             return false;
         }
+    }
+
+    public void Build(Map map)
+    {
+        building = false;
+        string shipName = buildingShip.name;
+        Destroy(buildingShip);
+        
+        GameObject ship_go = (GameObject)Instantiate(map.shipPrefab, map.graph[buildingShipX, buildingShipY].worldPos, Quaternion.identity);
+        ship_go.name = shipName;
+        ship_go.GetComponent<Ship>().ShipX = buildingShipX;
+        ship_go.GetComponent<Ship>().ShipY = buildingShipY;
+        ship_go.GetComponent<Ship>().ShipName = shipName;
+        ship_go.GetComponentInChildren<MeshRenderer>().material.color = owner.Color;
+        Ship ship = ship_go.GetComponent<Ship>();
+        ship.Owner = owner;
+        owner.Fleet.Add(ship);
+        GameObject.Find("Hex_" + buildingShipX + "_" + buildingShipY).GetComponent<Sea>().ShipContained = ship;
+    }
+
+    public bool Building
+    {
+        get { return building; }
+        set { building = value; }
+    }
+
+    public int RemainingBuildingTime
+    {
+        get { return remainingBuildingTime; }
+        set { remainingBuildingTime = value; }
     }
 }
