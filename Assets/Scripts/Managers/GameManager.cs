@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour {
 
 	// UI
 	public PanelHandler panelHandler;
+	private bool checkInit = false;
 
 	// Attributes
 	Player currentPlayer;
@@ -61,12 +62,21 @@ public class GameManager : MonoBehaviour {
 			}
 			CheckShipsToDestroy (player);
 		}
+		if (!checkInit) {
+			panelHandler.removeAllShip ();
+			foreach(Ship ship in currentPlayer.Fleet){
+				panelHandler.addShip (ship);
+			}
+			panelHandler.refreshListShipDisplay ();
+			checkInit = true;
+		}
 		if (mouseManager.selectedUnit == null) {
 			panelHandler.hidePanelUnkown ();
 			panelHandler.hidePanelShip ();
 		} else if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.GetType() == typeof(Ship) && mouseManager.selectedUnit.Playable) {
 			panelHandler.hidePanelUnkown ();
 		} else if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.GetType() == typeof(Ship) && !mouseManager.selectedUnit.Playable) {
+			panelHandler.hidePanelShip ();
 			panelHandler.initPanelEnnemyShip ();
 		}
 	}
@@ -129,11 +139,20 @@ public class GameManager : MonoBehaviour {
 					ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 					Ship ship = ship_go.GetComponent<Ship> ();
 					ship.Owner = player;
-					ship.addCrewMember(new Conjurer());
+					CrewMember cm = new Conjurer ();
+					cm.Lp = 80;
+					cm.Lpmax = 100;
+					cm.Xp = 20;
+					ship.addCrewMember(cm);
 					ship.addCrewMember(new Conjurer());
 					ship.addCrewMember(new Filibuster());
 					ship.addCrewMember(new PowderMonkey());
-					ship.addCrewMember(new PowderMonkey());
+					if (count > 5) {
+						cm = new PowderMonkey ();
+						cm.Lp = 75;
+						cm.Xp = 40;
+						ship.addCrewMember (cm);
+					}
 					ship.addCrewMember(new PowderMonkey());
 					player.Fleet.Add (ship);
 					mouseManager.map.graph [x, y].isWalkable = false;

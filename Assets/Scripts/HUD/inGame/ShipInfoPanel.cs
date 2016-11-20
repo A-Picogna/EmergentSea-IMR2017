@@ -14,6 +14,14 @@ public class ShipInfoPanel : MonoBehaviour {
 
 	void Start () {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
+	}
+
+	public void updateShip(Ship currentShip) {
+		shipName.text = currentShip.ShipName;
+		percentageQE.value = (currentShip.EnergyQuantity*100)/currentShip.calculateEQmax();
+		percentageQEText.text = currentShip.EnergyQuantity + "/" + currentShip.calculateEQmax();
+		goldAmount.text = currentShip.Gold + " " + lang.getString ("gold");
+		foodAmount.text = currentShip.Food + " " + lang.getString ("food");
 		fishingButtonText.text = lang.getString("fishing");
 	}
 }

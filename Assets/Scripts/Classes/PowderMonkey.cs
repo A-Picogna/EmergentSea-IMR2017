@@ -15,5 +15,6 @@ public class PowderMonkey : CrewMember
 		Xp = 0;
 		RecruitmentCost = 70;
 		Atk = 100;
+		Type = 2;
     }
 }

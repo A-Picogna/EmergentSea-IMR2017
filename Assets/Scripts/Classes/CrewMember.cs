@@ -5,7 +5,7 @@ using System.Collections;
 
 public class CrewMember
 {
-	private int lp, lpmax, energyQuantity, xp, recruitmentCost, atk;
+	private int lp, lpmax, energyQuantity, xp, recruitmentCost, atk, type;
 
     // Use this for initialization
     void Start()
@@ -54,6 +54,12 @@ public class CrewMember
         get { return atk; }
         set { atk = value; }
     }
+
+	public int Type
+	{
+		get { return type; }
+		set { type = value; }
+	}
 
     public void updateLp(int add) //is it usefull with the set fonction?
     {

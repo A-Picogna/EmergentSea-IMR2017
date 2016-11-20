@@ -4,59 +4,90 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class CrewItem {
-	public Sprite type;
-	public string pvLabel;
-	public float percentagePV;
-	public string xpLabel;
-	public float percentageXP;
-}
-
 public class CrewMemberList : MonoBehaviour {
 
 	public GameObject crewItemButton;
 
-	public List<CrewItem> itemList;
-	public Transform contentPanel;
+	private List<CrewMember> itemList;
+	public Transform panelLeft;
+	public Transform panelRight;
+
+	public CrewMemberObjectPool buttonObjectPool;
+	public EmptyObjectPool emptyObjectPool;
 
 	// Use this for initialization
 	void Start () {
+		itemList = new List<CrewMember> ();
 		RefreshDisplay ();
 	}
 
-	private void RefreshDisplay() {
+	public void RefreshDisplay() {
 		RemoveButtons ();
 		AddButtons ();
 	}
 
 	private void AddButtons() {
+		int i;
+		for (i = 0; i < itemList.Count; i++) {
+			CrewMember item = itemList [i];
+			GameObject newItemButton = buttonObjectPool.GetObject();
+			CrewItemButton crewButton = newItemButton.GetComponent<CrewItemButton> ();
+			crewButton.Setup (item);
+			if (i < 4)
+				newItemButton.transform.SetParent (panelLeft, false);
+			else 
+				newItemButton.transform.SetParent (panelRight, false);
+			newItemButton.transform.localScale = Vector3.one;
+		}
+		for (int j = i; j < 8; j++) {
+			GameObject newItemButton = emptyObjectPool.GetObject();
+			if (j < 4)
+				newItemButton.transform.SetParent (panelLeft, false);
+			else 
+				newItemButton.transform.SetParent (panelRight, false);
+			newItemButton.transform.localScale = Vector3.one;
+		}
+		/*
 		foreach (var item in itemList) {
-			GameObject newItemButton = Instantiate (crewItemButton) as GameObject;
+			GameObject newItemButton = buttonObjectPool.GetObject();
 			CrewItemButton shipButton = newItemButton.GetComponent<CrewItemButton> ();
 			shipButton.Setup (item);
 			newItemButton.transform.SetParent (contentPanel, false);
-		}
+
+			//shipButton.Setup (item, mouseManager, panelHandler, shipInfoPanel);
+		}*/
 	}
 
 	private void RemoveButtons() {
-		while (contentPanel.childCount > 0) {
-			GameObject toRemove = transform.GetChild (0).gameObject;
-			Destroy(toRemove);
+		for (int i = 3; i >= 0; i--) {
+			GameObject toRemove = panelLeft.GetChild (i).gameObject;
+			if (toRemove.GetComponent<Button> ())
+				buttonObjectPool.ReturnObject (toRemove);
+			else
+				emptyObjectPool.ReturnObject (toRemove);
+			toRemove = panelRight.GetChild (i).gameObject;
+			if (toRemove.GetComponent<Button> ())
+				buttonObjectPool.ReturnObject (toRemove);
+			else
+				emptyObjectPool.ReturnObject (toRemove);
 		}
 	}
 
-	private void AddItem(CrewItem itemToAdd) {
+	public void AddItem(CrewMember itemToAdd) {
 		itemList.Add (itemToAdd);
 	}
 
-	private void RemoveItem(CrewItem itemToRemove) {
+	public void RemoveItem(CrewMember itemToRemove) {
 		for (int i = 0; i < itemList.Count; i++) {
 			if (itemList [i] == itemToRemove) {
 				itemList.RemoveAt (i);
 				break;
 			}
 		}
+	}
+
+	public void RemoveAll() {
+		itemList = new List<CrewMember> ();
 	}
 
 }

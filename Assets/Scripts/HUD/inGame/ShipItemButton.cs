@@ -10,18 +10,25 @@ public class ShipItemButton : MonoBehaviour {
 	public Text goldAmount;
 	public Text foodAmount;
 
+	private MouseManager mouseManager;
+	private PanelHandler panelHandler;
+	private ShipInfoPanel shipInfoPanel;
 	private Ship item;
 
 	void Start() {
 		button.onClick.AddListener (HandleClick);
 	}
 
-	public void Setup (Ship currentItem) {
+	public void Setup (Ship currentItem, MouseManager mm, PanelHandler ph, ShipInfoPanel sip) {
 		item = currentItem;
 		shipName.text = item.ShipName;
 		percentageQE.value = item.EnergyQuantity;
 		goldAmount.text = amountformatter(item.Gold); // Utility function to form correct numbers
 		foodAmount.text = amountformatter(item.Food);
+
+		mouseManager = mm;
+		panelHandler = ph;
+		shipInfoPanel = sip;
 	}
 
 	private string amountformatter(int amount) {
@@ -39,6 +46,13 @@ public class ShipItemButton : MonoBehaviour {
 	}
 
 	public void HandleClick() {
-		
+		mouseManager.selectedUnit = item;
+		shipInfoPanel.updateShip (item);
+		panelHandler.showPanelShip ();
+		panelHandler.removeAllCrewMember ();
+		foreach(CrewMember crewMember in item.Crew){
+			panelHandler.addCrewMember (crewMember);
+		}
+		panelHandler.refreshCrewMemberDisplay ();
 	}
 }

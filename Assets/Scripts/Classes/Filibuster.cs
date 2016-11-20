@@ -15,5 +15,6 @@ public class Filibuster : CrewMember
 		Xp = 0;
 		RecruitmentCost = 200;
 		Atk = 150;
+		Type = 1;
     }
 }

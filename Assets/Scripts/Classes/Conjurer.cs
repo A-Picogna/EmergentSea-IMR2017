@@ -13,5 +13,6 @@ public class Conjurer : CrewMember
 		Xp = 0;
 		RecruitmentCost = 200;
 		Atk = 80;
+		Type = 3;
     }
 }
