@@ -305,8 +305,9 @@ public class Ship : MonoBehaviour {
 		//if enough energy
 		if(energyQuantity >= 5){
 			//debug test of fishing value of 100
-			food += 100;
-
+			//food += 100;
+			GameObject foodplace = GameObject.Find ("Hex_" + shipX + "_" + shipY);
+			food += foodplace.GetComponent<Sea> ().FoodQuantity;
 			//toImplement : modify foodQuantity of the hex
 			//decrement energyQuantity, to check, debug value
 			//Or set it to 0 to make the ship unable to move
