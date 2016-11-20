@@ -28,6 +28,7 @@ public class Ship : MonoBehaviour {
 	private string shipName;
 	private List<CrewMember> crew = new List<CrewMember>();
 	public Vector3 destination;
+	public AudioClip shipMovingSound;
 
 	// Use this for initialization
 	void Start () {
