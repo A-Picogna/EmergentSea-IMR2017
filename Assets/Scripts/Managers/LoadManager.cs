@@ -1,5 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
+using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 
 public class LoadManager : MonoBehaviour {
@@ -40,6 +44,10 @@ public class LoadManager : MonoBehaviour {
     public GameObject harborPrefab;
     public GameObject coastPrefab;
 	public GameObject gameManagerPrefab;
+
+	// Private variables
+	private Map MapLoaded;
+	public string MapPrefabToLoad;
 
 
 	// Use this before initialization (and between loading Maps)
@@ -167,20 +175,62 @@ public class LoadManager : MonoBehaviour {
         mapSettings.height = MapX;
 		mapSettings.width = MapY;
 
+		mapSettings.LaunchMapGeneration ();
 
+		return mapSettings;
+	}
+
+	private Map loadMap(MapFile saveMap) {
+		GameObject newObject = Instantiate(mapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		Map mapSettings = newObject.GetComponent<Map>();
+
+		mapSettings.hexPrefab = hexPrefab;
+		mapSettings.landPrefab = landPrefab;
+		mapSettings.seaPrefab = seaPrefab;
+		mapSettings.harborPrefab = harborPrefab;
+		mapSettings.coastPrefab = coastPrefab;
+
+		mapSettings.height = saveMap.height;
+		mapSettings.width = saveMap.width;
+
+		mapSettings.LaunchMapLoading (saveMap);
 
 		return mapSettings;
 	}
 
 	private void initWorld() {
-		Map worldMap = initMap ();
+		MapLoaded = initMap ();
 		GameObject mouseSettings = GameObject.Find ("MouseManager");
-		((MouseManager)mouseSettings.GetComponent<MouseManager> ()).map = worldMap;
+		((MouseManager)mouseSettings.GetComponent<MouseManager> ()).map = MapLoaded;
 
-		GameManager gameManager = initGame (worldMap);
+		GameManager gameManager = initGame (MapLoaded);
 
+		// Connection des objets
 		GameObject pathfinder = GameObject.Find ("Pathfinder");
-		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = worldMap;
+		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = MapLoaded;
+
+		GameObject btn_save = GameObject.Find ("btn_save");
+		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			LoadManager.instance.savePrefabricatedMap ("test");
+		});
+
+	}
+
+	private void loadWorld(MapFile saveMap) {
+		MapLoaded = loadMap (saveMap);
+		GameObject mouseSettings = GameObject.Find ("MouseManager");
+		((MouseManager)mouseSettings.GetComponent<MouseManager> ()).map = MapLoaded;
+
+		GameManager gameManager = initGame (MapLoaded);
+
+		// Connection des objets
+		GameObject pathfinder = GameObject.Find ("Pathfinder");
+		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = MapLoaded;
+
+		GameObject btn_save = GameObject.Find ("btn_save");
+		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			LoadManager.instance.savePrefabricatedMap ("test");
+		});
 	}
 
 	void OnLevelWasLoaded() {
@@ -191,11 +241,13 @@ public class LoadManager : MonoBehaviour {
 			break;
 		case state.StartNewMap:
 			Debug.Log ("Génération de la map ;)");
+			Debug.Log ("Type : " + LoadManager.instance.MapWidthParameter.ToString() + ", Length : " + LoadManager.instance.MapX.ToString() + ", Width : " + LoadManager.instance.MapY.ToString());
 			initWorld ();
 			break;
 		case state.StartLoadedMap:
 			Debug.Log ("Chargement d'une map préfabriqué");
-			//loadWorld ();
+			Debug.Log ("Map à charger :");
+			loadPrefabricatedMap (MapPrefabToLoad);
 			break;
 		default:
 			Debug.LogError ("Ca ne devrait pas arriver.");
@@ -214,5 +266,52 @@ public class LoadManager : MonoBehaviour {
 		gameSettings.map = worldMap;
 
 		return gameSettings;
+	}
+
+	public void savePrefabricatedMap(string name) {
+		if (!Directory.Exists (Application.persistentDataPath + "/PrefabricatedMaps")) {
+			Directory.CreateDirectory (Application.persistentDataPath + "/PrefabricatedMaps");
+		}
+		BinaryFormatter bf = new BinaryFormatter();
+		FileStream saveFile = File.Open(Application.persistentDataPath + "/PrefabricatedMaps/" + name + ".map", FileMode.OpenOrCreate);
+
+		// 2. Construct a SurrogateSelector object
+		SurrogateSelector ss = new SurrogateSelector();
+
+		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ss.AddSurrogate(typeof(Vector3),
+			new StreamingContext(StreamingContextStates.All),
+			v3ss);
+
+		// 5. Have the formatter use our surrogate selector
+		bf.SurrogateSelector = ss;
+
+		Debug.Log ("Saving...");
+		bf.Serialize (saveFile, MapLoaded.SaveMap ());
+		Debug.Log (Application.persistentDataPath + "/PrefabricatedMaps/" + name + ".map");
+		saveFile.Close ();
+	}
+
+	public void loadPrefabricatedMap(string path) {
+		// LOADING FILE
+		///////
+		FileStream saveFile = File.OpenRead (path);
+		BinaryFormatter bf = new BinaryFormatter();
+
+		// 2. Construct a SurrogateSelector object
+		SurrogateSelector ss = new SurrogateSelector();
+
+		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ss.AddSurrogate(typeof(Vector3),
+			new StreamingContext(StreamingContextStates.All),
+			v3ss);
+
+		// 5. Have the formatter use our surrogate selector
+		bf.SurrogateSelector = ss;
+
+		Debug.Log ("Loading...");
+		MapFile saveMap = (MapFile)bf.Deserialize (saveFile);
+
+		loadWorld (saveMap);
 	}
 }

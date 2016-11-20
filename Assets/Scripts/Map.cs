@@ -97,6 +97,31 @@ public class Map : MonoBehaviour {
 		AddNeighboursToNodes ();
 	}
 
+	public void LaunchMapLoading(MapFile saveMap) {
+		size = width * height;
+		rand = new System.Random();
+		GroupLand = new List<Node>();
+		GroupListPossibleHarbor = new List<List<Node>>();
+		worldCoord = new Vector3(0, 0, 0);
+		mapFausse = false;
+		regenerateCount = 1;
+		worldCoordFood = new Vector3(0, 0, 0);
+		worldCoordTreasure = new Vector3(0, 0, 0);
+
+		this.graph = saveMap.graph;
+
+		InstantiateMap ();
+
+		//Generate coast and harbor
+		generateHarbor();
+
+		generateFood ();
+		generateTreasure ();
+
+		// Add neighbours
+		AddNeighboursToNodes ();
+	}
+
 	// Update is called once per frame
 	void Update () {
 	
@@ -451,5 +476,19 @@ public class Map : MonoBehaviour {
 		get{ return size; }
 	}
 
+	public MapFile SaveMap() {
+		MapFile mapSaved = new MapFile();
+		mapSaved.height = this.height;
+		mapSaved.width = this.width;
+		mapSaved.graph = this.graph;
+
+		return mapSaved;
+	}
+
+	public void LoadMap(MapFile SavedMap) {
+		this.height = SavedMap.height;
+		this.width = SavedMap.width;
+		this.graph = SavedMap.graph;
+	}
 
 }

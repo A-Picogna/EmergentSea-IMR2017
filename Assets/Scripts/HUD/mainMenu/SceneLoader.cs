@@ -12,7 +12,6 @@ public class SceneLoader : MonoBehaviour {
 	private Text loadingText;
 
 	public void NewMap() {
-		LoadManager.instance.LoadManagerState = LoadManager.state.StartNewMap;
 		if (loadingAScene == false) {
 			loadingAScene = true;
 
