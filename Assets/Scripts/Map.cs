@@ -55,11 +55,14 @@ public class Map : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
+	}
+
+	public void LaunchMapGeneration () {
 		size = width * height;
 		rand = new System.Random();
-        GroupLand = new List<Node>();
-        GroupListPossibleHarbor = new List<List<Node>>();
-        worldCoord = new Vector3(0, 0, 0);
+		GroupLand = new List<Node>();
+		GroupListPossibleHarbor = new List<List<Node>>();
+		worldCoord = new Vector3(0, 0, 0);
 		mapFausse = false;
 		regenerateCount = 1;
 		worldCoordFood = new Vector3(0, 0, 0);
@@ -84,16 +87,16 @@ public class Map : MonoBehaviour {
 
 		InstantiateMap ();
 
-        //Generate coast and harbor
-        generateHarbor();
+		//Generate coast and harbor
+		generateHarbor();
 
 		generateFood ();
 		generateTreasure ();
 
 		// Add neighbours
 		AddNeighboursToNodes ();
-
 	}
+
 	// Update is called once per frame
 	void Update () {
 	
