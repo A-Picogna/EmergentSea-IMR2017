@@ -108,4 +108,21 @@ public class PanelHandler : MonoBehaviour {
 	public void refreshCrewMemberDisplay() {
 		shipCrewScript.RefreshDisplay();
 	}
+
+	// Update Ship
+	public void updateShip(Player player, Ship ship) {
+		removeAllShip ();
+		foreach(Ship shipItem in player.Fleet){
+			addShip (shipItem);
+		}
+		refreshListShipDisplay ();
+
+		updateShipInfo (ship);
+		removeAllCrewMember ();
+		foreach(CrewMember crewMember in ship.Crew){
+			addCrewMember (crewMember);
+		}
+		refreshCrewMemberDisplay ();
+		showPanelShip ();
+	}
 }

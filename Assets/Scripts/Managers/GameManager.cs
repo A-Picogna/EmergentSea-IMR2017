@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour {
 	private bool checkInit = false;
 
 	// Attributes
-	Player currentPlayer;
+	public Player currentPlayer;
 	List<Player> players;
 	int currentPlayerNumber;
 	int turnNumber;

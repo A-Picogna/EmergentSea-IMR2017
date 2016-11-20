@@ -23,8 +23,6 @@ public class CrewItemButton : MonoBehaviour {
 	public void Setup (CrewMember currentItem) {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		item = currentItem;
-		print (item.Type);
-		print (item.Lpmax);
 		if (currentItem.Type == 0)
 			type.sprite =  Resources.Load<Sprite>("Images/admiral_icon");
 		else if (currentItem.Type == 1)
