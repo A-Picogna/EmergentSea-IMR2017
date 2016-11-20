@@ -6,7 +6,12 @@ using System.IO;
 public class HarborPanel : MonoBehaviour {
 	public GameObject panel;
 	public Button button;
-	public Button buttonTest;
+	public Button innButton;
+	public Button storehouseButton;
+	public Button warehouseButton;
+	public Button slumsButton;
+	public Button darkArtsAcademyButton;
+	public Button shipyardButton;
 
 	public Text harborHeader;
 	public Text harborDescription;
@@ -21,7 +26,13 @@ public class HarborPanel : MonoBehaviour {
 	void Start () {
 		panel.SetActive (false);
 		button.onClick.AddListener (hidePanel);
-		buttonTest.onClick.AddListener (showPanel);
+
+		innButton.onClick.AddListener (handleClickInn);
+		storehouseButton.onClick.AddListener (handleClickStorehouse);
+		warehouseButton.onClick.AddListener (handleClickWarehouse);
+		slumsButton.onClick.AddListener (handleClickSlums);
+		darkArtsAcademyButton.onClick.AddListener (handleClickDarkArtsAcademy);
+		shipyardButton.onClick.AddListener (handleClickShipyard);
 
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		harborHeader.text = lang.getString("harbor");
@@ -40,5 +51,24 @@ public class HarborPanel : MonoBehaviour {
 
 	public void hidePanel() {
 		panel.SetActive (false);
+	}
+
+	private void handleClickInn() {
+
+	}
+	private void handleClickStorehouse() {
+
+	}
+	private void handleClickWarehouse() {
+
+	}
+	private void handleClickSlums() {
+
+	}
+	private void handleClickDarkArtsAcademy() {
+
+	}
+	private void handleClickShipyard() {
+
 	}
 }
