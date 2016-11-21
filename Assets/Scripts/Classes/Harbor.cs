@@ -16,6 +16,7 @@ public class Harbor : Land
     private GameObject buildingShip;
     private int buildingShipX;
     private int buildingShipY;
+    private string buildingName;
 
     // Use this for initialization
     void Start()
@@ -98,6 +99,7 @@ public class Harbor : Land
                                 placeable = true;
                                 GameObject ship_go = (GameObject)Instantiate(map.foodPrefab, node.worldPos, Quaternion.identity);
                                 ship_go.name = "Ship_" + owner.Name + "_" + owner.NbTotalShip;
+                                buildingName = owner.Name + "_Ship_" + owner.NbTotalShip;
                                 ship_go.GetComponentInChildren<MeshRenderer>().material.color = owner.Color;
                                 owner.NbTotalShip++;
                                 node.isWalkable = false;
@@ -106,7 +108,7 @@ public class Harbor : Land
                                 buildingShip = ship_go;
                                 buildingShipX = node.x;
                                 buildingShipY = node.y;
-                                break;
+                            break;
                             }
                         }
                         if (!placeable)
@@ -355,13 +357,14 @@ public class Harbor : Land
     {
         building = false;
         string shipName = buildingShip.name;
+        buildingShip.name = buildingShip.name + "_trash";
         Destroy(buildingShip);
         
         GameObject ship_go = (GameObject)Instantiate(map.shipPrefab, map.graph[buildingShipX, buildingShipY].worldPos, Quaternion.identity);
         ship_go.name = shipName;
         ship_go.GetComponent<Ship>().ShipX = buildingShipX;
         ship_go.GetComponent<Ship>().ShipY = buildingShipY;
-        ship_go.GetComponent<Ship>().ShipName = shipName;
+        ship_go.GetComponent<Ship>().ShipName = buildingName;
         ship_go.GetComponentInChildren<MeshRenderer>().material.color = owner.Color;
         Ship ship = ship_go.GetComponent<Ship>();
         ship.Owner = owner;

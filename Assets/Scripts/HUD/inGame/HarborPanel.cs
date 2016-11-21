@@ -23,6 +23,15 @@ public class HarborPanel : MonoBehaviour {
 	public Text shipyard;
 	private Lang lang;
 
+    public bool tavernClicked;
+    public bool storeClicked;
+    public bool warehouseClicked;
+    public bool shallowsClicked;
+    public bool daaClicked;
+    public bool shipyardClicked;
+
+    public bool selected;
+
 	void Start () {
 		panel.SetActive (false);
 		button.onClick.AddListener (hidePanel);
@@ -43,6 +52,15 @@ public class HarborPanel : MonoBehaviour {
 		slums.text = lang.getString("slums");
 		darkArtsAcademy.text = lang.getString("dark_arts_academy");
 		shipyard.text = lang.getString("shipyard");
+
+        tavernClicked = false;
+        storeClicked = false;
+        warehouseClicked = false;
+        shallowsClicked = false;
+        daaClicked = false;
+        shipyardClicked = false;
+
+        selected = false;
 	}
 
 	public void showPanel() {
@@ -51,24 +69,68 @@ public class HarborPanel : MonoBehaviour {
 
 	public void hidePanel() {
 		panel.SetActive (false);
-	}
+        selected = true;
+    }
 
 	private void handleClickInn() {
 
-	}
+        tavernClicked = true;
+        storeClicked = false;
+        warehouseClicked = false;
+        shallowsClicked = false;
+        daaClicked = false;
+        shipyardClicked = false;
+        selected = true;
+    }
+
 	private void handleClickStorehouse() {
 
-	}
+        tavernClicked = false;
+        storeClicked = true;
+        warehouseClicked = false;
+        shallowsClicked = false;
+        daaClicked = false;
+        shipyardClicked = false;
+        selected = true;
+    }
 	private void handleClickWarehouse() {
 
-	}
+        tavernClicked = false;
+        storeClicked = false;
+        warehouseClicked = true;
+        shallowsClicked = false;
+        daaClicked = false;
+        shipyardClicked = false;
+        selected = true;
+    }
 	private void handleClickSlums() {
 
-	}
+        tavernClicked = false;
+        storeClicked = false;
+        warehouseClicked = false;
+        shallowsClicked = true;
+        daaClicked = false;
+        shipyardClicked = false;
+        selected = true;
+    }
 	private void handleClickDarkArtsAcademy() {
 
-	}
+        tavernClicked = false;
+        storeClicked = false;
+        warehouseClicked = false;
+        shallowsClicked = false;
+        daaClicked = true;
+        shipyardClicked = false;
+        selected = true;
+    }
 	private void handleClickShipyard() {
 
-	}
+        tavernClicked = false;
+        storeClicked = false;
+        warehouseClicked = false;
+        shallowsClicked = false;
+        daaClicked = false;
+        shipyardClicked = true;
+        selected = true;
+    }
 }
