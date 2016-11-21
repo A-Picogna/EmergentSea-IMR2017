@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour {
 	void CheckShipsToDestroy(Player player){
 		Ship shipToDestroy = null;
 		foreach (Ship ship in player.Fleet) {
-			if (ship.Hp <= 0) {
+			if (ship.Hp < 0) {
 				shipToDestroy = ship;
 			}
 		}

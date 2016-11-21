@@ -7,7 +7,7 @@ public class Ship : MonoBehaviour {
 	private List<Node> currentPath = null;
 	private int food = 100;
 	private int gold = 100;
-	private int hp = 100;
+	private int hp = 0;
 	private int energyQuantity = 100000000;
 	private int shipX = -1;
 	private int shipY = -1;
@@ -31,7 +31,7 @@ public class Ship : MonoBehaviour {
 	public AudioClip shipMovingSound;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		//There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
         addCrewMember(admiral);
@@ -254,9 +254,40 @@ public class Ship : MonoBehaviour {
 			}
 			break;
 		}
-		target.Hp -= attackValue;
+		target.TakeDamages (attackValue);
 		return attackValue;
 		Debug.Log ("Ouch! I've lost " + attackValue + ", I have only " + target.Hp + " left!");
+	}
+
+	public void TakeDamages(int damages){
+		int victimIndex;
+		bool takingDamages = true;
+		do{
+			if (crew.Count > 1){
+				victimIndex = Random.Range(1,crew.Count);
+				if (damages >= crew[victimIndex].Lp){
+					damages -= crew[victimIndex].Lp;
+					crew.RemoveAt(victimIndex);
+				}
+				else{
+					crew[victimIndex].Lp -= damages;
+					takingDamages = false;
+				}
+			}
+			else{
+				crew[0].Lp -= damages;
+				takingDamages = false;
+			}
+		} while (takingDamages);
+		UpdateShipHp ();
+	}
+
+	public void UpdateShipHp(){
+		int res = 0;
+		foreach (CrewMember c in crew){
+			res += c.Lp;
+		}
+		hp = res;
 	}
 
 	public void displayFloatingInfo(Color color, string text, Vector3 pos){
