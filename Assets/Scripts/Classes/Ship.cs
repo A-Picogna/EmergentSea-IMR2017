@@ -5,10 +5,10 @@ using System.Collections.Generic;
 public class Ship : MonoBehaviour {
 
 	private List<Node> currentPath = null;
-	private int food;
-	private int gold;
-	private int hp;
-	private int energyQuantity;
+	private int food = 100;
+	private int gold = 100;
+	private int hp = 100;
+	private int energyQuantity = 100000000;
 	private int shipX = -1;
 	private int shipY = -1;
 	private int orientation = 0;
@@ -24,7 +24,7 @@ public class Ship : MonoBehaviour {
 	 */
 	bool playable;
 	bool isMoving;
-	bool dead;
+	bool dead = false;
 	private string shipName;
 	private List<CrewMember> crew = new List<CrewMember>();
 	public Vector3 destination;
@@ -35,10 +35,6 @@ public class Ship : MonoBehaviour {
 		//There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
         addCrewMember(admiral);
-        dead = false;
-		energyQuantity = 100000000;
-		food = 100;
-		gold = 100;
 		destination = transform.position;
 	}
 
