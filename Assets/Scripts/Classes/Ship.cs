@@ -35,7 +35,6 @@ public class Ship : MonoBehaviour {
 		//There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
         addCrewMember(admiral);
-		RefuelEnergy ();
 		destination = transform.position;
 	}
 
@@ -85,10 +84,11 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void RefuelEnergy(){
-		energyQuantity = 0;
+		int res = 0;
 		foreach (CrewMember c in crew) {
-			energyQuantity += c.EnergyQuantity;
+			res += c.EnergyQuantity;
 		}
+		energyQuantity = res;
 	}
 
 	IEnumerator Sink (){

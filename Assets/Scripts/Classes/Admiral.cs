@@ -12,8 +12,6 @@ public class Admiral : CrewMember
         //Initialise the variables
 		Lpmax = 300;
 		Lp = Lpmax;
-		EnergyQuantity = 300;
-		Xp = 0;
 		RecruitmentCost = 0;
 		Atk = 0;
 		Type = 0;
