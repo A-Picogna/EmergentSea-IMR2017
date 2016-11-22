@@ -5,20 +5,55 @@ using System.Collections;
 
 public class CrewMember
 {
-	private int lp, lpmax, energyQuantity, xp, recruitmentCost, atk, type;
+	private int lp, 
+	lpmax, 
+	energyQuantity,
+	xp, 
+	recruitmentCost, 
+	atk, 
+	type,
+	xpMax,
+	level,
+	levelMax;
 
-    // Use this for initialization
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+	public CrewMember(){
+		EnergyQuantity = 5;
+		Xp = 0;
+		XpMax = 100;
+		Level = 1;
+		LevelMax = 10;
 	}
 
+	public void gainXP(int value){
+		xp += value;
+		if (xp >= 100 && level < levelMax) {
+			level++;
+			xp = xp % 100;
+
+			int tmp_lpmax = Mathf.CeilToInt (lpmax * 1.1f);
+			lp = lp + (tmp_lpmax - lpmax);
+			lpmax = tmp_lpmax;
+
+			atk = Mathf.CeilToInt (atk * 1.1f);
+			energyQuantity = Mathf.CeilToInt (energyQuantity * 1.1f);
+		}
+	}
+
+	public int XpMax
+	{
+		get { return xpMax; }
+		set { xpMax = value; }
+	}
+	public int Level
+	{
+		get { return level; }
+		set { level = value; }
+	}
+	public int LevelMax
+	{
+		get { return levelMax; }
+		set { levelMax = value; }
+	}
 	public int Lp
 	{
 		get { return lp; }
@@ -60,22 +95,4 @@ public class CrewMember
 		get { return type; }
 		set { type = value; }
 	}
-
-    public void updateLp(int add) //is it usefull with the set fonction?
-    {
-        //add can be positive or negative
-        lp = lp + add;
-    }
-
-    public void updateEnergyQuantity(int add) //is it usefull with the set fonction?
-    {
-        //add can be positive or negative
-        energyQuantity = energyQuantity + add;
-    }
-
-    public void updateXp(int add) //is it usefull with the set fonction?
-    {
-        //add positive
-        xp = xp + add;
-    }
 }

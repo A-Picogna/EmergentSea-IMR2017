@@ -9,11 +9,11 @@ public class MainCamera : MonoBehaviour {
 	public int speed = 5;
 	private int theScreenWidth;
 	private int theScreenHeight;
-	float cameraDistanceMax = 40f;
-	float cameraDistanceMin = 5f;
-	float scrollSpeed = 3f;
-	float DragSpeed = 10.0f;
+	float DragSpeed = 20.0f;
 	float cameraDistance;
+	float minFov = 10f;
+	float maxFov = 40f;
+	float sensitivity = 20f;
 
 	// Use this for initialization
 	void Start () {
@@ -24,10 +24,11 @@ public class MainCamera : MonoBehaviour {
 	void LateUpdate () {     
 
 
-		if (!EventSystem.current.IsPointerOverGameObject ()) {
-			cameraDistance -= Input.GetAxis ("Mouse ScrollWheel") * scrollSpeed;
-			cameraDistance = Mathf.Clamp (cameraDistance, cameraDistanceMin, cameraDistanceMax);
-			this.transform.position = new Vector3 (this.transform.position.x, cameraDistance, this.transform.position.z);
+		if (!EventSystem.current.IsPointerOverGameObject ()) {   
+			float fov = Camera.main.fieldOfView;
+			fov -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
+			fov = Mathf.Clamp(fov, minFov, maxFov);
+			Camera.main.fieldOfView = fov;
 
 			if (Input.GetKey (KeyCode.D) || Input.GetKey (KeyCode.RightArrow)) {
 				this.transform.position += new Vector3 (speed * Time.deltaTime, 0, 0); // move on +X axis

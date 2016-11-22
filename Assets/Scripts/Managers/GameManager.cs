@@ -57,7 +57,9 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		foreach(Player player in players){
+		List<Player> playersCopy = players;
+		List<Ship> currentPlayerFleet = currentPlayer.Fleet;
+		foreach(Player player in playersCopy){
 			if ( (player.Fleet == null || player.Fleet.Count == 0) && (player.Harbors == null || player.Harbors.Count == 0)) {
 				GameOver ();
 			}
@@ -65,7 +67,7 @@ public class GameManager : MonoBehaviour {
 		}
 		if (!checkInit) {
 			panelHandler.removeAllShip ();
-			foreach(Ship ship in currentPlayer.Fleet){
+			foreach(Ship ship in currentPlayerFleet){
 				panelHandler.addShip (ship);
 			}
 			panelHandler.refreshListShipDisplay ();
@@ -102,7 +104,7 @@ public class GameManager : MonoBehaviour {
 	void CheckShipsToDestroy(Player player){
 		Ship shipToDestroy = null;
 		foreach (Ship ship in player.Fleet) {
-			if (ship.Hp <= 0) {
+			if (ship.Hp < 0) {
 				shipToDestroy = ship;
 			}
 		}
@@ -128,6 +130,7 @@ public class GameManager : MonoBehaviour {
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = false;
+				ship.RefuelEnergy();
 			}
 		}
 		currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
