@@ -14,7 +14,7 @@ public class Admiral : CrewMember
 		Lp = Lpmax;
 		EnergyQuantity = 300;
 		Xp = 0;
-		RecruitmentCost = 0;
+		RecruitmentCost = 2000;
 		Atk = 0;
 		Type = 0;
     }

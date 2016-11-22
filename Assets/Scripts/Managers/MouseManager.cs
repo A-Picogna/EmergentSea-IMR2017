@@ -15,6 +15,7 @@ public class MouseManager : MonoBehaviour {
 	public Pathfinder pathfinder;
 	private GameObject ourHitObject;
     public bool harbor = false;
+    public Harbor currentHarbor;
 
 	// UI
 	public PanelHandler panelHandler;
@@ -99,7 +100,11 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonUp (1)) {
             if(ourHitObject.GetComponent<Harbor>() != null)
             {
-                /*harbor = */ourHitObject.GetComponent<Harbor>().Interact(selectedUnit,map);
+                harbor = ourHitObject.GetComponent<Harbor>().Interact(selectedUnit,map);
+                if(harbor)
+                {
+                    currentHarbor = ourHitObject.GetComponent<Harbor>().getHarbor();
+                }
             }
 			else if (ourHitObject.GetComponent<Sea> () != null) {
 				if (ourHitObject.GetComponent<Sea> ().ShipContained != null) {

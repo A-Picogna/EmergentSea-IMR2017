@@ -77,7 +77,12 @@ public class GameManager : MonoBehaviour {
             lastSelected = mouseManager.selectedUnit.ShipName;
             mouseManager.harbor = false;
         }
-		if (mouseManager.selectedUnit == null) {
+        if(panelHandler.panelHarbor.GetComponent<HarborPanel>().selected)
+        {
+            panelHandler.panelHarbor.GetComponent<HarborPanel>().selected = false;
+            mouseManager.currentHarbor.doAction(mouseManager.selectedUnit, map, panelHandler.panelHarbor.GetComponent<HarborPanel>().buttonClicked);
+        }
+        if (mouseManager.selectedUnit == null) {
 			panelHandler.hidePanelUnkown ();
 			panelHandler.hidePanelShip ();
             panelHandler.hidePanelHarbor();

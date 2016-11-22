@@ -32,9 +32,11 @@ public class Ship : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		//There is always an amiral when the ship is construct so we create one and add it to the ship
+        //There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
+        Debug.Log(hp);
         addCrewMember(admiral);
+        Debug.Log(hp);
         dead = false;
 		energyQuantity = 100000000;
 		food = 100;
