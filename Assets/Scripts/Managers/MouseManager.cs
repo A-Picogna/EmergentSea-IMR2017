@@ -98,29 +98,41 @@ public class MouseManager : MonoBehaviour {
 		}
 
 		if (Input.GetMouseButtonUp (1)) {
-            if(ourHitObject.GetComponent<Harbor>() != null)
+            if (ourHitObject.GetComponent<Harbor>() != null)
             {
-                harbor = ourHitObject.GetComponent<Harbor>().Interact(selectedUnit,map);
-                if(harbor)
+                harbor = ourHitObject.GetComponent<Harbor>().Interact(selectedUnit, map);
+                if (harbor)
                 {
                     currentHarbor = ourHitObject.GetComponent<Harbor>().getHarbor();
                 }
             }
-			else if (ourHitObject.GetComponent<Sea> () != null) {
-				if (ourHitObject.GetComponent<Sea> ().ShipContained != null) {
-					Ship target = ourHitObject.GetComponent<Sea> ().ShipContained;
-					selectedUnit.Interact (target);
-				} else {
-					if (ourHitObject.GetComponent<Sea> ().Treasure_go != null) {
-						Sea target = ourHitObject.GetComponent<Sea> ();
-						selectedUnit.HoistTreasure (target);
-					} else { 
-						if (selectedUnit != null && selectedUnit.Playable) {
-							pathfinder.PathRequest (selectedUnit, ourHitObject);
-						}
-					}
-				}
-			}
+            else
+            {
+                panelHandler.hidePanelHarbor();
+                if (ourHitObject.GetComponent<Sea>() != null)
+                {
+                    if (ourHitObject.GetComponent<Sea>().ShipContained != null)
+                    {
+                        Ship target = ourHitObject.GetComponent<Sea>().ShipContained;
+                        selectedUnit.Interact(target);
+                    }
+                    else
+                    {
+                        if (ourHitObject.GetComponent<Sea>().Treasure_go != null)
+                        {
+                            Sea target = ourHitObject.GetComponent<Sea>();
+                            selectedUnit.HoistTreasure(target);
+                        }
+                        else
+                        {
+                            if (selectedUnit != null && selectedUnit.Playable)
+                            {
+                                pathfinder.PathRequest(selectedUnit, ourHitObject);
+                            }
+                        }
+                    }
+                }
+            }
 		}
 	}
 

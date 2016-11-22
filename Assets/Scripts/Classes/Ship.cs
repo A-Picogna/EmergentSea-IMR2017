@@ -34,7 +34,6 @@ public class Ship : MonoBehaviour {
 	void Awake () {
 		//There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
-        Debug.Log(hp);
         addCrewMember(admiral);
 		destination = transform.position;
 	}
