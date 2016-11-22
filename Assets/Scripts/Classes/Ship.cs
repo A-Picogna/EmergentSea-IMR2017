@@ -131,15 +131,18 @@ public class Ship : MonoBehaviour {
 			int attackValue = 0;
 			if (AtFilibusterRange(target)){
 				Debug.Log ("Filibusters at range, ready to aboard !");
-				attackValue += Attack ("Filibuster", target);
-			}
-			if (AtConjurerRange(target)){
-				Debug.Log ("Conjurer at range, ready to cast !");
-				attackValue += Attack ("Conjurer", target);
+				// 1 is the type code of Filibusters
+				attackValue += Attack (1, target);
 			}
 			if (AtPowderMonkeyRange(target)){
 				Debug.Log ("Canon at range, ready to fire !");
-				attackValue += Attack ("PowderMonkey", target);
+				// 2 is the type code of PowerMonkeys
+				attackValue += Attack (2, target);
+			}
+			if (AtConjurerRange(target)){
+				Debug.Log ("Conjurer at range, ready to cast !");
+				// 3 is the type code of Conjurers
+				attackValue += Attack (3, target);
 			}
 			if (attackValue > 0) {
 				displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
@@ -234,28 +237,31 @@ public class Ship : MonoBehaviour {
 
 	}
 
-	public int Attack(string crewUsed, Ship target){
+	public int Attack(int crewUsed, Ship target){
 		int attackValue = 0;
 		switch (crewUsed) {
-		case "Filibuster":
+		case 1:
+			// Case Filibuster
 			foreach (CrewMember c in crew) {
-				if (c is Filibuster) {
+				if (c.Type == crewUsed) {
 					attackValue += c.Atk;
 				}
 			}
 			GiveXP (crewUsed);
 			break;
-		case "Conjurer":
+		case 2:
+			// Case PowderMonkey
 			foreach (CrewMember c in crew) {
-				if (c is Conjurer) {
+				if (c.Type == crewUsed) {
 					attackValue += c.Atk;
 				}
 			}
 			GiveXP (crewUsed);
 			break;
-		case "PowderMonkey":
+		case 3:
+			// Case Conjurer
 			foreach (CrewMember c in crew) {
-				if (c is PowderMonkey) {
+				if (c.Type == crewUsed) {
 					attackValue += c.Atk;
 				}
 			}
@@ -266,9 +272,9 @@ public class Ship : MonoBehaviour {
 		return attackValue;
 	}
 
-	public void GiveXP(string crewType){
+	public void GiveXP(int crewType){
 		foreach (CrewMember c in crew) {
-			if (c.GetType().Equals (crewType)){
+			if (c.Type == crewType){
 				c.gainXP (15);
 			}
 		}
