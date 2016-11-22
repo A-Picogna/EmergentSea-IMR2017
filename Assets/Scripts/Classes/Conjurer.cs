@@ -6,11 +6,9 @@ using System.Collections;
 public class Conjurer : CrewMember
 {
 
-    public Conjurer(){
+	public Conjurer() : base(){
 		Lpmax = 50;
 		Lp = Lpmax;
-		EnergyQuantity = 50;
-		Xp = 0;
 		RecruitmentCost = 200;
 		Atk = 80;
 		Type = 3;

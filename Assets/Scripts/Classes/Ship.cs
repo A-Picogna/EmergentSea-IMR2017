@@ -8,7 +8,7 @@ public class Ship : MonoBehaviour {
 	private int food = 100;
 	private int gold = 100;
 	private int hp = 0;
-	private int energyQuantity = 100000000;
+	private int energyQuantity = 0;
 	private int shipX = -1;
 	private int shipY = -1;
 	private int orientation = 0;
@@ -35,6 +35,7 @@ public class Ship : MonoBehaviour {
 		//There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
         addCrewMember(admiral);
+		RefuelEnergy ();
 		destination = transform.position;
 	}
 
@@ -81,6 +82,13 @@ public class Ship : MonoBehaviour {
 		dead = true;
 		Destroy (this.GetComponentInChildren<MeshCollider> ());
 		StartCoroutine (Sink ());
+	}
+
+	public void RefuelEnergy(){
+		energyQuantity = 0;
+		foreach (CrewMember c in crew) {
+			energyQuantity += c.EnergyQuantity;
+		}
 	}
 
 	IEnumerator Sink (){
@@ -175,10 +183,7 @@ public class Ship : MonoBehaviour {
 		} else {
 			bool result = false;
 			Node[,] tmpGraph = GameObject.Find ("Map").GetComponent<Map> ().graph;
-			Node originNode = tmpGraph [shipX, shipY];
 			Node targetNode = tmpGraph [target.ShipX, target.ShipY];
-			List<Node> neighbours = new List<Node> ();
-			List<Node> neighbours2 = new List<Node> ();
 			int angle = Angle360 (targetNode.worldPos, destination);
 			// oriented toward right or left
 			if (orientation == 0 || orientation == 180) {
@@ -238,6 +243,7 @@ public class Ship : MonoBehaviour {
 					attackValue += c.Atk;
 				}
 			}
+			GiveXP (crewUsed);
 			break;
 		case "Conjurer":
 			foreach (CrewMember c in crew) {
@@ -245,6 +251,7 @@ public class Ship : MonoBehaviour {
 					attackValue += c.Atk;
 				}
 			}
+			GiveXP (crewUsed);
 			break;
 		case "PowderMonkey":
 			foreach (CrewMember c in crew) {
@@ -252,11 +259,19 @@ public class Ship : MonoBehaviour {
 					attackValue += c.Atk;
 				}
 			}
+			GiveXP (crewUsed);
 			break;
 		}
 		target.TakeDamages (attackValue);
 		return attackValue;
-		Debug.Log ("Ouch! I've lost " + attackValue + ", I have only " + target.Hp + " left!");
+	}
+
+	public void GiveXP(string crewType){
+		foreach (CrewMember c in crew) {
+			if (c.GetType().Equals (crewType)){
+				c.gainXP (15);
+			}
+		}
 	}
 
 	public void TakeDamages(int damages){

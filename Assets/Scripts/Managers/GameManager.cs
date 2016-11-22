@@ -125,6 +125,7 @@ public class GameManager : MonoBehaviour {
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = false;
+				ship.RefuelEnergy();
 			}
 		}
 		currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
