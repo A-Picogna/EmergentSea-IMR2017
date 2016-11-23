@@ -128,24 +128,24 @@ public class Ship : MonoBehaviour {
 				Trade ();
 			}
 		} else {
-			int attackValue = 0;
-			if (AtFilibusterRange(target)){
-				Debug.Log ("Filibusters at range, ready to aboard !");
-				// 1 is the type code of Filibusters
-				attackValue += Attack (1, target);
-			}
-			if (AtPowderMonkeyRange(target)){
-				Debug.Log ("Canon at range, ready to fire !");
-				// 2 is the type code of PowerMonkeys
-				attackValue += Attack (2, target);
-			}
-			if (AtConjurerRange(target)){
-				Debug.Log ("Conjurer at range, ready to cast !");
-				// 3 is the type code of Conjurers
-				attackValue += Attack (3, target);
-			}
-			if (attackValue > 0) {
-				displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
+			if (energyQuantity >= 5) {
+				int attackValue = 0;
+				if (AtFilibusterRange (target)) {
+					// 1 is the type code of Filibusters
+					attackValue += Attack (1, target);
+				}
+				if (AtPowderMonkeyRange (target)) {
+					// 2 is the type code of PowerMonkeys
+					attackValue += Attack (2, target);
+				}
+				if (AtConjurerRange (target)) {
+					// 3 is the type code of Conjurers
+					attackValue += Attack (3, target);
+				}
+				if (attackValue > 0) {
+					displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
+				}
+				energyQuantity -= 5;
 			}
 		}
 	}
@@ -276,6 +276,10 @@ public class Ship : MonoBehaviour {
 		foreach (CrewMember c in crew) {
 			if (c.Type == crewType){
 				c.gainXP (15);
+			}
+			// We also give xp to the admiral, code 0
+			if (c.Type == 0) {
+				c.gainXP (10);
 			}
 		}
 	}

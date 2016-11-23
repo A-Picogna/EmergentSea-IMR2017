@@ -5,11 +5,14 @@ using System.Collections;
 
 public class CrewMember
 {
-	private int lp, 
-	lpmax, 
+	private int baseLpMax,
+	lp, 
+	lpMax, 
+	baseEnergyQuantity,
 	energyQuantity,
 	xp, 
 	recruitmentCost, 
+	baseAtk,
 	atk, 
 	type,
 	xpMax,
@@ -17,25 +20,31 @@ public class CrewMember
 	levelMax;
 
 	public CrewMember(){
-		EnergyQuantity = 5;
-		Xp = 0;
-		XpMax = 100;
-		Level = 1;
-		LevelMax = 10;
+		baseEnergyQuantity = 5;
+		energyQuantity = baseEnergyQuantity;
+		xp = 0;
+		xpMax = 1000;
+		//Level = 1;
+		//LevelMax = 10;
 	}
 
 	public void gainXP(int value){
-		xp += value;
-		if (xp >= 100 && level < levelMax) {
-			level++;
-			xp = xp % 100;
+		if ((xp + value) <= xpMax) {
+			xp += value;
 
-			int tmp_lpmax = Mathf.CeilToInt (lpmax * 1.1f);
-			lp = lp + (tmp_lpmax - lpmax);
-			lpmax = tmp_lpmax;
+			int tmp = Mathf.RoundToInt (baseLpMax * (1f + (xp/1000f)) );
+			lp = lp + (tmp - baseLpMax);
+			lpMax = lp + (tmp - baseLpMax);
 
-			atk = Mathf.CeilToInt (atk * 1.1f);
-			energyQuantity = Mathf.CeilToInt (energyQuantity * 1.1f);
+			atk = Mathf.RoundToInt (baseAtk * (1f + (xp/1000f)) );
+			energyQuantity = Mathf.RoundToInt (baseEnergyQuantity * (1f + (xp/1000f)) );
+
+			Debug.Log ("================");
+			Debug.Log (lpMax);
+			Debug.Log (lp);
+
+		} else {
+			xp = xpMax;			
 		}
 	}
 
@@ -44,26 +53,35 @@ public class CrewMember
 		get { return xpMax; }
 		set { xpMax = value; }
 	}
+
 	public int Level
 	{
 		get { return level; }
 		set { level = value; }
 	}
+
 	public int LevelMax
 	{
 		get { return levelMax; }
 		set { levelMax = value; }
 	}
+
 	public int Lp
 	{
 		get { return lp; }
 		set { lp = value; }
 	}
 
-	public int Lpmax
+	public int BaseLpMax
+	{
+		get { return baseLpMax; }
+		set { baseLpMax = value; }
+	}
+
+	public int LpMax
     {
-        get { return lpmax; }
-        set { lpmax = value; }
+		get { return lpMax; }
+        set { lpMax = value; }
     }
 
 	public int EnergyQuantity
@@ -82,13 +100,19 @@ public class CrewMember
     {
         get { return recruitmentCost; }
         set { recruitmentCost = value; }
-    }
+	}
 
 	public int Atk
-    {
-        get { return atk; }
-        set { atk = value; }
-    }
+	{
+		get { return atk; }
+		set { atk = value; }
+	}
+
+	public int BaseAtk
+	{
+		get { return baseAtk; }
+		set { baseAtk = value; }
+	}
 
 	public int Type
 	{

@@ -48,6 +48,11 @@ public class GameManager : MonoBehaviour {
 		currentPlayer = players [currentPlayerNumber];
 		endTurnButton.onClick.AddListener(() => EndTurn());
 		AddShips (10);
+		foreach(Player player in players){
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.UpdateShipHp ();
+			}
+		}
 		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = true;
@@ -127,10 +132,10 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void EndTurn(){
+		mouseManager.selectedUnit = null;
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = false;
-				ship.RefuelEnergy();
 			}
 		}
 		currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
@@ -157,6 +162,7 @@ public class GameManager : MonoBehaviour {
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = true;
+				ship.RefuelEnergy();
 			}
 		}
 	}
@@ -177,7 +183,7 @@ public class GameManager : MonoBehaviour {
 					ship.Owner = player;
 					CrewMember cm = new Conjurer ();
 					cm.Lp = 80;
-					cm.Lpmax = 100;
+					cm.LpMax = 100;
 					cm.Xp = 20;
 					ship.addCrewMember(cm);
 					ship.addCrewMember(new Conjurer());

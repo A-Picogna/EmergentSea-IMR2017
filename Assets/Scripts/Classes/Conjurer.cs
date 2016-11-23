@@ -7,10 +7,12 @@ public class Conjurer : CrewMember
 {
 
 	public Conjurer() : base(){
-		Lpmax = 50;
-		Lp = Lpmax;
-		RecruitmentCost = 200;
-		Atk = 80;
+		BaseAtk = 80;
+		BaseLpMax = 50;
+		LpMax = BaseLpMax;
+		Lp = LpMax;
+		Atk = BaseAtk;
+		RecruitmentCost = 150;
 		Type = 3;
     }
 }

@@ -32,10 +32,10 @@ public class CrewItemButton : MonoBehaviour {
 		else if (currentItem.Type == 3)
 			type.sprite =  Resources.Load<Sprite>("Images/mage_icon");
 		pvLabel.text = lang.getString("pv");
-		if (item.Lpmax > 0)
-			percentagePV.value = (item.Lp*100)/item.Lpmax;
+		if (item.LpMax > 0)
+			percentagePV.value = (item.Lp*100)/item.LpMax;
 		else
-			percentagePV.value = item.Lpmax;
+			percentagePV.value = item.LpMax;
 		xpLabel.text = lang.getString("xp");
 		percentageXP.value = item.Xp;
 	}

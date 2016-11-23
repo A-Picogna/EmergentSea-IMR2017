@@ -7,15 +7,14 @@ public class Admiral : CrewMember
 {
 
     // Use this for initialization
-    public Admiral()
-    {
-        //Initialise the variables
-		Lpmax = 300;
-		Lp = Lpmax;
-		EnergyQuantity = 300;
-		Xp = 0;
+    public Admiral(){
+		//Initialise the variables
+		BaseAtk = 0;
+		BaseLpMax = 300;
+		LpMax = BaseLpMax;
+		Lp = LpMax;
+		Atk = BaseAtk;
 		RecruitmentCost = 2000;
-		Atk = 0;
 		Type = 0;
     }
 }

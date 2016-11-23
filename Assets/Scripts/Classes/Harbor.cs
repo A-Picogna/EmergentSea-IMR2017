@@ -227,11 +227,11 @@ public class Harbor : Land
             int nbMemberNeeding = 0;
             foreach (CrewMember c in selected.Crew)
             {
-                if (c.Lpmax - c.Lp != 0)
+                if (c.LpMax - c.Lp != 0)
                 {
                     nbMemberNeeding += 1;
                 }
-                lpMissing += c.Lpmax - c.Lp;
+                lpMissing += c.LpMax - c.Lp;
             }
             Debug.Log("lp missing : " + lpMissing);
             int total = 0;
@@ -255,9 +255,9 @@ public class Harbor : Land
 
                 foreach (CrewMember c in selected.Crew)
                 {
-                    if (c.Lpmax - c.Lp != 0)
+                    if (c.LpMax - c.Lp != 0)
                     {
-                        int heal = c.Lpmax - c.Lp;
+                        int heal = c.LpMax - c.Lp;
                         if (heal > lpMissing)
                         {
                             heal = lpMissing;

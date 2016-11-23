@@ -8,11 +8,13 @@ public class PowderMonkey : CrewMember
 
     // Use this for initialization
 	public PowderMonkey() : base(){
-        //Initialise the variables
-		Lpmax = 100;
-		Lp = Lpmax;
+		//Initialise the variables
+		BaseAtk = 100;
+		BaseLpMax = 100;
+		LpMax = BaseLpMax;
+		Lp = LpMax;
+		Atk = BaseAtk;
 		RecruitmentCost = 70;
-		Atk = 100;
 		Type = 2;
     }
 }
