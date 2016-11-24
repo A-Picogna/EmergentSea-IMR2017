@@ -200,7 +200,6 @@ public class GameManager : MonoBehaviour {
 					mouseManager.map.graph [x, y].isWalkable = false;
 					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
                     player.NbTotalShip++;
-					ship.PanelHandler = panelHandler;
 				}
 			}
 		}

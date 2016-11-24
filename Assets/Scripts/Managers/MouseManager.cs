@@ -82,7 +82,13 @@ public class MouseManager : MonoBehaviour {
 			if (ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().ShipContained != null) {
 				selectedUnit = ourHitObject.GetComponent<Sea> ().ShipContained;
 				selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
-				panelHandler.updateShip ();
+				panelHandler.updateShipInfo (selectedUnit);
+				panelHandler.removeAllCrewMember ();
+				foreach(CrewMember crewMember in selectedUnit.Crew){
+					panelHandler.addCrewMember (crewMember);
+				}
+				panelHandler.refreshCrewMemberDisplay ();
+				panelHandler.showPanelShip ();
 			} else {
 				if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 					selectedUnit = null;
@@ -135,7 +141,13 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonUp(0)) {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
-			panelHandler.updateShip ();
+			panelHandler.updateShipInfo (selectedUnit);
+			panelHandler.removeAllCrewMember ();
+			foreach(CrewMember crewMember in selectedUnit.Crew){
+				panelHandler.addCrewMember (crewMember);
+			}
+			panelHandler.refreshCrewMemberDisplay ();
+			panelHandler.showPanelShip ();
 		}
 
 		if (Input.GetMouseButtonUp (1)) {

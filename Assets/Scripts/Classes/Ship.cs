@@ -27,7 +27,6 @@ public class Ship : MonoBehaviour {
 	bool dead = false;
 	private string shipName;
 	private List<CrewMember> crew = new List<CrewMember>();
-	private PanelHandler panelHandler;
 	public Vector3 destination;
 	public AudioClip shipMovingSound;
 
@@ -76,14 +75,12 @@ public class Ship : MonoBehaviour {
 		} else {
 			currentPath = null;
 		}
-		panelHandler.updateShip ();
 	}
 
 	public void Die(){
 		dead = true;
 		Destroy (this.GetComponentInChildren<MeshCollider> ());
 		StartCoroutine (Sink ());
-		panelHandler.updateShip ();
 	}
 
 	public void RefuelEnergy(){
@@ -92,7 +89,6 @@ public class Ship : MonoBehaviour {
 			res += c.EnergyQuantity;
 		}
 		energyQuantity = res;
-		panelHandler.updateShip ();
 	}
 
 	IEnumerator Sink (){
@@ -152,7 +148,6 @@ public class Ship : MonoBehaviour {
 				energyQuantity -= 5;
 			}
 		}
-		panelHandler.updateShip ();
 	}
 
 	public bool AtFilibusterRange(Ship target){
@@ -310,7 +305,6 @@ public class Ship : MonoBehaviour {
 			}
 		} while (takingDamages);
 		UpdateShipHp ();
-		panelHandler.updateShip ();
 	}
 
 	public void UpdateShipHp(){
@@ -347,7 +341,6 @@ public class Ship : MonoBehaviour {
 			Destroy (target.Treasure_go);
 			target.RemoveTreasure();
 			energyQuantity -= 3;
-			panelHandler.updateShip ();
 			return true;
 		}
 		else{
@@ -371,7 +364,7 @@ public class Ship : MonoBehaviour {
 			//decrement energyQuantity, to check, debug value
 			//Or set it to 0 to make the ship unable to move
 			energyQuantity -= 5;
-			panelHandler.updateShip ();
+
 			return true;
 		}
 		else{ 
@@ -383,15 +376,11 @@ public class Ship : MonoBehaviour {
 		crew.Add(member);
         hp += member.Lp;
         energyQuantity += member.EnergyQuantity;
-		if (panelHandler)
-			panelHandler.updateShip ();
     }
 
 	public void removeCrewMember(CrewMember member){
 		crew.Remove(member);
         hp -= member.Lp;
-		if (panelHandler)
-			panelHandler.updateShip ();
 	}
 
 
@@ -488,9 +477,6 @@ public class Ship : MonoBehaviour {
 	// ====================
 	// ====================
 
-	public PanelHandler PanelHandler
-	{
-		get { return panelHandler; }
-		set { panelHandler = value; }
-	}
+
+
 }

@@ -36,6 +36,6 @@ public class ShipInfoPanel : MonoBehaviour {
 
 	private void handleClick() {
 		item.fishing ();
-		panelHandler.updateShip ();
+		panelHandler.updateShip (gameManager.currentPlayer, item);
 	}
 }
