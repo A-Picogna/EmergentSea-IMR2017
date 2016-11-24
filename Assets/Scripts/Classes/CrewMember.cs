@@ -34,14 +34,10 @@ public class CrewMember
 
 			int tmp = Mathf.RoundToInt (baseLpMax * (1f + (xp/1000f)) );
 			lp = lp + (tmp - baseLpMax);
-			lpMax = lp + (tmp - baseLpMax);
+			lpMax = lpMax + (tmp - baseLpMax);
 
 			atk = Mathf.RoundToInt (baseAtk * (1f + (xp/1000f)) );
 			energyQuantity = Mathf.RoundToInt (baseEnergyQuantity * (1f + (xp/1000f)) );
-
-			Debug.Log ("================");
-			Debug.Log (lpMax);
-			Debug.Log (lp);
 
 		} else {
 			xp = xpMax;			
