@@ -48,6 +48,7 @@ public class LoadManager : MonoBehaviour {
 	// Private variables
 	private Map MapLoaded;
 	public string MapPrefabToLoad;
+	private int nbCasesTerre;
 
 
 	// Use this before initialization (and between loading Maps)
@@ -115,6 +116,8 @@ public class LoadManager : MonoBehaviour {
 			//Géré par NewPlayUI
 			break;
 		}
+		// On recalcule le nombre de terre
+		GroundFrequencyDropdownCallback(GroundFrequencyParameter);
 	}
 
 	public void DifficultyDropdownCallback(int DifficultyType) {
@@ -123,12 +126,33 @@ public class LoadManager : MonoBehaviour {
 	}
 
 	public void GroundFrequencyDropdownCallback(int GroundFrequencyType) {
+		int facteur = 0;
+		// ANCIENNE VERSION
 		// 0: Très basse
 		// 1: Basse
 		// 2: Normale
 		// 3: Elevée
 		// 4: Très élevée
+		// NOUVELLE VERSION
+		// 0 : Peu
+		// 1 : Normale
+		// 2 : Beaucoup
 		GroundFrequencyParameter = GroundFrequencyType;
+
+		// Calcul du nbcaseinit
+		this.nbCasesTerre = (int)((Math.Sqrt(this.MapX*this.MapY))/2);
+		// Application facteur
+		switch (GroundFrequencyType) {
+			case 0:
+				this.nbCasesTerre = this.nbCasesTerre - 10;
+				break;
+			case 1:
+				break;
+			case 2:
+				this.nbCasesTerre = this.nbCasesTerre + 10;
+				break;
+		}
+		Debug.Log ("nbCasesTerre calculé = " + this.nbCasesTerre.ToString ());
 	}
 
 	public void PortFrequencyDropdownCallback(int PortFrequencyType) {
@@ -172,8 +196,10 @@ public class LoadManager : MonoBehaviour {
         mapSettings.harborPrefab = harborPrefab;
         mapSettings.coastPrefab = coastPrefab;
 
-        mapSettings.height = MapX;
-		mapSettings.width = MapY;
+        mapSettings.height = MapY;
+		mapSettings.width = MapX;
+
+		mapSettings.nbCasesRemplinit = this.nbCasesTerre;
 
 		mapSettings.LaunchMapGeneration ();
 

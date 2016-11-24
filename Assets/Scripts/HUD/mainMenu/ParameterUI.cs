@@ -15,7 +15,7 @@ public class ParameterUI : MonoBehaviour {
 	}
 
 	public void OnBrightnessSliderValueChanged(float number) {
-		Debug.Log ("Number " + number.ToString ());
-		RenderSettings.ambientLight = Color.Lerp(ambientDarkest, ambientLightest, number);
+		//Debug.Log ("Number " + number.ToString ());
+		//RenderSettings.ambientLight = Color.Lerp(ambientDarkest, ambientLightest, number);
 	}
 }
