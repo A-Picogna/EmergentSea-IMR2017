@@ -221,6 +221,8 @@ public class LoadManager : MonoBehaviour {
 
 		mapSettings.LaunchMapLoading (saveMap);
 
+		newObject.name = "Map";
+
 		return mapSettings;
 	}
 
@@ -293,6 +295,8 @@ public class LoadManager : MonoBehaviour {
 		gameSettings.panelHandler = (GameObject.Find ("HUDCanvas")).GetComponent<PanelHandler> ();
 	
 		gameSettings.map = worldMap;
+
+		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
 
 		return gameSettings;
 	}
