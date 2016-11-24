@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PanelHandler : MonoBehaviour {
+	public GameManager gameManager;
+	public MouseManager mouseManager;
 	public GameObject panelHarbor;
 	public GameObject panelTrade;
 	public GameObject panelCrewMember;
@@ -94,8 +97,8 @@ public class PanelHandler : MonoBehaviour {
 	}
 
 	// Update Ship bottom
-	public void updateShipInfo(Ship ship) {
-		shipInfoScript.updateShip (ship);
+	public void updateShipInfo() {
+		shipInfoScript.updateShip (mouseManager.selectedUnit);
 	}
 
 	// Update crew member bottom
@@ -110,16 +113,18 @@ public class PanelHandler : MonoBehaviour {
 	}
 
 	// Update Ship
-	public void updateShip(Player player, Ship ship) {
+	public void updateShip() {
+		List<Ship> currentPlayerFleet = gameManager.currentPlayer.Fleet;
+		List<CrewMember> currentShipCrew = mouseManager.selectedUnit.Crew;
 		removeAllShip ();
-		foreach(Ship shipItem in player.Fleet){
+		foreach(Ship shipItem in currentPlayerFleet){
 			addShip (shipItem);
 		}
 		refreshListShipDisplay ();
 
-		updateShipInfo (ship);
+		updateShipInfo ();
 		removeAllCrewMember ();
-		foreach(CrewMember crewMember in ship.Crew){
+		foreach(CrewMember crewMember in currentShipCrew){
 			addCrewMember (crewMember);
 		}
 		refreshCrewMemberDisplay ();

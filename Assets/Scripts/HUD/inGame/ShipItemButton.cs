@@ -22,7 +22,7 @@ public class ShipItemButton : MonoBehaviour {
 	public void Setup (Ship currentItem, MouseManager mm, PanelHandler ph, ShipInfoPanel sip) {
 		item = currentItem;
 		shipName.text = item.ShipName;
-		percentageQE.value = item.EnergyQuantity;
+		percentageQE.value = (item.EnergyQuantity*100)/item.calculateEQmax();
 		goldAmount.text = amountformatter(item.Gold); // Utility function to form correct numbers
 		foodAmount.text = amountformatter(item.Food);
 
