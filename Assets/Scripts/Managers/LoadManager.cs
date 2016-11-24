@@ -187,6 +187,8 @@ public class LoadManager : MonoBehaviour {
 
 	private Map initMap() {
 		GameObject newObject = Instantiate(mapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
+
 		Map mapSettings = newObject.GetComponent<Map>();
 		//do additional initialization steps here
 
@@ -208,6 +210,8 @@ public class LoadManager : MonoBehaviour {
 
 	private Map loadMap(MapFile saveMap) {
 		GameObject newObject = Instantiate(mapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
+
 		Map mapSettings = newObject.GetComponent<Map>();
 
 		mapSettings.hexPrefab = hexPrefab;
@@ -221,7 +225,6 @@ public class LoadManager : MonoBehaviour {
 
 		mapSettings.LaunchMapLoading (saveMap);
 
-		newObject.name = "Map";
 
 		return mapSettings;
 	}
@@ -288,6 +291,8 @@ public class LoadManager : MonoBehaviour {
 
 	private GameManager initGame(Map worldMap) {
 		GameObject newObject = Instantiate(gameManagerPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
+
 		GameManager gameSettings = newObject.GetComponent<GameManager> ();
 
 		gameSettings.mouseManager = (GameObject.Find ("MouseManager")).GetComponent<MouseManager> ();
@@ -296,7 +301,6 @@ public class LoadManager : MonoBehaviour {
 	
 		gameSettings.map = worldMap;
 
-		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
 
 		return gameSettings;
 	}
