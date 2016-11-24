@@ -165,6 +165,7 @@ public class GameManager : MonoBehaviour {
 				ship.RefuelEnergy();
 			}
 		}
+		checkInit = false;
 	}
 
 	void AddShips(int n){
