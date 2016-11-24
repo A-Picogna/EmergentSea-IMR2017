@@ -209,11 +209,14 @@ public class LoadManager : MonoBehaviour {
 		GameObject pathfinder = GameObject.Find ("Pathfinder");
 		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = MapLoaded;
 
-		GameObject btn_save = GameObject.Find ("btn_save");
-		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
-			LoadManager.instance.savePrefabricatedMap ("test");
-		});
+		//GameObject btn_save = GameObject.Find ("btn_save");
+		//((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+		//	LoadManager.instance.savePrefabricatedMap ("test");
+		//});
 
+		GameObject HUDCanvas = GameObject.Find ("HUDCanvas");
+		PanelHandler panelHandler = HUDCanvas.GetComponent<PanelHandler> ();
+		panelHandler.gameManager = gameManager;
 	}
 
 	private void loadWorld(MapFile saveMap) {
