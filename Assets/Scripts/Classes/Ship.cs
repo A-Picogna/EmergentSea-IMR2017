@@ -239,7 +239,8 @@ public class Ship : MonoBehaviour {
 	}
 		
 	public void Trade(){
-
+		panelHandler.hideAllModals ();
+		panelHandler.showPanelTrade ();
 	}
 
 	public int Attack(int crewUsed, Ship target){

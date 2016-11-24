@@ -38,5 +38,6 @@
         <string name="dark_arts_academy_description">Engager un mage</string>
         <string name="shipyard">Chantier naval</string>
         <string name="shipyard_description">Construire un navire</string>
+        <string name="trade">Echange</string>
     </French>
 </languages>
