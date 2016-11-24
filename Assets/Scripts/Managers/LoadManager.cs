@@ -246,7 +246,7 @@ public class LoadManager : MonoBehaviour {
 			break;
 		case state.StartLoadedMap:
 			Debug.Log ("Chargement d'une map préfabriqué");
-			Debug.Log ("Map à charger :");
+			Debug.Log ("Map à charger :" + MapPrefabToLoad.ToString());
 			loadPrefabricatedMap (MapPrefabToLoad);
 			break;
 		default:

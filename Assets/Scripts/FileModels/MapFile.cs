@@ -4,7 +4,7 @@
 public class MapFile
 {
 	public int width, height;
-	public Node[,] graph;
+	public NodeStruct[] graph;
 }
 
 
