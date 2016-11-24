@@ -115,19 +115,21 @@ public class PanelHandler : MonoBehaviour {
 	// Update Ship
 	public void updateShip() {
 		List<Ship> currentPlayerFleet = gameManager.currentPlayer.Fleet;
-		List<CrewMember> currentShipCrew = mouseManager.selectedUnit.Crew;
-		removeAllShip ();
-		foreach(Ship shipItem in currentPlayerFleet){
-			addShip (shipItem);
-		}
-		refreshListShipDisplay ();
+		if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.Crew != null) {
+			List<CrewMember> currentShipCrew = mouseManager.selectedUnit.Crew;
+			removeAllShip ();
+			foreach (Ship shipItem in currentPlayerFleet) {
+				addShip (shipItem);
+			}
+			refreshListShipDisplay ();
 
-		updateShipInfo ();
-		removeAllCrewMember ();
-		foreach(CrewMember crewMember in currentShipCrew){
-			addCrewMember (crewMember);
+			updateShipInfo ();
+			removeAllCrewMember ();
+			foreach (CrewMember crewMember in currentShipCrew) {
+				addCrewMember (crewMember);
+			}
+			refreshCrewMemberDisplay ();
 		}
-		refreshCrewMemberDisplay ();
 		showPanelShip ();
 	}
 }
