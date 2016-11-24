@@ -10,12 +10,15 @@ public class Player : MonoBehaviour {
 	private Color color;
 	private List<Ship> fleet;
 	private List<Harbor> harbors;
+    private int nbTotalShip;
     
 	public Player(string _type, Color _color, string _name){
 		type = _type;
 		color = _color;
 		name = _name;
 		fleet = new List<Ship> ();
+        harbors = new List<Harbor>();
+        nbTotalShip = 0;
 	}
 
 
@@ -60,4 +63,10 @@ public class Player : MonoBehaviour {
 		get { return harbors; }
 		set { harbors = value; }
 	}
+
+    public int NbTotalShip
+    {
+        get { return nbTotalShip; }
+        set { nbTotalShip = value; }
+    }
 }

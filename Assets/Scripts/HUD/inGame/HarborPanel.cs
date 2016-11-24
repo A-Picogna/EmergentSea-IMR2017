@@ -6,7 +6,12 @@ using System.IO;
 public class HarborPanel : MonoBehaviour {
 	public GameObject panel;
 	public Button button;
-	public Button buttonTest;
+	public Button innButton;
+	public Button storehouseButton;
+	public Button warehouseButton;
+	public Button slumsButton;
+	public Button darkArtsAcademyButton;
+	public Button shipyardButton;
 
 	public Text harborHeader;
 	public Text harborDescription;
@@ -18,10 +23,20 @@ public class HarborPanel : MonoBehaviour {
 	public Text shipyard;
 	private Lang lang;
 
+    public string buttonClicked;
+
+    public bool selected;
+
 	void Start () {
 		panel.SetActive (false);
 		button.onClick.AddListener (hidePanel);
-		buttonTest.onClick.AddListener (showPanel);
+
+		innButton.onClick.AddListener (handleClickInn);
+		storehouseButton.onClick.AddListener (handleClickStorehouse);
+		warehouseButton.onClick.AddListener (handleClickWarehouse);
+		slumsButton.onClick.AddListener (handleClickSlums);
+		darkArtsAcademyButton.onClick.AddListener (handleClickDarkArtsAcademy);
+		shipyardButton.onClick.AddListener (handleClickShipyard);
 
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		harborHeader.text = lang.getString("harbor");
@@ -32,6 +47,8 @@ public class HarborPanel : MonoBehaviour {
 		slums.text = lang.getString("slums");
 		darkArtsAcademy.text = lang.getString("dark_arts_academy");
 		shipyard.text = lang.getString("shipyard");
+
+        selected = false;
 	}
 
 	public void showPanel() {
@@ -40,5 +57,38 @@ public class HarborPanel : MonoBehaviour {
 
 	public void hidePanel() {
 		panel.SetActive (false);
-	}
+        selected = false;
+    }
+
+	private void handleClickInn() {
+
+        buttonClicked = "tavern";
+        selected = true;
+    }
+
+	private void handleClickStorehouse() {
+
+        buttonClicked = "store";
+        selected = true;
+    }
+	private void handleClickWarehouse() {
+
+        buttonClicked = "warehouse";
+        selected = true;
+    }
+	private void handleClickSlums() {
+
+        buttonClicked = "shallows";
+        selected = true;
+    }
+	private void handleClickDarkArtsAcademy() {
+
+        buttonClicked = "daa";
+        selected = true;
+    }
+	private void handleClickShipyard() {
+
+        buttonClicked = "shipyard";
+        selected = true;
+    }
 }

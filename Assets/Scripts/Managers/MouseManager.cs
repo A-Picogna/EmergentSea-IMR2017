@@ -14,6 +14,11 @@ public class MouseManager : MonoBehaviour {
 	public Projector selectionCircle;
 	public Pathfinder pathfinder;
 	private GameObject ourHitObject;
+    public bool harbor = false;
+    public Harbor currentHarbor;
+
+	// UI
+	public PanelHandler panelHandler;
 
 	// Attributes
 	public Vector2 mousePos;
@@ -63,6 +68,7 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonUp (0)) {
 			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 				selectedUnit = null;
+				panelHandler.hideAllBottom ();
 			}
 		}
 	}
@@ -76,29 +82,51 @@ public class MouseManager : MonoBehaviour {
 			if (ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().ShipContained != null) {
 				selectedUnit = ourHitObject.GetComponent<Sea> ().ShipContained;
 				selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
+				panelHandler.updateShip ();
 			} else {
 				if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 					selectedUnit = null;
+					panelHandler.hideAllBottom ();
 				}
 			}
 		}
 
 		if (Input.GetMouseButtonUp (1)) {
-			if (ourHitObject.GetComponent<Sea> () != null) {
-				if (ourHitObject.GetComponent<Sea> ().ShipContained != null) {
-					Ship target = ourHitObject.GetComponent<Sea> ().ShipContained;
-					selectedUnit.Interact (target);
-				} else {
-					if (ourHitObject.GetComponent<Sea> ().Treasure_go != null) {
-						Sea target = ourHitObject.GetComponent<Sea> ();
-						selectedUnit.HoistTreasure (target);
-					} else { 
-						if (selectedUnit != null && selectedUnit.Playable) {
-							pathfinder.PathRequest (selectedUnit, ourHitObject);
-						}
-					}
-				}
-			}
+            if (ourHitObject.GetComponent<Harbor>() != null)
+            {
+                harbor = ourHitObject.GetComponent<Harbor>().Interact(selectedUnit, map);
+                if (harbor)
+                {
+                    currentHarbor = ourHitObject.GetComponent<Harbor>().getHarbor();
+                }
+            }
+            else
+            {
+                panelHandler.hidePanelHarbor();
+                if (ourHitObject.GetComponent<Sea>() != null)
+                {
+                    if (ourHitObject.GetComponent<Sea>().ShipContained != null)
+                    {
+                        Ship target = ourHitObject.GetComponent<Sea>().ShipContained;
+                        selectedUnit.Interact(target);
+                    }
+                    else
+                    {
+                        if (ourHitObject.GetComponent<Sea>().Treasure_go != null)
+                        {
+                            Sea target = ourHitObject.GetComponent<Sea>();
+                            selectedUnit.HoistTreasure(target);
+                        }
+                        else
+                        {
+                            if (selectedUnit != null && selectedUnit.Playable)
+                            {
+                                pathfinder.PathRequest(selectedUnit, ourHitObject);
+                            }
+                        }
+                    }
+                }
+            }
 		}
 	}
 
@@ -107,6 +135,7 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonUp(0)) {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
+			panelHandler.updateShip ();
 		}
 
 		if (Input.GetMouseButtonUp (1)) {

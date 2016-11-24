@@ -10,10 +10,32 @@ public class ShipInfoPanel : MonoBehaviour {
 	public Text goldAmount;
 	public Text foodAmount;
 	public Text fishingButtonText;
+
+	public Button fishingButton;
+	public GameManager gameManager;
+	public PanelHandler panelHandler;
+
 	private Lang lang;
+	private Ship item;
 
 	void Start () {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
+	}
+
+	public void updateShip(Ship currentShip) {
+		item = currentShip;
+		shipName.text = currentShip.ShipName;
+		percentageQE.value = (currentShip.EnergyQuantity*100)/currentShip.calculateEQmax();
+		percentageQEText.text = currentShip.EnergyQuantity + "/" + currentShip.calculateEQmax();
+		goldAmount.text = currentShip.Gold + " " + lang.getString ("gold");
+		foodAmount.text = currentShip.Food + " " + lang.getString ("food");
 		fishingButtonText.text = lang.getString("fishing");
+		fishingButton.onClick.RemoveAllListeners ();
+		fishingButton.onClick.AddListener(handleClick);
+	}
+
+	private void handleClick() {
+		item.fishing ();
+		panelHandler.updateShip ();
 	}
 }

@@ -16,9 +16,10 @@ public class Map : MonoBehaviour {
     public GameObject harborPrefab;
 	public GameObject foodPrefab;
 	public GameObject treasurePrefab;
+    public GameObject shipPrefab;
 
-	// Map in graph to calculate pathfinding
-	public Node[,] graph;
+    // Map in graph to calculate pathfinding
+    public Node[,] graph;
 
 	// size of map in terms of numer of hexagon
 	public int width;
@@ -295,7 +296,7 @@ public class Map : MonoBehaviour {
 
             drawEdgesLines(hex_go);
             //Update the graph
-            graph[GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].y] = new Node(GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].worldPos, false, "harbor");
+            graph[GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].y] = new Node(GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].y, GroupListPossibleHarbor[island][NodeHarbor].worldPos, false, "harbor");
         }
     }
 

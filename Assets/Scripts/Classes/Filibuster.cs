@@ -7,13 +7,14 @@ public class Filibuster : CrewMember
 {
 
     // Use this for initialization
-    public Filibuster(){
-        //Initialise the variables
-		Lpmax = 200;
-		Lp = Lpmax;
-		EnergyQuantity = 100;
-		Xp = 0;
+	public Filibuster() : base(){
+		//Initialise the variables
+		BaseAtk = 150;
+		BaseLpMax = 200;
+		LpMax = BaseLpMax;
+		Lp = LpMax;
+		Atk = BaseAtk;
 		RecruitmentCost = 200;
-		Atk = 150;
+		Type = 1;
     }
 }

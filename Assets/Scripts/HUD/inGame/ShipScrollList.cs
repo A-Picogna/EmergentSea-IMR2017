@@ -13,7 +13,12 @@ public class ShipScrollList : MonoBehaviour {
 	private List<Ship> itemList;
 	public Transform contentPanel;
 	public Text fleetHeader;
+	public ShipObjectPool buttonObjectPool;
 	private Lang lang;
+
+	public MouseManager mouseManager;
+	public PanelHandler panelHandler;
+	public ShipInfoPanel shipInfoPanel;
 
 	void Start () {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
@@ -29,17 +34,18 @@ public class ShipScrollList : MonoBehaviour {
 	
 	private void AddButtons() {
 		foreach (var item in itemList) {
-			GameObject newItemButton = Instantiate (shipItemButton) as GameObject;
+			GameObject newItemButton = buttonObjectPool.GetObject();
 			ShipItemButton shipButton = newItemButton.GetComponent<ShipItemButton> ();
-			shipButton.Setup (item);
+			shipButton.Setup (item, mouseManager, panelHandler, shipInfoPanel);
 			newItemButton.transform.SetParent (contentPanel, false);
+			newItemButton.transform.localScale = Vector3.one;
 		}
 	}
 
 	private void RemoveButtons() {
 		while (contentPanel.childCount > 0) {
 			GameObject toRemove = transform.GetChild (0).gameObject;
-			Destroy(toRemove);
+			buttonObjectPool.ReturnObject (toRemove);
 		}
 	}
 
@@ -54,5 +60,9 @@ public class ShipScrollList : MonoBehaviour {
 				break;
 			}
 		}
+	}
+
+	public void RemoveAll() {
+		itemList = new List<Ship> ();
 	}
 }

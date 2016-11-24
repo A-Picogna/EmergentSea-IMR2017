@@ -7,20 +7,14 @@ public class Admiral : CrewMember
 {
 
     // Use this for initialization
-    void Start()
-    {
-        //Initialise the variables
-		Lpmax = 300;
-		Lp = Lpmax;
-		EnergyQuantity = 300;
-		Xp = 0;
-		RecruitmentCost = 0;
-		Atk = 0;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+    public Admiral(){
+		//Initialise the variables
+		BaseAtk = 0;
+		BaseLpMax = 300;
+		LpMax = BaseLpMax;
+		Lp = LpMax;
+		Atk = BaseAtk;
+		RecruitmentCost = 2000;
+		Type = 0;
     }
 }

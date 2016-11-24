@@ -25,13 +25,15 @@ public class GameManager : MonoBehaviour {
 
 	// UI
 	public PanelHandler panelHandler;
+	private bool checkInit = false;
 
 	// Attributes
-	Player currentPlayer;
+	public Player currentPlayer;
 	List<Player> players;
 	int currentPlayerNumber;
 	int turnNumber;
 	System.Random rand;
+    string lastSelected = "";
 
 
 	// Use this for initialization
@@ -46,6 +48,11 @@ public class GameManager : MonoBehaviour {
 		currentPlayer = players [currentPlayerNumber];
 		endTurnButton.onClick.AddListener(() => EndTurn());
 		AddShips (10);
+		foreach(Player player in players){
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.UpdateShipHp ();
+			}
+		}
 		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = true;
@@ -55,26 +62,54 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		foreach(Player player in players){
+		List<Player> playersCopy = players;
+		List<Ship> currentPlayerFleet = currentPlayer.Fleet;
+		foreach(Player player in playersCopy){
 			if ( (player.Fleet == null || player.Fleet.Count == 0) && (player.Harbors == null || player.Harbors.Count == 0)) {
 				GameOver ();
 			}
 			CheckShipsToDestroy (player);
 		}
-		if (mouseManager.selectedUnit == null) {
+		if (!checkInit) {
+			panelHandler.removeAllShip ();
+			foreach(Ship ship in currentPlayerFleet){
+				panelHandler.addShip (ship);
+			}
+			panelHandler.refreshListShipDisplay ();
+			checkInit = true;
+		}
+        if(mouseManager.harbor == true)
+        {
+            panelHandler.showPanelHarbor();
+            lastSelected = mouseManager.selectedUnit.ShipName;
+            mouseManager.harbor = false;
+        }
+        if(panelHandler.panelHarbor.GetComponent<HarborPanel>().selected)
+        {
+            panelHandler.panelHarbor.GetComponent<HarborPanel>().selected = false;
+            mouseManager.currentHarbor.doAction(mouseManager.selectedUnit, map, panelHandler.panelHarbor.GetComponent<HarborPanel>().buttonClicked);
+        }
+        if (mouseManager.selectedUnit == null) {
 			panelHandler.hidePanelUnkown ();
 			panelHandler.hidePanelShip ();
-		} else if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.GetType() == typeof(Ship) && mouseManager.selectedUnit.Playable) {
+            panelHandler.hidePanelHarbor();
+        } else if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.GetType() == typeof(Ship) && mouseManager.selectedUnit.Playable) {
 			panelHandler.hidePanelUnkown ();
+            if(mouseManager.selectedUnit.ShipName != lastSelected)
+            {
+                panelHandler.hidePanelHarbor();
+            }
 		} else if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.GetType() == typeof(Ship) && !mouseManager.selectedUnit.Playable) {
+			panelHandler.hidePanelShip ();
 			panelHandler.initPanelEnnemyShip ();
+            panelHandler.hidePanelHarbor();
 		}
 	}
 
 	void CheckShipsToDestroy(Player player){
 		Ship shipToDestroy = null;
 		foreach (Ship ship in player.Fleet) {
-			if (ship.Hp <= 0) {
+			if (ship.Hp < 0) {
 				shipToDestroy = ship;
 			}
 		}
@@ -97,7 +132,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void EndTurn(){
-		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
+		mouseManager.selectedUnit = null;
+        if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = false;
 			}
@@ -107,10 +143,26 @@ public class GameManager : MonoBehaviour {
 			turnNumber++;
 		currentPlayer = players [currentPlayerNumber];
 		Debug.Log("Its turn of player : "+currentPlayer.Name);
-		Debug.Log("Turn number : "+turnNumber);
-		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
+        Debug.Log("Turn number : " + turnNumber);
+        foreach (Harbor harbor in currentPlayer.Harbors)
+        {
+            if (harbor.Building)
+            {
+                if (harbor.RemainingBuildingTime > 1)
+                {
+                    harbor.RemainingBuildingTime--;
+                    Debug.Log(harbor.RemainingBuildingTime);
+                }
+                else
+                {
+                    harbor.Build(map);
+                }
+            }
+        }
+        if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = true;
+				ship.RefuelEnergy();
 			}
 		}
 	}
@@ -122,22 +174,33 @@ public class GameManager : MonoBehaviour {
 				int y = rand.Next (1, mouseManager.map.height);
 				if (mouseManager.map.graph [x, y].type == "sea" && mouseManager.map.graph [x, y].tag && mouseManager.map.graph [x, y].isWalkable) {
 					GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [x, y].worldPos, Quaternion.identity);
-					ship_go.name = "Ship_" + x + "_" + y;
+					ship_go.name = "Ship_" + player.Name + "_" + player.NbTotalShip;
 					ship_go.GetComponent<Ship> ().ShipX = x;
 					ship_go.GetComponent<Ship> ().ShipY = y;
-					ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + count.ToString ();
+					ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + player.NbTotalShip;
 					ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 					Ship ship = ship_go.GetComponent<Ship> ();
 					ship.Owner = player;
-					ship.addCrewMember(new Conjurer());
+					CrewMember cm = new Conjurer ();
+					cm.Lp = 80;
+					cm.LpMax = 100;
+					cm.Xp = 20;
+					ship.addCrewMember(cm);
 					ship.addCrewMember(new Conjurer());
 					ship.addCrewMember(new Filibuster());
 					ship.addCrewMember(new PowderMonkey());
-					ship.addCrewMember(new PowderMonkey());
+					if (count > 5) {
+						cm = new PowderMonkey ();
+						cm.Lp = 75;
+						cm.Xp = 40;
+						ship.addCrewMember (cm);
+					}
 					ship.addCrewMember(new PowderMonkey());
 					player.Fleet.Add (ship);
 					mouseManager.map.graph [x, y].isWalkable = false;
 					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
+                    player.NbTotalShip++;
+					ship.PanelHandler = panelHandler;
 				}
 			}
 		}
