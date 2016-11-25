@@ -22,19 +22,27 @@ public class MouseManager : MonoBehaviour {
 
 	// Attributes
 	public Vector2 mousePos;
+	public Texture2D mainCursorTexture;
+	public Texture2D attackCursorTexture;
+	public Texture2D interactCursorTexture;
 
 	// Use this for initialization
 	void Start () {
-	
+		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
+		/*
 		if (Input.GetMouseButtonDown (0) || Input.GetMouseButtonUp (0) || Input.GetMouseButtonUp (1)) {
 			if (!EventSystem.current.IsPointerOverGameObject ()) {
 				RayCast ();
 			}
+		}*/
+
+		if (!EventSystem.current.IsPointerOverGameObject ()) {
+			RayCast ();
 		}
 
 		if (selectedUnit != null) {
@@ -61,6 +69,9 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_Nothing(){
+
+		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+
 		if (Input.GetMouseButtonDown (0)) {
 			mousePos = Input.mousePosition;
 		}
@@ -74,6 +85,13 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_Hex(GameObject ourHitObject) {
+
+		if (ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().ShipContained != null || ourHitObject.GetComponent<Harbor> () != null || ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().Treasure_go != null) {
+			Cursor.SetCursor (interactCursorTexture, Vector2.zero, CursorMode.Auto);
+		} else {
+			Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+		}
+
 		if (Input.GetMouseButtonDown (0)) {
 			mousePos = Input.mousePosition;
 		}
@@ -131,6 +149,7 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_Unit(GameObject ourHitObject) {
+		Cursor.SetCursor(interactCursorTexture, Vector2.zero, CursorMode.Auto);
 		//Debug.Log("Raycast hit: " + ourHitObject.name );
 		if (Input.GetMouseButtonUp(0)) {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();

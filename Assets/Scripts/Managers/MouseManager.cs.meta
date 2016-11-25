@@ -1,10 +1,17 @@
 fileFormatVersion: 2
 guid: 943b09572ba25514481b4c14e217c712
-timeCreated: 1475585173
+timeCreated: 1480089952
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - map: {instanceID: 0}
+  - selectedUnit: {instanceID: 0}
+  - selectionCircle: {instanceID: 0}
+  - pathfinder: {instanceID: 0}
+  - currentHarbor: {instanceID: 0}
+  - panelHandler: {instanceID: 0}
+  - cursorTexture: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
