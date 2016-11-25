@@ -4,9 +4,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine.SceneManagement;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 public class Map : MonoBehaviour {
 
 	public GameObject hexPrefab;
@@ -56,11 +57,14 @@ public class Map : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
+	}
+
+	public void LaunchMapGeneration () {
 		size = width * height;
 		rand = new System.Random();
-        GroupLand = new List<Node>();
-        GroupListPossibleHarbor = new List<List<Node>>();
-        worldCoord = new Vector3(0, 0, 0);
+		GroupLand = new List<Node>();
+		GroupListPossibleHarbor = new List<List<Node>>();
+		worldCoord = new Vector3(0, 0, 0);
 		mapFausse = false;
 		regenerateCount = 1;
 		worldCoordFood = new Vector3(0, 0, 0);
@@ -85,16 +89,42 @@ public class Map : MonoBehaviour {
 
 		InstantiateMap ();
 
-        //Generate coast and harbor
-        generateHarbor();
+		//Generate coast and harbor
+		generateHarbor();
 
 		generateFood ();
 		generateTreasure ();
 
 		// Add neighbours
 		AddNeighboursToNodes ();
-
 	}
+
+	public void LaunchMapLoading(MapFile saveMap) {
+
+		LoadMap (saveMap);
+
+		this.size = this.width * this.height;
+		rand = new System.Random();
+		//GroupLand = new List<Node>();						// On a déjà crée les harbors, pas la paine
+		//GroupListPossibleHarbor = new List<List<Node>>(); // On a déjà crée les harbors, pas la peine
+		worldCoord = new Vector3(0, 0, 0);
+		//mapFausse = false;
+		//regenerateCount = 1;
+		worldCoordFood = new Vector3(0, 0, 0);
+		worldCoordTreasure = new Vector3(0, 0, 0);
+
+		InstantiateMap ();
+
+		//Generate coast and harbor --Already generated---
+		//generateHarbor();
+
+		generateFood ();
+		generateTreasure ();
+
+		// Add neighbours
+		AddNeighboursToNodes ();
+	}
+
 	// Update is called once per frame
 	void Update () {
 	
@@ -248,7 +278,7 @@ public class Map : MonoBehaviour {
         for (int island = 0; island < idGroupLand; island++)
         {
             int NodeHarbor = rand.Next(0, GroupListPossibleHarbor[island].Count);
-            Debug.Log("Ile : " + island + " port en x : " + GroupListPossibleHarbor[island][NodeHarbor].x + " en y : " + GroupListPossibleHarbor[island][NodeHarbor].y);
+            //Debug.Log("Ile : " + island + " port en x : " + GroupListPossibleHarbor[island][NodeHarbor].x + " en y : " + GroupListPossibleHarbor[island][NodeHarbor].y);
             
             //Destroy doesn't work !
             GameObject remplacable = GameObject.Find("Hex_" + GroupListPossibleHarbor[island][NodeHarbor].x + "_" + GroupListPossibleHarbor[island][NodeHarbor].y);
@@ -301,6 +331,9 @@ public class Map : MonoBehaviour {
 					break;
 				case "land":
 					hex_go = (GameObject)Instantiate (landPrefab, graph [x, y].worldPos, Quaternion.identity);
+					break;
+				case "harbor":
+					hex_go = (GameObject)Instantiate (harborPrefab, graph [x, y].worldPos, Quaternion.identity);
 					break;
 				}
 				drawEdgesLines(hex_go);
@@ -449,5 +482,68 @@ public class Map : MonoBehaviour {
 		get{ return size; }
 	}
 
+	public MapFile SaveMap() {
+		int index = 0;
+		MapFile mapSaved = new MapFile();
+		mapSaved.height = this.height;
+		Debug.Log ("Height: "+this.height.ToString());
+		mapSaved.width = this.width;
+		Debug.Log ("Width: "+this.width.ToString());
+		mapSaved.graph = new NodeStruct[(this.height * this.width)];
+
+		Debug.Log ("MapSaved_size=" + (this.height * this.width));
+
+		int k = 0;
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.height; j++) {
+				index = (i * this.height) + j;
+				mapSaved.graph [index] = new NodeStruct(this.graph [i, j].x, 
+																		this.graph [i, j].y, 
+																		this.graph [i, j].isWalkable, 
+																		this.graph [i, j].type);
+				k++;
+			}
+		}
+		Debug.Log ("K = " + k.ToString ());
+
+		return mapSaved;
+	}
+
+	public void LoadMap(MapFile SavedMap) {
+		this.height = SavedMap.height;
+		Debug.Log ("Height: "+this.height.ToString());
+		this.width = SavedMap.width;
+		Debug.Log ("Width: "+this.width.ToString());
+
+		this.graph = new Node[width, height];
+
+		int index = 0;
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.height; j++) {
+				index = (i * this.height) + j;
+				Debug.Log (SavedMap.graph [index].type);
+
+				// Use the loop for initialise de graph too, we save one loop with this
+				float xPos = SavedMap.graph[index].x * xOffset;
+
+				// if we're an odd line, we need to reduce the offset by half
+				if (SavedMap.graph[index].y % 2 == 1) {
+					xPos += xOffset / 2f;
+				}
+
+				Vector3 worldPosition = new Vector3 (xPos, 0, SavedMap.graph[index].y * zOffset);
+
+				this.graph [i, j] = new Node(SavedMap.graph[index].x,
+					SavedMap.graph[index].y,
+					worldPosition,
+					SavedMap.graph[index].isWalkable,
+					SavedMap.graph[index].type);
+
+				Debug.Log ("(i * this.height) + j=" + ((i * this.height) + j).ToString());
+			}
+		}
+
+
+	}
 
 }
