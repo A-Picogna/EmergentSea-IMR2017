@@ -237,8 +237,7 @@ public class Map : MonoBehaviour {
                                 worldCoord = remplacable.transform.position;
                                 remplacable.name = remplacable.name + "_trash";
                                 Destroy(remplacable);
-
-                                //Change this for the coast prefab !
+                                
                                 GameObject hex_go = (GameObject)Instantiate(coastPrefab, worldCoord, Quaternion.identity);
 
                                 hex_go.name = "Hex_" + GroupLand[0].x + "_" + GroupLand[0].y;
@@ -249,7 +248,10 @@ public class Map : MonoBehaviour {
 
                                 drawEdgesLines(hex_go);
                                 //Add it to the list of possible harbor
-                                ListPossibleHarbor.Add(GroupLand[0]);
+                                if (GroupLand[0].getSeaNodesNeighbours(graph).Count() > 1)
+                                {
+                                    ListPossibleHarbor.Add(GroupLand[0]);
+                                }
                             }
                         }
                     }
