@@ -47,7 +47,7 @@ public class SceneLoader : MonoBehaviour {
 		yield return new WaitForSeconds (1);
 
 		// Start an ansync operation to load the scene
-		AsyncOperation async = SceneManager.LoadSceneAsync(1);
+		AsyncOperation async = SceneManager.LoadSceneAsync("map");
 
 		while (!async.isDone) {
 			yield return null;
