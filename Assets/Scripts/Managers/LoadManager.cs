@@ -29,10 +29,10 @@ public class LoadManager : MonoBehaviour {
 	// MAP INFORMATION
 	public int nbOfSharks = 0; // For testing purposes
 	public int MapWidthParameter = 2;
-	public int DifficultyParameter = 2;
-	public int GroundFrequencyParameter = 2;
-	public int PortFrequencyParameter = 2;
-	public int TreasureFrequencyParameter = 2;
+	public int DifficultyParameter = 0;
+	public int GroundFrequencyParameter = 1;
+	public int PortFrequencyParameter = 1;
+	public int TreasureFrequencyParameter = 1;
 	public int MapX = 0;
 	public int MapY = 0;
 	//public int Parameter =;
@@ -49,6 +49,7 @@ public class LoadManager : MonoBehaviour {
 	private Map MapLoaded;
 	public string MapPrefabToLoad;
 	private int nbCasesTerre;
+	private int nbCasesTresors;
 
 
 	// Use this before initialization (and between loading Maps)
@@ -61,7 +62,6 @@ public class LoadManager : MonoBehaviour {
 			LoadManagerState = state.Inactive;
 			MapWidthDropdownCallback(MapWidthParameter);
 		}
-			
 
 		//If instance already exists and it's not this:
 		else if (instance != this)
@@ -118,6 +118,7 @@ public class LoadManager : MonoBehaviour {
 		}
 		// On recalcule le nombre de terre
 		GroundFrequencyDropdownCallback(GroundFrequencyParameter);
+		TreasureFrequencyDropdownCallback(GroundFrequencyParameter);
 	}
 
 	public void DifficultyDropdownCallback(int DifficultyType) {
@@ -126,14 +127,6 @@ public class LoadManager : MonoBehaviour {
 	}
 
 	public void GroundFrequencyDropdownCallback(int GroundFrequencyType) {
-		int facteur = 0;
-		// ANCIENNE VERSION
-		// 0: Très basse
-		// 1: Basse
-		// 2: Normale
-		// 3: Elevée
-		// 4: Très élevée
-		// NOUVELLE VERSION
 		// 0 : Peu
 		// 1 : Normale
 		// 2 : Beaucoup
@@ -144,12 +137,12 @@ public class LoadManager : MonoBehaviour {
 		// Application facteur
 		switch (GroundFrequencyType) {
 			case 0:
-				this.nbCasesTerre = this.nbCasesTerre - 10;
+			this.nbCasesTerre = Mathf.RoundToInt(this.nbCasesTerre * 0.5f);
 				break;
 			case 1:
 				break;
 			case 2:
-				this.nbCasesTerre = this.nbCasesTerre + 10;
+			this.nbCasesTerre = Mathf.RoundToInt(this.nbCasesTerre * 1.5f);
 				break;
 		}
 		Debug.Log ("nbCasesTerre calculé = " + this.nbCasesTerre.ToString ());
@@ -165,12 +158,25 @@ public class LoadManager : MonoBehaviour {
 	}
 
 	public void TreasureFrequencyDropdownCallback(int TreasureFrequencyType) {
-		// 0: Très basse
-		// 1: Basse
-		// 2: Normale
-		// 3: Elevée
-		// 4: Très élevée
+		// 0 : Peu
+		// 1 : Normale
+		// 2 : Beaucoup
 		TreasureFrequencyParameter = TreasureFrequencyType;
+
+		// Calcul du nbcaseinit
+		this.nbCasesTresors = Mathf.RoundToInt( (this.MapX*this.MapY) * 0.015f);
+		// Application facteur
+		switch (TreasureFrequencyType) {
+		case 0:
+			this.nbCasesTresors = Mathf.RoundToInt(this.nbCasesTresors * 0.5f);
+			break;
+		case 1:
+			break;
+		case 2:
+			this.nbCasesTresors = Mathf.RoundToInt(this.nbCasesTresors * 1.5f);
+			break;
+		}
+		Debug.Log ("nbCasesTresors calculé = " + this.nbCasesTresors.ToString ());
 	}
 
 	public void MapXSliderCallBack(float MapX) {
@@ -202,6 +208,7 @@ public class LoadManager : MonoBehaviour {
 		mapSettings.width = MapX;
 
 		mapSettings.nbCasesRemplinit = this.nbCasesTerre;
+		mapSettings.nombreCasesTreasure = this.nbCasesTresors;
 
 		mapSettings.LaunchMapGeneration ();
 
@@ -297,6 +304,7 @@ public class LoadManager : MonoBehaviour {
 
 		gameSettings.mouseManager = (GameObject.Find ("MouseManager")).GetComponent<MouseManager> ();
 		gameSettings.endTurnButton = (GameObject.Find ("btn_roundEnd")).GetComponent<UnityEngine.UI.Button> ();
+		gameSettings.textEndTurnNumber = (GameObject.Find ("txt_roundNumber")).GetComponent<UnityEngine.UI.Text> ();
 		gameSettings.panelHandler = (GameObject.Find ("HUDCanvas")).GetComponent<PanelHandler> ();
 	
 		gameSettings.map = worldMap;

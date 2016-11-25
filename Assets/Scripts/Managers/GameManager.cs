@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
 	public MouseManager mouseManager;
 	public Map map;
 	public Button endTurnButton;
+	public Text textEndTurnNumber;
 
 	// Prefabs
 	public GameObject shipPrefab;
@@ -46,7 +47,8 @@ public class GameManager : MonoBehaviour {
 		players.Add (new Player ("IA", Color.blue, "Player2"));
 		currentPlayerNumber = 0;
 		currentPlayer = players [currentPlayerNumber];
-		endTurnButton.onClick.AddListener(() => EndTurn());
+		endTurnButton.onClick.AddListener(() => NextPlayer());
+		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
 		AddShips (10);
 		foreach(Player player in players){
 			foreach (Ship ship in currentPlayer.Fleet) {
@@ -131,7 +133,12 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	void EndTurn(){
+	void NextTurn(){
+		turnNumber++;
+		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
+	}
+
+	void NextPlayer(){
 		mouseManager.selectedUnit = null;
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
@@ -139,11 +146,10 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
-		if (currentPlayerNumber == 0)
-			turnNumber++;
+		if (currentPlayerNumber == 0) {
+			NextTurn ();
+		}
 		currentPlayer = players [currentPlayerNumber];
-		Debug.Log("Its turn of player : "+currentPlayer.Name);
-        Debug.Log("Turn number : " + turnNumber);
         foreach (Harbor harbor in currentPlayer.Harbors)
         {
             if (harbor.Building)
@@ -170,7 +176,8 @@ public class GameManager : MonoBehaviour {
 
 	void AddShips(int n){
 		foreach (Player player in players) {
-			for (int count = 1; count <= n; count++) {
+			int count = 1;
+			while (count <= n) {
 				int x = rand.Next (1, mouseManager.map.width);
 				int y = rand.Next (1, mouseManager.map.height);
 				if (mouseManager.map.graph [x, y].type == "sea" && mouseManager.map.graph [x, y].tag && mouseManager.map.graph [x, y].isWalkable) {
@@ -201,7 +208,7 @@ public class GameManager : MonoBehaviour {
 					mouseManager.map.graph [x, y].isWalkable = false;
 					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
                     player.NbTotalShip++;
-					ship.PanelHandler = panelHandler;
+					count++;
 				}
 			}
 		}

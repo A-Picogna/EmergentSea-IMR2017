@@ -6,7 +6,7 @@ public class Ship : MonoBehaviour {
 
 	private List<Node> currentPath = null;
 	private int food = 100;
-	private int gold = 100;
+	private int gold = 3000;
 	private int hp = 0;
 	private int energyQuantity = 0;
 	private int shipX = -1;
@@ -37,6 +37,7 @@ public class Ship : MonoBehaviour {
 		Admiral admiral = new Admiral();
         addCrewMember(admiral);
 		destination = transform.position;
+		panelHandler = GameObject.Find ("HUDCanvas").GetComponent<PanelHandler> ();
 	}
 
 	// Update is called once per frame
