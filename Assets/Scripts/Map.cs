@@ -4,9 +4,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine.SceneManagement;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 public class Map : MonoBehaviour {
 
 	public GameObject hexPrefab;
