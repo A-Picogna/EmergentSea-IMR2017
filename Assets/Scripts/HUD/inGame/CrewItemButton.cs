@@ -7,9 +7,8 @@ using System.IO;
 public class CrewItemButton : MonoBehaviour {
 	public Button button;
 	public Image type;
-	public Text pvLabel;
 	public Slider percentagePV;
-	public Text xpLabel;
+	public Text level;
 	public Slider percentageXP;
 
 	private Lang lang;
@@ -23,20 +22,19 @@ public class CrewItemButton : MonoBehaviour {
 	public void Setup (CrewMember currentItem) {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		item = currentItem;
-		if (currentItem.Type == 0)
+		if (item.Type == 0)
 			type.sprite =  Resources.Load<Sprite>("Images/admiral_icon");
-		else if (currentItem.Type == 1)
+		else if (item.Type == 1)
 			type.sprite =  Resources.Load<Sprite>("Images/sword_icon");
-		else if (currentItem.Type == 2)
+		else if (item.Type == 2)
 			type.sprite =  Resources.Load<Sprite>("Images/pistol_icon");
-		else if (currentItem.Type == 3)
+		else if (item.Type == 3)
 			type.sprite =  Resources.Load<Sprite>("Images/mage_icon");
-		pvLabel.text = lang.getString("pv");
 		if (item.LpMax > 0)
 			percentagePV.value = (item.Lp*100)/item.LpMax;
 		else
 			percentagePV.value = item.LpMax;
-		xpLabel.text = lang.getString("xp");
+		level.text = item.Level.ToString();
 		percentageXP.value = item.Xp;
 	}
 

@@ -11,6 +11,7 @@ public class CrewMember
 	baseEnergyQuantity,
 	energyQuantity,
 	xp, 
+	allxp,
 	recruitmentCost, 
 	baseAtk,
 	atk, 
@@ -23,24 +24,46 @@ public class CrewMember
 		baseEnergyQuantity = 5;
 		energyQuantity = baseEnergyQuantity;
 		xp = 0;
+		allxp = 0;
 		xpMax = 1000;
-		//Level = 1;
-		//LevelMax = 10;
+		level = 1;
+		//levelMax = 10;
 	}
 
 	public void gainXP(int value){
-		if ((xp + value) <= xpMax) {
+		if ((allxp + value) <= xpMax) {
+			allxp += value;
 			xp += value;
 
-			int tmp = Mathf.RoundToInt (baseLpMax * (1f + (xp/1000f)) );
+			if (xp > 100) {
+				level++;
+				xp -= 100;
+				int tmp = Mathf.RoundToInt (baseLpMax * (1f + (allxp/1000f)) );
+				lp = lp + (tmp - baseLpMax);
+				lpMax = lpMax + (tmp - baseLpMax);
+
+				atk = Mathf.RoundToInt (baseAtk * (1f + (allxp/1000f)) );
+				energyQuantity = Mathf.RoundToInt (baseEnergyQuantity * (1f + (allxp/1000f)) );
+			}
+			/*
+			int tmp = Mathf.RoundToInt (baseLpMax * (1f + (allxp/1000f)) );
 			lp = lp + (tmp - baseLpMax);
 			lpMax = lpMax + (tmp - baseLpMax);
 
-			atk = Mathf.RoundToInt (baseAtk * (1f + (xp/1000f)) );
-			energyQuantity = Mathf.RoundToInt (baseEnergyQuantity * (1f + (xp/1000f)) );
-
+			atk = Mathf.RoundToInt (baseAtk * (1f + (allxp/1000f)) );
+			energyQuantity = Mathf.RoundToInt (baseEnergyQuantity * (1f + (allxp/1000f)) );
+			*/
 		} else {
-			xp = xpMax;			
+			allxp = xpMax;
+			xp = 100;
+			level++;
+
+			int tmp = Mathf.RoundToInt (baseLpMax * (1f + (allxp/1000f)) );
+			lp = lp + (tmp - baseLpMax);
+			lpMax = lpMax + (tmp - baseLpMax);
+
+			atk = Mathf.RoundToInt (baseAtk * (1f + (allxp/1000f)) );
+			energyQuantity = Mathf.RoundToInt (baseEnergyQuantity * (1f + (allxp/1000f)) );
 		}
 	}
 
@@ -87,9 +110,15 @@ public class CrewMember
     }
 
 	public int Xp
+	{
+		get { return xp; }
+		set { xp = value; }
+	}
+
+	public int Allxp
     {
-        get { return xp; }
-        set { xp = value; }
+		get { return allxp; }
+		set { allxp = value; }
     }
 
 	public int RecruitmentCost
