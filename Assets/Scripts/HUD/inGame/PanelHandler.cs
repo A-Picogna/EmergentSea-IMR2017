@@ -7,6 +7,7 @@ public class PanelHandler : MonoBehaviour {
 	public MouseManager mouseManager;
 	public GameObject panelHarbor;
 	public GameObject panelTrade;
+	public GameObject panelTradeAmount;
 	public GameObject panelCrewMember;
 
 	public GameObject panelShip;
@@ -47,10 +48,14 @@ public class PanelHandler : MonoBehaviour {
 	public void hidePanelCrewMember() {
 		panelCrewMember.SetActive (false);
 	}
+	public void hidePanelTradeamount() {
+		panelTradeAmount.SetActive (false);
+	}
 	public void hideAllModals() {
 		panelHarbor.SetActive (false);
 		panelTrade.SetActive (false);
 		panelCrewMember.SetActive (false);
+		panelTradeAmount.SetActive (false);
 	}
 
 	// Show/hide bottom
@@ -131,5 +136,11 @@ public class PanelHandler : MonoBehaviour {
 			refreshCrewMemberDisplay ();
 		}
 		showPanelShip ();
+	}
+
+	// Prepare trade
+	public void initTrade(Ship toShip) {
+		TradePanel tradePanelScript = panelTrade.GetComponent<TradePanel> ();
+		tradePanelScript.Setup (mouseManager.selectedUnit, toShip);
 	}
 }

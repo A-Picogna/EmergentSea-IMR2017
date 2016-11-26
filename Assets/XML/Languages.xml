@@ -39,5 +39,6 @@
         <string name="shipyard">Chantier naval</string>
         <string name="shipyard_description">Construire un navire</string>
         <string name="trade">Echange</string>
+        <string name="give">Donner</string>
     </French>
 </languages>

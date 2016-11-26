@@ -11,16 +11,13 @@ public class CrewItemButton : MonoBehaviour {
 	public Text level;
 	public Slider percentageXP;
 
-	private Lang lang;
 	private CrewMember item;
 
 	void Start() {
-		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		button.onClick.AddListener (HandleClick);
 	}
 
 	public void Setup (CrewMember currentItem) {
-		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		item = currentItem;
 		if (item.Type == 0)
 			type.sprite =  Resources.Load<Sprite>("Images/admiral_icon");

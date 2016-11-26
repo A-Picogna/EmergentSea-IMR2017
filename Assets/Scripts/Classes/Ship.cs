@@ -126,13 +126,13 @@ public class Ship : MonoBehaviour {
 		if (!this.playable) {
 			return;
 		}
-		if (target.owner.Name.Equals (owner.Name)) {
+		if (target.owner.Name.Equals (owner.Name) && target != this) {
 			Debug.Log ("It's a friend dammit! Don't Shoot!!!");
 			if (AtFilibusterRange (target)) {
 				Debug.Log ("Friendly ship at range, ready to trade !");
-				Trade ();
+				Trade (target);
 			}
-		} else {
+		} else if (!target.owner.Name.Equals (owner.Name)) {
 			if (energyQuantity >= 5) {
 				int attackValue = 0;
 				if (AtFilibusterRange (target)) {
@@ -239,8 +239,9 @@ public class Ship : MonoBehaviour {
 		}
 	}
 		
-	public void Trade(){
+	public void Trade(Ship ship){
 		panelHandler.hideAllModals ();
+		panelHandler.initTrade (ship);
 		panelHandler.showPanelTrade ();
 	}
 

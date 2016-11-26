@@ -47,15 +47,6 @@ public class CrewMemberList : MonoBehaviour {
 				newItemButton.transform.SetParent (panelRight, false);
 			newItemButton.transform.localScale = Vector3.one;
 		}
-		/*
-		foreach (var item in itemList) {
-			GameObject newItemButton = buttonObjectPool.GetObject();
-			CrewItemButton shipButton = newItemButton.GetComponent<CrewItemButton> ();
-			shipButton.Setup (item);
-			newItemButton.transform.SetParent (contentPanel, false);
-
-			//shipButton.Setup (item, mouseManager, panelHandler, shipInfoPanel);
-		}*/
 	}
 
 	private void RemoveButtons() {
