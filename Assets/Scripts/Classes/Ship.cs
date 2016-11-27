@@ -128,7 +128,7 @@ public class Ship : MonoBehaviour {
 		}
 		if (target.owner.Name.Equals (owner.Name) && target != this) {
 			Debug.Log ("It's a friend dammit! Don't Shoot!!!");
-			if (AtFilibusterRange (target)) {
+			if (AtTradeRange (target)) {
 				Debug.Log ("Friendly ship at range, ready to trade !");
 				Trade (target);
 			}
@@ -166,6 +166,16 @@ public class Ship : MonoBehaviour {
 		if (!found) {
 			return false;
 		}
+		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
+		// 1 Hex dist
+		if (distance < 1f) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public bool AtTradeRange(Ship target){
 		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
 		// 1 Hex dist
 		if (distance < 1f) {

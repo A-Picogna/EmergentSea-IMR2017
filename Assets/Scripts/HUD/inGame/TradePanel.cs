@@ -32,10 +32,18 @@ public class TradePanel : MonoBehaviour {
 	}
 	
 	public void showPanel() {
+		print ("Affiche");
 		panel.SetActive (true);
 	}
 
 	public void hidePanel() {
+		print ("Cacher");
 		panel.SetActive (false);
+		if (panelLeft.duringTransfer ()) {
+			panelLeft.reinitialiseButtonColor ();
+			panelLeft.readyForTrade (false, null, null, null);
+			panelRight.readyForTrade (false, null, null, null);
+		}
+
 	}
 }

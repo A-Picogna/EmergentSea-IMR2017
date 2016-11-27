@@ -22,11 +22,14 @@ public class PanelHandler : MonoBehaviour {
 	public GameObject panelShipCrew;
 	private CrewMemberList shipCrewScript;
 
+	private TradePanel tradePanelScript;
+
 	void Start () {
 		upScript = panelUnkown.GetComponent<UnkownPanel>();
 		scrollScript = objectScrollListShip.GetComponent<ShipScrollList>();
 		shipInfoScript = panelShipInfo.GetComponent<ShipInfoPanel>();
 		shipCrewScript = panelShipCrew.GetComponent<CrewMemberList>();
+		tradePanelScript = panelTrade.GetComponent<TradePanel> ();
 	}
 
 	// Show/hide modals
@@ -37,10 +40,10 @@ public class PanelHandler : MonoBehaviour {
 		panelHarbor.SetActive (false);
 	}
 	public void showPanelTrade() {
-		panelTrade.SetActive (true);
+		tradePanelScript.showPanel ();
 	}
 	public void hidePanelTrade() {
-		panelTrade.SetActive (false);
+		tradePanelScript.hidePanel ();
 	}
 	public void showPanelCrewMember() {
 		panelCrewMember.SetActive (true);
@@ -53,7 +56,7 @@ public class PanelHandler : MonoBehaviour {
 	}
 	public void hideAllModals() {
 		panelHarbor.SetActive (false);
-		panelTrade.SetActive (false);
+		tradePanelScript.hidePanel ();
 		panelCrewMember.SetActive (false);
 		panelTradeAmount.SetActive (false);
 	}
@@ -140,7 +143,6 @@ public class PanelHandler : MonoBehaviour {
 
 	// Prepare trade
 	public void initTrade(Ship toShip) {
-		TradePanel tradePanelScript = panelTrade.GetComponent<TradePanel> ();
 		tradePanelScript.Setup (mouseManager.selectedUnit, toShip);
 	}
 }

@@ -29,11 +29,19 @@ public class TradeShipPanel : MonoBehaviour {
 
 	public Ship item;
 	public TradeShipPanel otherShipPanel;
+	public PanelHandler panelHandler;
 	private int index;
+	private bool selectedForTrade;
+	private CrewMember toBeTransfered;
+	private TradeShipPanel toBeTradedWith;
+	private Button highlightedButton;
+	private int indexHighlightedButton;
+	private int indexParentHighlightedButton;
 	private Lang lang;
 
 	// Use this for initialization
 	void Start () {
+		selectedForTrade = false;
 		panelGiveAmount.SetActive (false);
 		index = transform.GetSiblingIndex();
 		tradeAmount.keyboardType = TouchScreenKeyboardType.NumberPad;
@@ -66,7 +74,7 @@ public class TradeShipPanel : MonoBehaviour {
 			CrewMember item = itemList [i];
 			GameObject newItemButton = buttonObjectPool.GetObject();
 			CrewTradeItemButton crewButton = newItemButton.GetComponent<CrewTradeItemButton> ();
-			crewButton.Setup (item);
+			crewButton.Setup (item, this);
 			if (i < 4)
 				newItemButton.transform.SetParent (panelLeft, false);
 			else 
@@ -150,6 +158,7 @@ public class TradeShipPanel : MonoBehaviour {
 		item.Gold -= amount;
 		refreshPanel ();
 		otherShipPanel.refreshPanel ();
+		panelHandler.updateShip ();
 		panelGiveAmount.SetActive(false);
 	}
 	public void sendFood() {
@@ -162,6 +171,90 @@ public class TradeShipPanel : MonoBehaviour {
 		item.Food -= amount;
 		refreshPanel ();
 		otherShipPanel.refreshPanel ();
+		panelHandler.updateShip ();
 		panelGiveAmount.SetActive(false);
+	}
+
+	public void transferCrewMember(CrewMember toGive, Button button) {
+		if (selectedForTrade) {
+			print ("Second part of trade");
+			var colors = highlightedButton.colors;
+			colors.normalColor = Color.white;
+			colors.highlightedColor = new Color32( 0xF5, 0xF5, 0xF5, 0xFF );
+			highlightedButton.colors = colors;
+
+			if (toBeTradedWith != this) {
+				otherShipPanel.item.Crew.Remove (toBeTransfered);
+				otherShipPanel.item.Crew.Add (toGive);
+				item.Crew.Remove (toGive);
+				item.Crew.Add (toBeTransfered);
+				otherShipPanel.refreshPanel ();
+				panelHandler.updateShip ();
+			}
+			refreshPanel ();
+
+			readyForTrade (false, null, null, null);
+			otherShipPanel.readyForTrade (false, null, null, null);
+		} else if (otherShipPanel.item.Crew.Count < 8) {
+			print ("Normal trade");
+			otherShipPanel.item.Crew.Add (toGive);
+			item.Crew.Remove (toGive);
+
+			refreshPanel ();
+			otherShipPanel.refreshPanel ();
+			panelHandler.updateShip ();
+		} else if (!selectedForTrade) {
+			print ("First part of trade");
+			readyForTrade (true, toGive, this, button);
+			otherShipPanel.readyForTrade (true, toGive, this, button);
+			refreshPanel ();
+			for (int i = 0; i < itemList.Count; i++) {
+				if (i < 4) {
+					CrewTradeItemButton ctib = panelLeft.transform.GetChild (i).GetComponent<CrewTradeItemButton> ();
+					if (ctib.checkItem (toGive)) {
+						Button but = panelLeft.transform.GetChild (i).GetComponent<Button> ();
+						var colors = but.colors;
+						colors.normalColor = Color.grey;
+						colors.highlightedColor = Color.grey;
+						but.colors = colors;
+						readyForTrade (true, toGive, this, but);
+						otherShipPanel.readyForTrade (true, toGive, this, but);
+						break;
+					}
+				} else {
+					CrewTradeItemButton ctib = panelRight.transform.GetChild (i-4).GetComponent<CrewTradeItemButton> ();
+					if (ctib.checkItem (toGive)) {
+						Button but = panelRight.transform.GetChild (i-4).GetComponent<Button> ();
+						var colors = but.colors;
+						colors.normalColor = Color.grey;
+						colors.highlightedColor = Color.grey;
+						but.colors = colors;
+						readyForTrade (true, toGive, this, but);
+						otherShipPanel.readyForTrade (true, toGive, this, but);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	public void readyForTrade(bool selected, CrewMember cm, TradeShipPanel tsp, Button button) {
+		selectedForTrade = selected;
+		toBeTransfered = cm;
+		toBeTradedWith = tsp;
+		highlightedButton = button;
+		if (button != null) {
+			indexHighlightedButton = button.transform.GetSiblingIndex ();
+			indexParentHighlightedButton = button.transform.parent.transform.GetSiblingIndex ();
+		}
+	}
+	public void reinitialiseButtonColor() {
+		var colors = highlightedButton.colors;
+		colors.normalColor = Color.white;
+		colors.highlightedColor = new Color32( 0xF5, 0xF5, 0xF5, 0xFF );
+		highlightedButton.colors = colors;
+	}
+	public bool duringTransfer() {
+		return selectedForTrade;
 	}
 }
