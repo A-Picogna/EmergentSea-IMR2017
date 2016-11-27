@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class Ship : MonoBehaviour {
 
 	private List<Node> currentPath = null;
-	private int food = 100;
-	private int gold = 3000;
+	private int food = 0;
+	private int gold = 0;
 	private int hp = 0;
 	private int energyQuantity = 0;
 	private int shipX = -1;
@@ -31,8 +31,17 @@ public class Ship : MonoBehaviour {
 	public Vector3 destination;
 	public AudioClip shipMovingSound;
 
-	// Use this for initialization
-	void Awake () {
+    //AI
+    private bool used = false;
+    private int nbFilibuster = 0;
+    private int nbConjurer = 0;
+    private int nbPowderMonkey = 0;
+    private int directionX;
+    private int directionY;
+    private int directionLifeTime;
+
+    // Use this for initialization
+    void Awake () {
 		//There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
         addCrewMember(admiral);
@@ -394,18 +403,47 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void addCrewMember(CrewMember member){
-		crew.Add(member);
+        if(member.Type == 1)
+        {
+            nbFilibuster += 1;
+        }
+        else if(member.Type == 2)
+        {
+            nbPowderMonkey += 1;
+        }
+        else if (member.Type == 3)
+        {
+            nbConjurer += 1;
+        }
+        crew.Add(member);
         hp += member.Lp;
         energyQuantity += member.EnergyQuantity;
-		if (panelHandler)
-			panelHandler.updateShip ();
+        if (panelHandler)
+        {
+            panelHandler.updateShip();
+        }
     }
 
-	public void removeCrewMember(CrewMember member){
-		crew.Remove(member);
+	public void removeCrewMember(CrewMember member)
+    {
+        if (member.Type == 1)
+        {
+            nbFilibuster -= 1;
+        }
+        else if (member.Type == 2)
+        {
+            nbPowderMonkey -= 1;
+        }
+        else if (member.Type == 3)
+        {
+            nbConjurer -= 1;
+        }
+        crew.Remove(member);
         hp -= member.Lp;
-		if (panelHandler)
-			panelHandler.updateShip ();
+        if (panelHandler)
+        {
+            panelHandler.updateShip();
+        }
 	}
 
 	public void UpdateFOW (){
@@ -543,10 +581,52 @@ public class Ship : MonoBehaviour {
 		set { owner = value; }
 	}
 
-	// ====================
-	// ====================
+    public bool Used
+    {
+        get { return used; }
+        set { used = value; }
+    }
 
-	public PanelHandler PanelHandler
+    public int NbConjurer
+    {
+        get { return nbConjurer; }
+        set { nbConjurer = value; }
+    }
+
+    public int NbFilibuster
+    {
+        get { return nbFilibuster; }
+        set { nbFilibuster = value; }
+    }
+
+    public int NbPowderMonkey
+    {
+        get { return nbPowderMonkey; }
+        set { nbPowderMonkey = value; }
+    }
+
+    public int DirectionX
+    {
+        get { return directionX; }
+        set { directionX = value; }
+    }
+
+    public int DirectionY
+    {
+        get { return directionY; }
+        set { directionY = value; }
+    }
+
+    public int DirectionLifeTime
+    {
+        get { return directionLifeTime; }
+        set { directionLifeTime = value; }
+    }
+
+    // ====================
+    // ====================
+
+    public PanelHandler PanelHandler
 	{
 		get { return panelHandler; }
 		set { panelHandler = value; }
