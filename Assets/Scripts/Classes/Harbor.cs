@@ -8,8 +8,8 @@ public class Harbor : Land
 {
     private Player owner;
     private string ownerName;
-    private float lpCost = 0.5f;
-    private float changeFoodGold = 0.1f;
+    private float lpCost = 2f; //0.5 => 2pv = 1gold, 2 => 2pv = 4gold
+    private float changeFoodGold = 0.1f; //0.5 => 100 food sold = 50 gold, 2 => 100 food = 200 gold
     private int buildingTime = 2;
     private bool building;
     private int remainingBuildingTime;
@@ -185,6 +185,7 @@ public class Harbor : Land
                             buildingShip = ship_go;
                             buildingShipX = node.x;
                             buildingShipY = node.y;
+                            selected.Gold -= admiral.RecruitmentCost;
                             break;
                         }
                     }

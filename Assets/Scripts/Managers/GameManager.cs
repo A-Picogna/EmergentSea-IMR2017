@@ -35,11 +35,17 @@ public class GameManager : MonoBehaviour {
 	int turnNumber;
 	System.Random rand;
     string lastSelected = "";
+    bool aiTurn;
+
+    //AI
+    AiScript AI;
 
 
 	// Use this for initialization
 
 	void Start () {
+        aiTurn = false;
+        AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
 		players = new List<Player>();
@@ -166,12 +172,31 @@ public class GameManager : MonoBehaviour {
             }
         }
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
-			foreach (Ship ship in currentPlayer.Fleet) {
-				ship.Playable = true;
-				ship.RefuelEnergy();
-			}
+            if(currentPlayer.Type == "Humain")
+            {
+                foreach (Ship ship in currentPlayer.Fleet)
+                {
+                    ship.Playable = true;
+                    ship.RefuelEnergy();
+                }
+            }
+            else
+            {
+                foreach (Ship ship in currentPlayer.Fleet)
+                {
+                    ship.Used = false;
+                    ship.RefuelEnergy();
+                }
+                AI.turn(currentPlayer);
+                aiTurn = true;
+            }
 		}
 		checkInit = false;
+        if(aiTurn)
+        {
+            aiTurn = false;
+            NextPlayer();
+        }
 	}
 
 	void AddShips(int n){
