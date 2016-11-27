@@ -177,7 +177,6 @@ public class TradeShipPanel : MonoBehaviour {
 
 	public void transferCrewMember(CrewMember toGive, Button button) {
 		if (selectedForTrade) {
-			print ("Second part of trade");
 			var colors = highlightedButton.colors;
 			colors.normalColor = Color.white;
 			colors.highlightedColor = new Color32( 0xF5, 0xF5, 0xF5, 0xFF );
@@ -196,7 +195,6 @@ public class TradeShipPanel : MonoBehaviour {
 			readyForTrade (false, null, null, null);
 			otherShipPanel.readyForTrade (false, null, null, null);
 		} else if (otherShipPanel.item.Crew.Count < 8) {
-			print ("Normal trade");
 			otherShipPanel.item.Crew.Add (toGive);
 			item.Crew.Remove (toGive);
 
@@ -204,7 +202,6 @@ public class TradeShipPanel : MonoBehaviour {
 			otherShipPanel.refreshPanel ();
 			panelHandler.updateShip ();
 		} else if (!selectedForTrade) {
-			print ("First part of trade");
 			readyForTrade (true, toGive, this, button);
 			otherShipPanel.readyForTrade (true, toGive, this, button);
 			refreshPanel ();
