@@ -78,6 +78,67 @@ public class Hex : MonoBehaviour {
         return Neighbours;
     }
 
+	public void setVisibility(int visibilityLevel){
+		MeshRenderer[] meshRenderers;
+		FOWManager fowm = GameObject.Find ("FOWManager").GetComponent<FOWManager> ();;
+		// Visibility Level
+		// 0 for non-explored
+		// 1 for explored
+		// 2 for visible
+		switch (visibilityLevel) {
+		case 0:
+			if (this.GetComponent<Sea> () != null && this.GetComponent<Sea> ().ShipContained != null) {
+				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshRenderer> ().enabled = false;
+			}
+			this.GetComponent<LineRenderer> ().enabled = false;
+			meshRenderers = this.GetComponentsInChildren<MeshRenderer> ();
+			foreach (MeshRenderer mr in meshRenderers) {
+				mr.enabled = false;
+			}
+			break;
+		case 1:
+			if (this.GetComponent<Sea> () != null && this.GetComponent<Sea> ().ShipContained != null) {
+				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshRenderer> ().enabled = false;
+			}
+			this.GetComponent<LineRenderer> ().enabled = true;
+			meshRenderers = this.GetComponentsInChildren<MeshRenderer> ();
+			foreach (MeshRenderer mr in meshRenderers) {
+				mr.enabled = true;
+			}
+			if (this.GetComponent<Sea> () != null) {
+				this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredWaterMat;
+			}
+			if (this.GetComponent<Land> () != null) {
+				if (this.GetComponent<Land> ().IsCoast) {
+					this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredCoastMat;
+				} else {
+					this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredLandMat;
+				}
+			}
+			break;
+		case 2:
+			if (this.GetComponent<Sea> () != null && this.GetComponent<Sea> ().ShipContained != null) {
+				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshRenderer> ().enabled = true;
+			}
+			this.GetComponent<LineRenderer> ().enabled = true;
+			meshRenderers = this.GetComponentsInChildren<MeshRenderer> ();
+			foreach (MeshRenderer mr in meshRenderers) {
+				mr.enabled = true;
+			}
+			if (this.GetComponent<Sea> () != null) {
+				this.GetComponentInChildren<MeshRenderer> ().material = fowm.waterMat;
+			}
+			if (this.GetComponent<Land> () != null) {
+				if (this.GetComponent<Land> ().IsCoast) {
+					this.GetComponentInChildren<MeshRenderer> ().material = fowm.coastMat;
+				} else {
+					this.GetComponentInChildren<MeshRenderer> ().material = fowm.landMat;
+				}
+			}
+			break;
+		}
+	}
+
     public string Type{
 		get { return type; }
 		set { type = value; }
@@ -88,5 +149,7 @@ public class Hex : MonoBehaviour {
 		get { return isWalkable; }
 		set { isWalkable = value; }
 	}
+
+
 
 }

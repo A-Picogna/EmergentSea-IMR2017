@@ -243,6 +243,7 @@ public class Map : MonoBehaviour {
                                 hex_go.name = "Hex_" + GroupLand[0].x + "_" + GroupLand[0].y;
                                 hex_go.GetComponent<Hex>().x = GroupLand[0].x;
                                 hex_go.GetComponent<Hex>().y = GroupLand[0].y;
+								hex_go.GetComponent<Land> ().IsCoast = true;
                                 hex_go.transform.SetParent(this.transform);
                                 hex_go.isStatic = true;
 

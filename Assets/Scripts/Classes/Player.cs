@@ -11,6 +11,7 @@ public class Player : MonoBehaviour {
 	private List<Ship> fleet;
 	private List<Harbor> harbors;
     private int nbTotalShip;
+	private List<Node> exploredHex;
     
 	public Player(string _type, Color _color, string _name){
 		type = _type;
@@ -18,6 +19,7 @@ public class Player : MonoBehaviour {
 		name = _name;
 		fleet = new List<Ship> ();
         harbors = new List<Harbor>();
+		exploredHex = new List<Node> ();
         nbTotalShip = 0;
 	}
 
@@ -64,9 +66,15 @@ public class Player : MonoBehaviour {
 		set { harbors = value; }
 	}
 
-    public int NbTotalShip
-    {
-        get { return nbTotalShip; }
-        set { nbTotalShip = value; }
-    }
+	public int NbTotalShip
+	{
+		get { return nbTotalShip; }
+		set { nbTotalShip = value; }
+	}
+
+	public List<Node> ExploredHex
+	{
+		get { return exploredHex; }
+		set { exploredHex = value; }
+	}
 }

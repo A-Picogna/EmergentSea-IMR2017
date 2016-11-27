@@ -1,10 +1,16 @@
 fileFormatVersion: 2
 guid: 282a50fb3bfd39648ac90cf0f38b6e28
-timeCreated: 1475659139
+timeCreated: 1480270541
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - waterMat: {fileID: 2100000, guid: 52b7d70b1de7c4ce09662b77c14d9fda, type: 2}
+  - exploredWaterMat: {fileID: 2100000, guid: 70616de4dde7f514699c60d966ebee6a, type: 2}
+  - landMat: {fileID: 2100000, guid: 8bed645bcdf67874ab1ef8b80aa9d954, type: 2}
+  - exploredLandMat: {fileID: 2100000, guid: 313b0598339235a4295c2135b848f61d, type: 2}
+  - coastMat: {fileID: 2100000, guid: 3559896eb9faccc41a0e6093ff1d4c0e, type: 2}
+  - exploredCoastMat: {fileID: 2100000, guid: 808682a1878420449ab7315703dd1a51, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

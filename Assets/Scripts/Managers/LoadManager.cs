@@ -89,28 +89,28 @@ public class LoadManager : MonoBehaviour {
 		MapWidthParameter = WidthType;
 		switch (WidthType) {
 		case 0:
-			MapX = 40;
-			MapY = 24;
+			MapX = 20;
+			MapY = 12;
 			break;
 		case 1:
-			MapX = 56;
-			MapY = 36;
+			MapX = 28;
+			MapY = 18;
 			break;
 		case 2:
-			MapX = 66;
-			MapY = 42;
+			MapX = 33;
+			MapY = 21;
 			break;
 		case 3:
-			MapX = 80;
-			MapY = 52;
+			MapX = 40;
+			MapY = 26;
 			break;
 		case 4:
-			MapX = 104;
-			MapY = 64;
+			MapX = 52;
+			MapY = 32;
 			break;
 		case 5:
-			MapX = 128;
-			MapY = 80;
+			MapX = 64;
+			MapY = 40;
 			break;
 		case 6:
 			//Géré par NewPlayUI

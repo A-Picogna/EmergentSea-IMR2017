@@ -74,6 +74,7 @@ public class Ship : MonoBehaviour {
 			currentPath.RemoveAt (0);
 			destination = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
 			orientation = Angle360RoundToNeareast60(prevPos, destination);
+			//UpdateFOW ();
 		} else {
 			currentPath = null;
 		}
@@ -405,6 +406,50 @@ public class Ship : MonoBehaviour {
         hp -= member.Lp;
 		if (panelHandler)
 			panelHandler.updateShip ();
+	}
+
+	public void UpdateFOW (){
+		GameObject currentHex = (GameObject) GameObject.Find ("Hex_" + this.ShipX + "_" + this.ShipY);
+		List<GameObject> firstNeighboursToReveal;
+		List<GameObject> secondNeighboursToReveal;
+		List<GameObject> thirdNeighboursToReveal;
+		MeshRenderer[] meshRenderers;
+		Node newNode;
+
+		// Reveal Ship and ship Hex
+		currentHex.GetComponent<Hex>().setVisibility(2);
+		newNode = new Node(this.ShipX, this.ShipY, new Vector3(0,0,0), false, "ship");
+		if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+			owner.ExploredHex.Add(newNode);
+		}
+
+		// Reveal 1st Neighbours
+		firstNeighboursToReveal = currentHex.GetComponent<Hex>().getNeighbours();
+		foreach (GameObject n1 in firstNeighboursToReveal) {
+			n1.GetComponent<Hex> ().setVisibility (2);
+			newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
+			if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+				owner.ExploredHex.Add(newNode);
+			}
+			// Reveal 2nd Neighbours
+			secondNeighboursToReveal = n1.GetComponent<Hex> ().getNeighbours ();
+			foreach (GameObject n2 in secondNeighboursToReveal) {
+				n2.GetComponent<Hex> ().setVisibility (2);
+				newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
+				if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+					owner.ExploredHex.Add(newNode);
+				}
+				// Reveal 3rd Neighbours
+				thirdNeighboursToReveal = n2.GetComponent<Hex> ().getNeighbours ();
+				foreach (GameObject n3 in thirdNeighboursToReveal) {
+					n3.GetComponent<Hex> ().setVisibility (2);
+					newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
+					if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+						owner.ExploredHex.Add(newNode);
+					}
+				}
+			}
+		}
 	}
 
 

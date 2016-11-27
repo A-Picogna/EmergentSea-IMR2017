@@ -5,6 +5,8 @@ using System.Collections;
 
 public class Land : Hex {
     // Use this for initialization
+	private bool isCoast = false;
+
     void Start()
 	{
 		isWalkable = false;
@@ -17,4 +19,9 @@ public class Land : Hex {
     {
 
     }
+
+	public bool IsCoast {
+		get {return isCoast;}
+		set {isCoast = value;}
+	}
 }
