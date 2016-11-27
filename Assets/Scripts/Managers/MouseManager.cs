@@ -101,11 +101,6 @@ public class MouseManager : MonoBehaviour {
 			selectedUnit = ourHitObject.GetComponent<Sea> ().ShipContained;
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
-		} else {
-			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
-				selectedUnit = null;
-				panelHandler.hideAllBottom ();
-			}
 		}
 
 		if (Input.GetMouseButtonUp (1)) {
