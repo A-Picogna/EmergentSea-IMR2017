@@ -56,26 +56,38 @@ public class MouseManager : MonoBehaviour {
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hitInfo;
 
-		if (Physics.Raycast (ray, out hitInfo)) {			
+		if (Physics.Raycast (ray, out hitInfo)) {
+			if (Input.GetMouseButtonDown (0)) {
+				mousePos = Input.mousePosition;
+			}			
 			GameObject ourHitObject = hitInfo.collider.transform.parent.gameObject;
-			if (ourHitObject.GetComponent<Hex> () != null) {
-				MouseOver_Hex (ourHitObject);
+			if (ourHitObject.GetComponent<Sea> () != null) {
+				// If we are over a sea hex
+				if (ourHitObject.GetComponent<Sea> ().ShipContained != null) {
+					// If we are over a sea hex which contain a ship
+					MouseOver_HexUnit (ourHitObject);
+				} else if (ourHitObject.GetComponent<Sea> ().Treasure_go != null) {
+					// If we are over a sea hex which contain a treasure
+					MouseOver_Treasure (ourHitObject);
+				} else {
+					// If we are over a sea hex which contain a treasure
+					MouseOver_VoidSea (ourHitObject);
+				}
+			} else if (ourHitObject.GetComponent<Harbor> () != null) {
+				// if we are over an harbor hex
+				MouseOver_Harbor (ourHitObject);
 			} else if (ourHitObject.GetComponent<Ship> () != null) {
+				// if we are over a unit
 				MouseOver_Unit (ourHitObject);
+			} else {
+				// if we are over nothing important
+				MouseOver_NothingImportant ();
 			}
-		} else {
-			MouseOver_Nothing ();
 		}
 	}
 
-	void MouseOver_Nothing(){
-
+	void MouseOver_NothingImportant(){
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
-
-		if (Input.GetMouseButtonDown (0)) {
-			mousePos = Input.mousePosition;
-		}
-
 		if (Input.GetMouseButtonUp (0)) {
 			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 				selectedUnit = null;
@@ -84,67 +96,39 @@ public class MouseManager : MonoBehaviour {
 		}
 	}
 
-	void MouseOver_Hex(GameObject ourHitObject) {
-
-		if (ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().ShipContained != null || ourHitObject.GetComponent<Harbor> () != null || ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().Treasure_go != null) {
-			Cursor.SetCursor (interactCursorTexture, Vector2.zero, CursorMode.Auto);
-		} else {
-			Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
-		}
-
-		if (Input.GetMouseButtonDown (0)) {
-			mousePos = Input.mousePosition;
-		}
-
+	void MouseOver_HexUnit(GameObject ourHitObject){
 		if (Input.GetMouseButtonUp (0)) {
-			if (ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().ShipContained != null) {
-				selectedUnit = ourHitObject.GetComponent<Sea> ().ShipContained;
-				selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
-				panelHandler.updateShip ();
-			} else {
-				if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
-					selectedUnit = null;
-					panelHandler.hideAllBottom ();
-				}
+			selectedUnit = ourHitObject.GetComponent<Sea> ().ShipContained;
+			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
+			panelHandler.updateShip ();
+		} else {
+			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
+				selectedUnit = null;
+				panelHandler.hideAllBottom ();
 			}
 		}
 
 		if (Input.GetMouseButtonUp (1)) {
-            if (ourHitObject.GetComponent<Harbor>() != null)
-            {
-                harbor = ourHitObject.GetComponent<Harbor>().Interact(selectedUnit, map);
-                if (harbor)
-                {
-                    currentHarbor = ourHitObject.GetComponent<Harbor>().getHarbor();
-                }
-            }
-            else
-            {
-                panelHandler.hidePanelHarbor();
-                if (ourHitObject.GetComponent<Sea>() != null)
-                {
-                    if (ourHitObject.GetComponent<Sea>().ShipContained != null)
-                    {
-                        Ship target = ourHitObject.GetComponent<Sea>().ShipContained;
-                        selectedUnit.Interact(target);
-                    }
-                    else
-                    {
-                        if (ourHitObject.GetComponent<Sea>().Treasure_go != null)
-                        {
-                            Sea target = ourHitObject.GetComponent<Sea>();
-                            selectedUnit.HoistTreasure(target);
-                        }
-                        else
-                        {
-                            if (selectedUnit != null && selectedUnit.Playable)
-                            {
-                                pathfinder.PathRequest(selectedUnit, ourHitObject);
-                            }
-                        }
-                    }
-                }
-            }
+			Ship target = ourHitObject.GetComponent<Sea>().ShipContained;
+			selectedUnit.Interact(target);
+			panelHandler.hidePanelHarbor();
+		}
+	}
+
+	void MouseOver_Treasure(GameObject ourHitObject){
+		if (Input.GetMouseButtonUp (1)) {
+			Sea target = ourHitObject.GetComponent<Sea> ();
+			selectedUnit.HoistTreasure (target);
+			panelHandler.hidePanelHarbor();
+		}
+	}
+
+	void MouseOver_Harbor(GameObject ourHitObject){
+		if (Input.GetMouseButtonUp (1)) {
+			harbor = ourHitObject.GetComponent<Harbor> ().Interact (selectedUnit, map);
+			if (harbor) {
+				currentHarbor = ourHitObject.GetComponent<Harbor> ().getHarbor ();
+			}
 		}
 	}
 
@@ -160,6 +144,26 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonUp (1)) {
 			Ship target = ourHitObject.GetComponent<Ship> ();
 			selectedUnit.Interact (target);
+			panelHandler.hidePanelHarbor();
+		}
+	}
+
+	void MouseOver_VoidSea(GameObject ourHitObject) {
+
+		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+
+		if (Input.GetMouseButtonUp (1)) {
+			if (selectedUnit != null && selectedUnit.Playable) {
+				pathfinder.PathRequest (selectedUnit, ourHitObject);
+				panelHandler.hidePanelHarbor();
+			}
+		}
+
+		if (Input.GetMouseButtonUp (0)) {
+			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
+				selectedUnit = null;
+				panelHandler.hideAllBottom ();
+			}
 		}
 	}
 
