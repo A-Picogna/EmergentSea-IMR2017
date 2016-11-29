@@ -247,12 +247,14 @@ public class LoadManager : MonoBehaviour {
 		GameObject pathfinder = GameObject.Find ("Pathfinder");
 		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = MapLoaded;
 
-		//GameObject btn_save = GameObject.Find ("btn_save");
-		//((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
-		//	LoadManager.instance.savePrefabricatedMap ("test");
-		//});
+		GameObject btn_save = GameObject.Find ("PauseCanvas/pnl_inGameMenu/pnl_menu/pnl_menuContent/btn_save");
+		//Debug.Log (btn_save.ToString ());
+		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			LoadManager.instance.savePrefabricatedMap ("hello");
+		});
 
 		GameObject HUDCanvas = GameObject.Find ("HUDCanvas");
+		//Debug.Log (HUDCanvas.ToString ());
 		PanelHandler panelHandler = HUDCanvas.GetComponent<PanelHandler> ();
 		panelHandler.gameManager = gameManager;
 	}
@@ -272,6 +274,10 @@ public class LoadManager : MonoBehaviour {
 		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
 			LoadManager.instance.savePrefabricatedMap ("test");
 		});
+
+		GameObject HUDCanvas = GameObject.Find ("HUDCanvas");
+		PanelHandler panelHandler = HUDCanvas.GetComponent<PanelHandler> ();
+		panelHandler.gameManager = gameManager;
 	}
 
 	void OnLevelWasLoaded() {

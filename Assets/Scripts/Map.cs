@@ -118,8 +118,13 @@ public class Map : MonoBehaviour {
 		//Generate coast and harbor --Already generated---
 		//generateHarbor();
 
-		generateFood ();
-		generateTreasure ();
+		//generateFood ();
+		//loadFood();
+		// Because we set nothing for the treasure, he start to generate treasures infinitely
+		//generateTreasure ();
+		//loadTreasure();
+
+		loadFoodAndTreasures (saveMap);
 
 		// Add neighbours
 		AddNeighboursToNodes ();
@@ -349,6 +354,36 @@ public class Map : MonoBehaviour {
 		}
 	}
 
+	void loadFoodAndTreasures(MapFile saveMap) {
+		Sea SeaBuffer;
+		GameObject caseTreasure;
+		GameObject tres;
+		int index;
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (graph [x, y].type == "sea") {
+					index = (x * this.height) + y;
+
+					SeaBuffer = (GameObject.Find ("Hex_" + x + "_" + y)).GetComponent<Sea> ();
+
+					// On remet le bon nombre de nourriture
+					SeaBuffer.FoodQuantity = saveMap.graph [index].SeaFood;
+
+					if (saveMap.graph [index].SeaTreasure > 0) {
+						// On ajoute un trésor ! :)
+						worldCoordTreasure = graph [x,y].worldPos;
+						graph [x,y].isWalkable = false;
+						caseTreasure = GameObject.Find ("Hex_" + x + "_" + y);
+						tres = (GameObject) Instantiate (treasurePrefab, worldCoordTreasure, Quaternion.identity);
+						tres.name = caseTreasure.name+"_Treasure"+rand.Next(0,1000000000);
+						tres.transform.SetParent (caseTreasure.transform);
+						SeaBuffer.AddTreasure (saveMap.graph[index].SeaTreasure, tres);
+					}
+				}
+			}
+		}
+	}
+
 	void drawEdgesLines(GameObject go){
 		Vector3 worldPosition = go.transform.position;
 		LineRenderer lineRenderer = go.AddComponent<LineRenderer> (); // Add or get LineRenderer component to game object
@@ -469,7 +504,6 @@ public class Map : MonoBehaviour {
 				c--;
 			}
 		}
-
 	}
 
 	float[] hex_corner(float x, float y, int i){
@@ -497,17 +531,25 @@ public class Map : MonoBehaviour {
 		Debug.Log ("MapSaved_size=" + (this.height * this.width));
 
 		int k = 0;
+		Sea SeaBuffer;
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.height; j++) {
 				index = (i * this.height) + j;
+
 				mapSaved.graph [index] = new NodeStruct(this.graph [i, j].x, 
 																		this.graph [i, j].y, 
 																		this.graph [i, j].isWalkable, 
-																		this.graph [i, j].type);
-				k++;
+																		this.graph [i, j].type,
+																		this.graph [i, j].tag
+																		);
+				if(this.graph[i,j].type == "sea") {
+					SeaBuffer = (GameObject.Find ("Hex_" + i + "_" + j)).GetComponent<Sea> ();
+
+					mapSaved.graph [index].SeaFood = SeaBuffer.FoodQuantity;
+					mapSaved.graph [index].SeaTreasure = SeaBuffer.Treasure;
+				}
 			}
 		}
-		Debug.Log ("K = " + k.ToString ());
 
 		return mapSaved;
 	}
@@ -535,12 +577,14 @@ public class Map : MonoBehaviour {
 				}
 
 				Vector3 worldPosition = new Vector3 (xPos, 0, SavedMap.graph[index].y * zOffset);
-
+				Debug.Log (worldPosition.ToString ());
 				this.graph [i, j] = new Node(SavedMap.graph[index].x,
 					SavedMap.graph[index].y,
 					worldPosition,
 					SavedMap.graph[index].isWalkable,
 					SavedMap.graph[index].type);
+
+				this.graph [i, j].tag = SavedMap.graph [index].tag;
 
 				Debug.Log ("(i * this.height) + j=" + ((i * this.height) + j).ToString());
 			}
