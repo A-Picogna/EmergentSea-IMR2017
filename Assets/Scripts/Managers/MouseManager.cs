@@ -53,6 +53,7 @@ public class MouseManager : MonoBehaviour {
 			selectionCircle.transform.position = selectedUnit.transform.position + new Vector3 (0, 5f, 0);
 		} else {
 			selectionCircle.transform.position = new Vector3 (0, -5f, 0);
+			pathProjector.transform.position = new Vector3 (0, -5f, 0);
 		}
 	}
 
@@ -182,8 +183,9 @@ public class MouseManager : MonoBehaviour {
 
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
 
-		if (selectedUnit != null)
+		if (selectedUnit != null) {
 			pathProjector.transform.position = ourHitObject.transform.position+new Vector3(0,5f,0);
+		}
 
 		if (Input.GetMouseButtonUp (1)) {
 			if (selectedUnit != null && selectedUnit.Playable) {
