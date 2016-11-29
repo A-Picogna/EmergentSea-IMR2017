@@ -108,7 +108,9 @@ public class Hex : MonoBehaviour {
 			if (this.GetComponent<Sea> () != null) {
 				this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredWaterMat;
 			}
-			if (this.GetComponent<Land> () != null) {
+			if (this.GetComponent<Harbor> () != null) {
+
+			} else if (this.GetComponent<Land> () != null) {
 				if (this.GetComponent<Land> ().IsCoast) {
 					this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredCoastMat;
 				} else {
@@ -128,7 +130,9 @@ public class Hex : MonoBehaviour {
 			if (this.GetComponent<Sea> () != null) {
 				this.GetComponentInChildren<MeshRenderer> ().material = fowm.waterMat;
 			}
-			if (this.GetComponent<Land> () != null) {
+			if (this.GetComponent<Harbor> () != null) {
+
+			} else if (this.GetComponent<Land> () != null) {
 				if (this.GetComponent<Land> ().IsCoast) {
 					this.GetComponentInChildren<MeshRenderer> ().material = fowm.coastMat;
 				} else {

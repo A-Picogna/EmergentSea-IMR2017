@@ -83,7 +83,8 @@ public class Ship : MonoBehaviour {
 			currentPath.RemoveAt (0);
 			destination = GameObject.Find ("Hex_" + shipX + "_" + shipY).transform.position;
 			orientation = Angle360RoundToNeareast60(prevPos, destination);
-			//UpdateFOW ();
+			// We reaveal newly discovered area
+			UpdateFOW ();
 		} else {
 			currentPath = null;
 		}
@@ -159,8 +160,8 @@ public class Ship : MonoBehaviour {
 				}
 				if (attackValue > 0) {
 					displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
+					energyQuantity -= 5;
 				}
-				energyQuantity -= 5;
 			}
 		}
 		panelHandler.updateShip ();

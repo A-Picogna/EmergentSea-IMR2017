@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 		turnNumber = 1;
 		players = new List<Player>();
 		players.Add (new Player ("Humain", Color.red, "Player1"));
-		players.Add (new Player ("IA", Color.blue, "Player2"));
+		players.Add (new Player ("Humain", Color.blue, "Player2"));
 		currentPlayerNumber = 0;
 		currentPlayer = players [currentPlayerNumber];
 		endTurnButton.onClick.AddListener(() => NextPlayer());
@@ -67,8 +67,9 @@ public class GameManager : MonoBehaviour {
 				ship.Playable = true;
 			}
 		}
-		//ResetFOW ();
-		//RevealAreaAroundCurrentPlayerShips ();
+		// We init the fow
+		ResetFOW ();
+		RevealAreaAroundCurrentPlayerShips ();
 	}
 	
 	// Update is called once per frame
@@ -135,7 +136,6 @@ public class GameManager : MonoBehaviour {
 		mouseManager.map.graph [ship.ShipX, ship.ShipY].isWalkable = true;
 		ship.name = ship.name + rand.Next (1000000000);
 		ship.Die ();
-		//GameObject.DestroyObject (ship.gameObject);
 	}
 
 	void GameOver(){
@@ -200,9 +200,10 @@ public class GameManager : MonoBehaviour {
             aiTurn = false;
             NextPlayer();
         }
-		//ResetFOW ();
-		//RevealAreaAlreadyExplored ();
-		//RevealAreaAroundCurrentPlayerShips ();
+		// We reset fow for next player
+		ResetFOW ();
+		RevealAreaAlreadyExplored ();
+		RevealAreaAroundCurrentPlayerShips ();
 	}
 
 	void AddShips(int n){
