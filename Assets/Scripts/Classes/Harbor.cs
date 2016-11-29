@@ -49,7 +49,7 @@ public class Harbor : Land
     {
         Node[,] graph = map.graph;
         //Check if we can iteract with the harbor
-        if (CanUse(selected))
+        if (CanUse(selected, map))
         {
             //Afficher panneau port
             return true;
@@ -60,7 +60,7 @@ public class Harbor : Land
         }
     }
 
-    public bool CanUse(Ship selected)
+    public bool CanUse(Ship selected, Map map)
     {
         //If a ship is selected
         if (selected != null)
@@ -89,6 +89,8 @@ public class Harbor : Land
                     owner = selected.Owner;
                     ownerName = selected.Owner.Name;
                     owner.Harbors.Add(this);
+                    this.GetComponentsInChildren<MeshRenderer>()[1].material.color = owner.Color;
+                    //Debug.Log(hex_go.GetComponentsInChildren<MeshRenderer>()[1].material.color = Color.red;);
                     return true;
                 }
             }

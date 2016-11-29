@@ -302,7 +302,7 @@ public class Map : MonoBehaviour {
             hex_go.GetComponent<Hex>().y = GroupListPossibleHarbor[island][NodeHarbor].y;
             hex_go.transform.SetParent(this.transform);
             hex_go.isStatic = true;
-
+            //ship_go.GetComponentInChildren<MeshRenderer>().material.color = owner.Color;
             drawEdgesLines(hex_go);
             //Update the graph
             graph[GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].y] = new Node(GroupListPossibleHarbor[island][NodeHarbor].x, GroupListPossibleHarbor[island][NodeHarbor].y, GroupListPossibleHarbor[island][NodeHarbor].worldPos, false, "harbor");
