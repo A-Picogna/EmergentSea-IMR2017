@@ -12,6 +12,7 @@ public class MouseManager : MonoBehaviour {
 	public Map map;
 	public Ship selectedUnit;
 	public Projector selectionCircle;
+	public Projector pathProjector;
 	public Pathfinder pathfinder;
 	private GameObject ourHitObject;
     public bool harbor = false;
@@ -24,7 +25,10 @@ public class MouseManager : MonoBehaviour {
 	public Vector2 mousePos;
 	public Texture2D mainCursorTexture;
 	public Texture2D attackCursorTexture;
-	public Texture2D interactCursorTexture;
+	public Texture2D tradeCursorTexture;
+	public Texture2D harborCursorTexture;
+	public Texture2D fishingCursorTexture;
+	public Texture2D treasureCursorTexture;
 
 	// Use this for initialization
 	void Start () {
@@ -97,20 +101,36 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_HexUnit(GameObject ourHitObject){
+
+		if (selectedUnit != null) {
+			
+			Ship target = ourHitObject.GetComponent<Sea>().ShipContained;
+
+			if (target.Owner.Name.Equals (selectedUnit.Owner.Name)) {
+				if (target == selectedUnit) {
+					Cursor.SetCursor (fishingCursorTexture, new Vector2 (fishingCursorTexture.width / 2, fishingCursorTexture.height / 2), CursorMode.Auto);
+				} else {
+					Cursor.SetCursor (tradeCursorTexture, new Vector2 (tradeCursorTexture.width / 2, tradeCursorTexture.height / 2), CursorMode.Auto);
+				}
+			} else {
+				Cursor.SetCursor (attackCursorTexture, new Vector2 (attackCursorTexture.width / 2, attackCursorTexture.height / 2), CursorMode.Auto);
+			}
+
+			if (Input.GetMouseButtonUp (1)) {
+				selectedUnit.Interact(target);
+				panelHandler.hidePanelHarbor();
+			}
+		}
+
 		if (Input.GetMouseButtonUp (0)) {
 			selectedUnit = ourHitObject.GetComponent<Sea> ().ShipContained;
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
 		}
-
-		if (Input.GetMouseButtonUp (1)) {
-			Ship target = ourHitObject.GetComponent<Sea>().ShipContained;
-			selectedUnit.Interact(target);
-			panelHandler.hidePanelHarbor();
-		}
 	}
 
 	void MouseOver_Treasure(GameObject ourHitObject){
+		Cursor.SetCursor (treasureCursorTexture, new Vector2 (treasureCursorTexture.width / 2, treasureCursorTexture.height / 2), CursorMode.Auto);
 		if (Input.GetMouseButtonUp (1)) {
 			Sea target = ourHitObject.GetComponent<Sea> ();
 			selectedUnit.HoistTreasure (target);
@@ -119,6 +139,7 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_Harbor(GameObject ourHitObject){
+		Cursor.SetCursor (harborCursorTexture, new Vector2 (harborCursorTexture.width / 2, harborCursorTexture.height / 2), CursorMode.Auto);
 		if (Input.GetMouseButtonUp (1)) {
 			harbor = ourHitObject.GetComponent<Harbor> ().Interact (selectedUnit, map);
 			if (harbor) {
@@ -128,24 +149,41 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_Unit(GameObject ourHitObject) {
-		Cursor.SetCursor(interactCursorTexture, Vector2.zero, CursorMode.Auto);
-		//Debug.Log("Raycast hit: " + ourHitObject.name );
+
+		if (selectedUnit != null) {
+			
+			Ship target = ourHitObject.GetComponent<Ship> ();
+
+			// Cursor changing
+			if (target.Owner.Name.Equals (selectedUnit.Owner.Name)) {
+				if (target == selectedUnit) {
+					Cursor.SetCursor (fishingCursorTexture, new Vector2 (fishingCursorTexture.width / 2, fishingCursorTexture.height / 2), CursorMode.Auto);
+				} else {
+					Cursor.SetCursor (tradeCursorTexture, new Vector2 (tradeCursorTexture.width / 2, tradeCursorTexture.height / 2), CursorMode.Auto);
+				}
+			} else {
+				Cursor.SetCursor (attackCursorTexture, new Vector2 (attackCursorTexture.width / 2, attackCursorTexture.height / 2), CursorMode.Auto);
+			}
+
+			if (Input.GetMouseButtonUp (1)) {
+				selectedUnit.Interact (target);
+				panelHandler.hidePanelHarbor();
+			}
+		}
+
 		if (Input.GetMouseButtonUp(0)) {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
-		}
-
-		if (Input.GetMouseButtonUp (1)) {
-			Ship target = ourHitObject.GetComponent<Ship> ();
-			selectedUnit.Interact (target);
-			panelHandler.hidePanelHarbor();
 		}
 	}
 
 	void MouseOver_VoidSea(GameObject ourHitObject) {
 
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+
+		if (selectedUnit != null)
+			pathProjector.transform.position = ourHitObject.transform.position+new Vector3(0,5f,0);
 
 		if (Input.GetMouseButtonUp (1)) {
 			if (selectedUnit != null && selectedUnit.Playable) {
