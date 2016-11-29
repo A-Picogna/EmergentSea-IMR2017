@@ -40,7 +40,10 @@
         <string name="shipyard_description">Construire un navire</string>
         <string name="trade">Echange</string>
         <string name="give">Donner</string>
+        <string name="energy">Energie</string>
 
-        <string name="help_trade">Cliquez sur les membres d'équipage que vous voulez échanger. S'il n'y a plus de place, sélectionner un membre puis un autre pour les échanger. Les amiraux ne peuvent être échangés.</string>
+        <string name="help_trade">Cliquez sur les membres d'équipage que vous voulez échanger. S'il n'y a plus de place, sélectionnez un membre puis un autre pour les échanger. Les amiraux ne peuvent être échangés.</string>
+        <string name="help_attack">Attaquer le navire ennemi</string>
+        <string name="help_cost">Coût :</string>
     </French>
 </languages>

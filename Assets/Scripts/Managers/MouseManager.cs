@@ -17,6 +17,7 @@ public class MouseManager : MonoBehaviour {
 	private GameObject ourHitObject;
     public bool harbor = false;
     public Harbor currentHarbor;
+	private GameManager gameManager;
 
 	// UI
 	public PanelHandler panelHandler;
@@ -33,6 +34,7 @@ public class MouseManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+		gameManager = GameObject.Find ("GameManager").GetComponent<GameManager> ();
 	}
 	
 	// Update is called once per frame
@@ -93,6 +95,7 @@ public class MouseManager : MonoBehaviour {
 
 	void MouseOver_NothingImportant(){
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+		panelHandler.hidePanelHelper();
 		if (Input.GetMouseButtonUp (0)) {
 			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 				selectedUnit = null;
@@ -102,6 +105,7 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_HexUnit(GameObject ourHitObject){
+		panelHandler.hidePanelHelper();
 
 		if (selectedUnit != null) {
 			
@@ -132,6 +136,7 @@ public class MouseManager : MonoBehaviour {
 
 	void MouseOver_Treasure(GameObject ourHitObject){
 		Cursor.SetCursor (treasureCursorTexture, new Vector2 (treasureCursorTexture.width / 2, treasureCursorTexture.height / 2), CursorMode.Auto);
+		panelHandler.hidePanelHelper();
 		if (Input.GetMouseButtonUp (1)) {
 			Sea target = ourHitObject.GetComponent<Sea> ();
 			selectedUnit.HoistTreasure (target);
@@ -141,6 +146,7 @@ public class MouseManager : MonoBehaviour {
 
 	void MouseOver_Harbor(GameObject ourHitObject){
 		Cursor.SetCursor (harborCursorTexture, new Vector2 (harborCursorTexture.width / 2, harborCursorTexture.height / 2), CursorMode.Auto);
+		panelHandler.hidePanelHelper();
 		if (Input.GetMouseButtonUp (1)) {
 			harbor = ourHitObject.GetComponent<Harbor> ().Interact (selectedUnit, map);
 			if (harbor) {
@@ -150,7 +156,38 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_Unit(GameObject ourHitObject) {
+		Ship target = ourHitObject.GetComponent<Ship> ();
+		print (gameManager.currentPlayer.Name);
+		if (!target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
+			panelHandler.changeTextHelper (3);
+			panelHandler.refreshHelper ();
+			panelHandler.showPanelHelper ();
+		} else {
+			panelHandler.hidePanelHelper ();
+		}
 
+		if (selectedUnit != null) {
+			if (target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
+				if (target == selectedUnit) {
+					Cursor.SetCursor (fishingCursorTexture, new Vector2 (fishingCursorTexture.width / 2, fishingCursorTexture.height / 2), CursorMode.Auto);
+				} else {
+					Cursor.SetCursor (tradeCursorTexture, new Vector2 (tradeCursorTexture.width / 2, tradeCursorTexture.height / 2), CursorMode.Auto);
+				}
+			} else {
+				Cursor.SetCursor (attackCursorTexture, new Vector2 (attackCursorTexture.width / 2, attackCursorTexture.height / 2), CursorMode.Auto);
+			}
+			if (Input.GetMouseButtonUp (1)) {
+				selectedUnit.Interact (target);
+				panelHandler.hidePanelHarbor();
+			}
+		}
+		if (Input.GetMouseButtonUp(0)) {
+			selectedUnit = ourHitObject.GetComponent<Ship> ();
+			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
+			panelHandler.updateShip ();
+		}
+
+		/*
 		if (selectedUnit != null) {
 			
 			Ship target = ourHitObject.GetComponent<Ship> ();
@@ -164,6 +201,9 @@ public class MouseManager : MonoBehaviour {
 				}
 			} else {
 				Cursor.SetCursor (attackCursorTexture, new Vector2 (attackCursorTexture.width / 2, attackCursorTexture.height / 2), CursorMode.Auto);
+				panelHandler.changeTextHelper (3);
+				panelHandler.refreshHelper();
+				panelHandler.showPanelHelper();
 			}
 
 			if (Input.GetMouseButtonUp (1)) {
@@ -176,12 +216,13 @@ public class MouseManager : MonoBehaviour {
 			selectedUnit = ourHitObject.GetComponent<Ship> ();
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
-		}
+		}*/
 	}
 
 	void MouseOver_VoidSea(GameObject ourHitObject) {
 
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+		panelHandler.hidePanelHelper();
 
 		if (selectedUnit != null) {
 			pathProjector.transform.position = ourHitObject.transform.position+new Vector3(0,5f,0);
