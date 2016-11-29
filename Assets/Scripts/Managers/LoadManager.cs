@@ -21,7 +21,7 @@ public class LoadManager : MonoBehaviour {
 	// The magic works here : You can use the singleton just by indicating nager.instance
 
 	// Object Enum
-	public enum state { Inactive, StartNewMap, StartLoadedMap }
+	public enum state { Inactive, StartNewMap, StartLoadedMap, LoadSave }
 
 	// LoadManager Info
 	public state LoadManagerState;
@@ -48,6 +48,7 @@ public class LoadManager : MonoBehaviour {
 	// Private variables
 	private Map MapLoaded;
 	public string MapPrefabToLoad;
+	public string SaveToLoad;
 	private int nbCasesTerre;
 	private int nbCasesTresors;
 
@@ -238,42 +239,28 @@ public class LoadManager : MonoBehaviour {
 
 	private void initWorld() {
 		MapLoaded = initMap ();
-		GameObject mouseSettings = GameObject.Find ("MouseManager");
-		((MouseManager)mouseSettings.GetComponent<MouseManager> ()).map = MapLoaded;
-
 		GameManager gameManager = initGame (MapLoaded);
-
-		// Connection des objets
-		GameObject pathfinder = GameObject.Find ("Pathfinder");
-		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = MapLoaded;
-
-		GameObject btn_save = GameObject.Find ("PauseCanvas/pnl_inGameMenu/pnl_menu/pnl_menuContent/btn_save");
-		//Debug.Log (btn_save.ToString ());
-		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
-			LoadManager.instance.savePrefabricatedMap ("hello");
-		});
-
-		GameObject HUDCanvas = GameObject.Find ("HUDCanvas");
-		//Debug.Log (HUDCanvas.ToString ());
-		PanelHandler panelHandler = HUDCanvas.GetComponent<PanelHandler> ();
-		panelHandler.gameManager = gameManager;
+		linkObjects (MapLoaded, gameManager);
 	}
 
 	private void loadWorld(MapFile saveMap) {
 		MapLoaded = loadMap (saveMap);
+		GameManager gameManager = initGame (MapLoaded);
+		linkObjects (MapLoaded, gameManager);
+	}
+
+	private void linkObjects(Map MapLoaded, GameManager gameManager) {
 		GameObject mouseSettings = GameObject.Find ("MouseManager");
 		((MouseManager)mouseSettings.GetComponent<MouseManager> ()).map = MapLoaded;
-
-		GameManager gameManager = initGame (MapLoaded);
 
 		// Connection des objets
 		GameObject pathfinder = GameObject.Find ("Pathfinder");
 		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = MapLoaded;
 
-		GameObject btn_save = GameObject.Find ("btn_save");
-		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
-			LoadManager.instance.savePrefabricatedMap ("test");
-		});
+		//GameObject btn_save = GameObject.Find ("btn_save");
+		//((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+		//	LoadManager.instance.savePrefabricatedMap ("test");
+		//});
 
 		GameObject HUDCanvas = GameObject.Find ("HUDCanvas");
 		PanelHandler panelHandler = HUDCanvas.GetComponent<PanelHandler> ();
