@@ -10,6 +10,7 @@ public class PanelHandler : MonoBehaviour {
 	public GameObject panelTradeAmount;
 	public GameObject panelCrewMember;
 	public GameObject panelHelp;
+	public GameObject panelHelp2;
 
 	public GameObject panelShip;
 	public GameObject panelUnkown;
@@ -26,6 +27,7 @@ public class PanelHandler : MonoBehaviour {
 	private TradePanel tradePanelScript;
 
 	private HelpPanel helpPanelScript;
+	private HelpPanel helpPanelScript2;
 
 	void Start () {
 		upScript = panelUnkown.GetComponent<UnkownPanel>();
@@ -34,6 +36,7 @@ public class PanelHandler : MonoBehaviour {
 		shipCrewScript = panelShipCrew.GetComponent<CrewMemberList>();
 		tradePanelScript = panelTrade.GetComponent<TradePanel> ();
 		helpPanelScript = panelHelp.GetComponent<HelpPanel> ();
+		helpPanelScript2 = panelHelp2.GetComponent<HelpPanel> ();
 	}
 
 	// Show/hide modals
@@ -166,5 +169,22 @@ public class PanelHandler : MonoBehaviour {
 	}
 	public void hidePanelHelper() {
 		helpPanelScript.hidePanel ();
+	}
+
+	public void refreshHelper2() {
+		helpPanelScript2.refresh ();
+	}
+	public void changeTextHelper2(int tp) {
+		helpPanelScript2.changeText (tp);
+	}
+	public void addInfoHelper2(List<string> list) {
+		helpPanelScript2.addInfo (list);
+	}
+
+	public void showPanelHelper2() {
+		helpPanelScript2.showPanel ();
+	}
+	public void hidePanelHelper2() {
+		helpPanelScript2.hidePanel ();
 	}
 }

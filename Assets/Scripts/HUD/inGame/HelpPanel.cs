@@ -8,6 +8,7 @@ public class HelpPanel : MonoBehaviour {
 	public GameObject panelHelp;
 	public Text textHelp;
 	private int type;
+	public int positionMode;
 	private List<string> infoList;
 
 	// Mouse follower
@@ -25,7 +26,12 @@ public class HelpPanel : MonoBehaviour {
 	public void refreshPosition() {
 		Vector2 pos;
 		RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, canvas.worldCamera, out pos);
-		pos.x += 75;
+		if (positionMode == 0) {
+			pos.x += 75;
+		} else if (positionMode == 1) {
+			pos.x -= 20;
+			pos.y += 20;
+		}
 		transform.position = canvas.transform.TransformPoint(pos);
 	}
 	public void refresh() {
