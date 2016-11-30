@@ -119,11 +119,11 @@ public class Hex : MonoBehaviour {
 			}
 			meshColliders = this.GetComponentsInChildren<MeshCollider> ();
 			foreach (MeshCollider mc in meshColliders) {
-				mc.enabled = true;
+				mc.enabled = false;
 			}
 			boxColliders = this.GetComponentsInChildren<BoxCollider> ();
 			foreach (BoxCollider bc in boxColliders) {
-				bc.enabled = true;
+				bc.enabled = false;
 			}
 			if (this.GetComponent<Sea> () != null) {
 				this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredWaterMat;
