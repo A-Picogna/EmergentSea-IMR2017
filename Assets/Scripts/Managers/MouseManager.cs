@@ -88,15 +88,16 @@ public class MouseManager : MonoBehaviour {
 			} else if (ourHitObject.GetComponent<Ship> () != null) {
 				// if we are over a unit
 				MouseOver_Unit (ourHitObject);
-			} else {
-				// if we are over nothing important
-				MouseOver_NothingImportant ();
 			}
+		} else {
+			// if we are over nothing important
+			MouseOver_NothingImportant ();
 		}
 	}
 
 	void MouseOver_NothingImportant(){
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+		pathProjector.transform.position = new Vector3 (0, -5f, 0);
 		panelHandler.hidePanelHelper();
 		if (Input.GetMouseButtonUp (0)) {
 			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {

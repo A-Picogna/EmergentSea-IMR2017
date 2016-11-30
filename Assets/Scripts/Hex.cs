@@ -80,6 +80,8 @@ public class Hex : MonoBehaviour {
 
 	public void setVisibility(int visibilityLevel){
 		MeshRenderer[] meshRenderers;
+		MeshCollider[] meshColliders;
+		BoxCollider[] boxColliders;
 		FOWManager fowm = GameObject.Find ("FOWManager").GetComponent<FOWManager> ();;
 		// Visibility Level
 		// 0 for non-explored
@@ -89,21 +91,39 @@ public class Hex : MonoBehaviour {
 		case 0:
 			if (this.GetComponent<Sea> () != null && this.GetComponent<Sea> ().ShipContained != null) {
 				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshRenderer> ().enabled = false;
+				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshCollider> ().enabled = false;
 			}
 			this.GetComponent<LineRenderer> ().enabled = false;
 			meshRenderers = this.GetComponentsInChildren<MeshRenderer> ();
 			foreach (MeshRenderer mr in meshRenderers) {
 				mr.enabled = false;
 			}
+			meshColliders = this.GetComponentsInChildren<MeshCollider> ();
+			foreach (MeshCollider mc in meshColliders) {
+				mc.enabled = false;
+			}
+			boxColliders = this.GetComponentsInChildren<BoxCollider> ();
+			foreach (BoxCollider bc in boxColliders) {
+				bc.enabled = false;
+			}
 			break;
 		case 1:
 			if (this.GetComponent<Sea> () != null && this.GetComponent<Sea> ().ShipContained != null) {
 				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshRenderer> ().enabled = false;
+				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshCollider> ().enabled = false;
 			}
 			this.GetComponent<LineRenderer> ().enabled = true;
 			meshRenderers = this.GetComponentsInChildren<MeshRenderer> ();
 			foreach (MeshRenderer mr in meshRenderers) {
 				mr.enabled = true;
+			}
+			meshColliders = this.GetComponentsInChildren<MeshCollider> ();
+			foreach (MeshCollider mc in meshColliders) {
+				mc.enabled = true;
+			}
+			boxColliders = this.GetComponentsInChildren<BoxCollider> ();
+			foreach (BoxCollider bc in boxColliders) {
+				bc.enabled = true;
 			}
 			if (this.GetComponent<Sea> () != null) {
 				this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredWaterMat;
@@ -121,11 +141,20 @@ public class Hex : MonoBehaviour {
 		case 2:
 			if (this.GetComponent<Sea> () != null && this.GetComponent<Sea> ().ShipContained != null) {
 				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshRenderer> ().enabled = true;
+				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshCollider> ().enabled = true;
 			}
 			this.GetComponent<LineRenderer> ().enabled = true;
 			meshRenderers = this.GetComponentsInChildren<MeshRenderer> ();
 			foreach (MeshRenderer mr in meshRenderers) {
 				mr.enabled = true;
+			}
+			meshColliders = this.GetComponentsInChildren<MeshCollider> ();
+			foreach (MeshCollider mc in meshColliders) {
+				mc.enabled = true;
+			}
+			boxColliders = this.GetComponentsInChildren<BoxCollider> ();
+			foreach (BoxCollider bc in boxColliders) {
+				bc.enabled = true;
 			}
 			if (this.GetComponent<Sea> () != null) {
 				this.GetComponentInChildren<MeshRenderer> ().material = fowm.waterMat;

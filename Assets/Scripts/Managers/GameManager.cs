@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour {
 		turnNumber = 1;
 		players = new List<Player>();
 		players.Add (new Player ("Humain", Color.red, "Player1"));
-		players.Add (new Player ("IA", Color.blue, "Player2"));
+		players.Add (new Player ("Humain", Color.blue, "Player2"));
 		currentPlayerNumber = 0;
 		currentPlayer = players [currentPlayerNumber];
 		endTurnButton.onClick.AddListener(() => NextPlayer());
