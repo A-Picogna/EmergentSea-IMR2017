@@ -20,6 +20,7 @@
         <string name="load">Charger</string>
         <string name="options">Options</string>
         <string name="quit">Quitter</string>
+        <string name="friendly_ship">Navire allié</string>
         <string name="ennemy_ship">Navire ennemi</string>
         <string name="ennemy_ship_description">Un navire ennemi. Sa force est inconnue.</string>
         <string name="treasure">Trésor</string>
@@ -43,7 +44,12 @@
         <string name="energy">Energie</string>
 
         <string name="help_trade">Cliquez sur les membres d'équipage que vous voulez échanger. S'il n'y a plus de place, sélectionnez un membre puis un autre pour les échanger. Les amiraux ne peuvent être échangés.</string>
+        <string name="help_trading">Echanger des ressources</string>
+        <string name="help_fishing">Pêcher</string>
         <string name="help_attack">Attaquer le navire ennemi</string>
+        <string name="help_treasure">Hisser le trésor</string>
+        <string name="help_harbor">Prendre/Accoster au port</string>
         <string name="help_cost">Coût :</string>
+        <string name="help_gain">Gain :</string>
     </French>
 </languages>

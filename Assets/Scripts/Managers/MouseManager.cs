@@ -49,6 +49,8 @@ public class MouseManager : MonoBehaviour {
 
 		if (!EventSystem.current.IsPointerOverGameObject ()) {
 			RayCast ();
+		} else {
+			Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
 		}
 
 		if (selectedUnit != null) {
@@ -105,25 +107,42 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_HexUnit(GameObject ourHitObject){
-		panelHandler.hidePanelHelper();
+		Ship target = ourHitObject.GetComponent<Sea> ().ShipContained;
 
 		if (selectedUnit != null) {
-			
-			Ship target = ourHitObject.GetComponent<Sea>().ShipContained;
 
-			if (target.Owner.Name.Equals (selectedUnit.Owner.Name)) {
+			if (target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
 				if (target == selectedUnit) {
 					Cursor.SetCursor (fishingCursorTexture, new Vector2 (fishingCursorTexture.width / 2, fishingCursorTexture.height / 2), CursorMode.Auto);
+					panelHandler.changeTextHelper (11);
+					panelHandler.refreshHelper ();
+					panelHandler.showPanelHelper ();
 				} else {
 					Cursor.SetCursor (tradeCursorTexture, new Vector2 (tradeCursorTexture.width / 2, tradeCursorTexture.height / 2), CursorMode.Auto);
+					panelHandler.changeTextHelper (10);
+					panelHandler.refreshHelper ();
+					panelHandler.showPanelHelper ();
 				}
 			} else {
 				Cursor.SetCursor (attackCursorTexture, new Vector2 (attackCursorTexture.width / 2, attackCursorTexture.height / 2), CursorMode.Auto);
+				panelHandler.changeTextHelper (3);
+				panelHandler.refreshHelper ();
+				panelHandler.showPanelHelper ();
 			}
 
 			if (Input.GetMouseButtonUp (1)) {
-				selectedUnit.Interact(target);
-				panelHandler.hidePanelHarbor();
+				selectedUnit.Interact (target);
+				panelHandler.hidePanelHarbor ();
+			}
+		} else {
+			if (target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
+				panelHandler.changeTextHelper (9);
+				panelHandler.refreshHelper ();
+				panelHandler.showPanelHelper ();
+			} else {
+				panelHandler.changeTextHelper (4);
+				panelHandler.refreshHelper ();
+				panelHandler.showPanelHelper ();
 			}
 		}
 
@@ -135,94 +154,100 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_Treasure(GameObject ourHitObject){
-		Cursor.SetCursor (treasureCursorTexture, new Vector2 (treasureCursorTexture.width / 2, treasureCursorTexture.height / 2), CursorMode.Auto);
-		panelHandler.hidePanelHelper();
-		if (Input.GetMouseButtonUp (1)) {
-			Sea target = ourHitObject.GetComponent<Sea> ();
-			selectedUnit.HoistTreasure (target);
-			panelHandler.hidePanelHarbor();
+		if (selectedUnit != null) {
+			panelHandler.changeTextHelper (6);
+			panelHandler.refreshHelper ();
+			panelHandler.showPanelHelper ();
+			Cursor.SetCursor (treasureCursorTexture, new Vector2 (treasureCursorTexture.width / 2, treasureCursorTexture.height / 2), CursorMode.Auto);
+			if (Input.GetMouseButtonUp (1)) {
+				Sea target = ourHitObject.GetComponent<Sea> ();
+				selectedUnit.HoistTreasure (target);
+				panelHandler.hidePanelHarbor ();
+			}
+		} else {
+			panelHandler.changeTextHelper (5);
+			panelHandler.refreshHelper ();
+			panelHandler.showPanelHelper ();
 		}
 	}
 
 	void MouseOver_Harbor(GameObject ourHitObject){
-		Cursor.SetCursor (harborCursorTexture, new Vector2 (harborCursorTexture.width / 2, harborCursorTexture.height / 2), CursorMode.Auto);
-		panelHandler.hidePanelHelper();
-		if (Input.GetMouseButtonUp (1)) {
-			harbor = ourHitObject.GetComponent<Harbor> ().Interact (selectedUnit, map);
-			if (harbor) {
-				currentHarbor = ourHitObject.GetComponent<Harbor> ().getHarbor ();
+		if (selectedUnit != null) {
+			Cursor.SetCursor (harborCursorTexture, new Vector2 (harborCursorTexture.width / 2, harborCursorTexture.height / 2), CursorMode.Auto);
+			panelHandler.changeTextHelper (8);
+			panelHandler.refreshHelper ();
+			panelHandler.showPanelHelper ();
+			if (Input.GetMouseButtonUp (1)) {
+				harbor = ourHitObject.GetComponent<Harbor> ().Interact (selectedUnit, map);
+				if (harbor) {
+					currentHarbor = ourHitObject.GetComponent<Harbor> ().getHarbor ();
+				}
 			}
+		} else {
+			panelHandler.changeTextHelper (7);
+			panelHandler.refreshHelper ();
+			panelHandler.showPanelHelper ();
 		}
 	}
 
 	void MouseOver_Unit(GameObject ourHitObject) {
 		Ship target = ourHitObject.GetComponent<Ship> ();
-		print (gameManager.currentPlayer.Name);
-		if (!target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
-			panelHandler.changeTextHelper (3);
-			panelHandler.refreshHelper ();
-			panelHandler.showPanelHelper ();
+
+		if (selectedUnit != null) {
+			if (!target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
+				panelHandler.changeTextHelper (3);
+				panelHandler.refreshHelper ();
+				panelHandler.showPanelHelper ();
+			} else {
+				panelHandler.hidePanelHelper ();
+			}
 		} else {
-			panelHandler.hidePanelHelper ();
-		}
+			if (!target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
+				panelHandler.changeTextHelper (4);
+				panelHandler.refreshHelper ();
+				panelHandler.showPanelHelper ();
+			} else {
+				panelHandler.changeTextHelper (9);
+				panelHandler.refreshHelper ();
+				panelHandler.showPanelHelper ();
+			}
+		} 
 
 		if (selectedUnit != null) {
 			if (target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
 				if (target == selectedUnit) {
 					Cursor.SetCursor (fishingCursorTexture, new Vector2 (fishingCursorTexture.width / 2, fishingCursorTexture.height / 2), CursorMode.Auto);
+					panelHandler.changeTextHelper (11);
+					panelHandler.refreshHelper ();
+					panelHandler.showPanelHelper ();
 				} else {
 					Cursor.SetCursor (tradeCursorTexture, new Vector2 (tradeCursorTexture.width / 2, tradeCursorTexture.height / 2), CursorMode.Auto);
-				}
-			} else {
-				Cursor.SetCursor (attackCursorTexture, new Vector2 (attackCursorTexture.width / 2, attackCursorTexture.height / 2), CursorMode.Auto);
-			}
-			if (Input.GetMouseButtonUp (1)) {
-				selectedUnit.Interact (target);
-				panelHandler.hidePanelHarbor();
-			}
-		}
-		if (Input.GetMouseButtonUp(0)) {
-			selectedUnit = ourHitObject.GetComponent<Ship> ();
-			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
-			panelHandler.updateShip ();
-		}
-
-		/*
-		if (selectedUnit != null) {
-			
-			Ship target = ourHitObject.GetComponent<Ship> ();
-
-			// Cursor changing
-			if (target.Owner.Name.Equals (selectedUnit.Owner.Name)) {
-				if (target == selectedUnit) {
-					Cursor.SetCursor (fishingCursorTexture, new Vector2 (fishingCursorTexture.width / 2, fishingCursorTexture.height / 2), CursorMode.Auto);
-				} else {
-					Cursor.SetCursor (tradeCursorTexture, new Vector2 (tradeCursorTexture.width / 2, tradeCursorTexture.height / 2), CursorMode.Auto);
+					panelHandler.changeTextHelper (10);
+					panelHandler.refreshHelper ();
+					panelHandler.showPanelHelper ();
 				}
 			} else {
 				Cursor.SetCursor (attackCursorTexture, new Vector2 (attackCursorTexture.width / 2, attackCursorTexture.height / 2), CursorMode.Auto);
 				panelHandler.changeTextHelper (3);
-				panelHandler.refreshHelper();
-				panelHandler.showPanelHelper();
+				panelHandler.refreshHelper ();
+				panelHandler.showPanelHelper ();
 			}
-
 			if (Input.GetMouseButtonUp (1)) {
 				selectedUnit.Interact (target);
 				panelHandler.hidePanelHarbor();
 			}
 		}
-
-		if (Input.GetMouseButtonUp(0)) {
-			selectedUnit = ourHitObject.GetComponent<Ship> ();
+		if (Input.GetMouseButtonUp(0) && target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
+			selectedUnit = target;
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
-		}*/
+		}
 	}
 
 	void MouseOver_VoidSea(GameObject ourHitObject) {
 
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
-		panelHandler.hidePanelHelper();
+		panelHandler.hidePanelHelper ();
 
 		if (selectedUnit != null) {
 			pathProjector.transform.position = ourHitObject.transform.position+new Vector3(0,5f,0);

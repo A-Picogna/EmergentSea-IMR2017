@@ -8,6 +8,8 @@ public class GlobalVariables : MonoBehaviour {
 
 	// Energy Cost
 	public static int energyAttack = 5;
+	public static int energyTreasure = 3;
+	public static int energyFishing = 5;
 
 	//Stockage d'information
 	public static string pathMaps = Application.persistentDataPath + "/PrefabricatedMaps/";
