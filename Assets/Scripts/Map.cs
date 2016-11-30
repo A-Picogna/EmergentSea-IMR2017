@@ -354,8 +354,39 @@ public class Map : MonoBehaviour {
 		}
 	}
 
+	void InstantiateMap(MapFile mapSaved) {
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				string hexType = graph [x, y].type;
+				GameObject hex_go = null;
+				switch (hexType) {
+				case "sea":
+					hex_go = (GameObject)Instantiate (seaPrefab, graph [x, y].worldPos, Quaternion.identity);
+					break;
+				case "land":
+					int index = (x * this.height) + y;
+					if(mapSaved.graph[index].LandIsCoast)
+						hex_go = (GameObject)Instantiate (coastPrefab, graph [x, y].worldPos, Quaternion.identity);
+					else 
+						hex_go = (GameObject)Instantiate (landPrefab, graph [x, y].worldPos, Quaternion.identity);
+					break;
+				case "harbor":
+					hex_go = (GameObject)Instantiate (harborPrefab, graph [x, y].worldPos, Quaternion.identity);
+					break;
+				}
+				drawEdgesLines(hex_go);
+				hex_go.name = "Hex_" + x + "_" + y;
+				hex_go.GetComponent<Hex> ().x = x;
+				hex_go.GetComponent<Hex> ().y = y;
+				hex_go.transform.SetParent (this.transform);
+				hex_go.isStatic = true;
+			}
+		}
+	}
+
 	void loadFoodAndTreasures(MapFile saveMap) {
 		Sea SeaBuffer;
+		Land LandBuffer;
 		GameObject caseTreasure;
 		GameObject tres;
 		int index;
@@ -379,6 +410,13 @@ public class Map : MonoBehaviour {
 						tres.transform.SetParent (caseTreasure.transform);
 						SeaBuffer.AddTreasure (saveMap.graph[index].SeaTreasure, tres);
 					}
+				}
+				if (graph [x, y].type == "land") {
+					index = (x * this.height) + y;
+
+					LandBuffer = (GameObject.Find ("Hex_" + x + "_" + y)).GetComponent<Land> ();
+					LandBuffer.IsCoast = saveMap.graph[index].LandIsCoast;
+
 				}
 			}
 		}
@@ -532,6 +570,7 @@ public class Map : MonoBehaviour {
 
 		int k = 0;
 		Sea SeaBuffer;
+		Land LandBuffer;
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.height; j++) {
 				index = (i * this.height) + j;
@@ -548,6 +587,11 @@ public class Map : MonoBehaviour {
 					mapSaved.graph [index].SeaFood = SeaBuffer.FoodQuantity;
 					mapSaved.graph [index].SeaTreasure = SeaBuffer.Treasure;
 				}
+				if (this.graph [i, j].type == "land") {
+					LandBuffer = (GameObject.Find ("Hex_" + i + "_" + j)).GetComponent<Land> ();
+					mapSaved.graph [index].LandIsCoast = LandBuffer.IsCoast;
+				}
+
 			}
 		}
 

@@ -249,6 +249,13 @@ public class LoadManager : MonoBehaviour {
 		linkObjects (MapLoaded, gameManager);
 	}
 
+	private void loadSave(SaveFile save) {
+		MapLoaded = loadMap (save.map);
+		// Pour l'instant on refait un GameManager
+		GameManager gameManager = initGame (MapLoaded);
+		linkObjects (MapLoaded, gameManager);
+	}
+
 	private void linkObjects(Map MapLoaded, GameManager gameManager) {
 		GameObject mouseSettings = GameObject.Find ("MouseManager");
 		((MouseManager)mouseSettings.GetComponent<MouseManager> ()).map = MapLoaded;
@@ -257,10 +264,11 @@ public class LoadManager : MonoBehaviour {
 		GameObject pathfinder = GameObject.Find ("Pathfinder");
 		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = MapLoaded;
 
-		//GameObject btn_save = GameObject.Find ("btn_save");
-		//((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
-		//	LoadManager.instance.savePrefabricatedMap ("test");
-		//});
+		GameObject btn_save = GameObject.Find ("btn_save");
+		Debug.Log ("Linking save button...");
+		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			LoadManager.instance.savePrefabricatedMap ("hello");
+		});
 
 		GameObject HUDCanvas = GameObject.Find ("HUDCanvas");
 		PanelHandler panelHandler = HUDCanvas.GetComponent<PanelHandler> ();
@@ -282,6 +290,11 @@ public class LoadManager : MonoBehaviour {
 			Debug.Log ("Chargement d'une map préfabriqué");
 			Debug.Log ("Map à charger :" + MapPrefabToLoad.ToString());
 			loadPrefabricatedMap (MapPrefabToLoad);
+			break;
+		case state.LoadSave:
+			Debug.Log ("Chargement d'une sauvegarde ! :o");
+			Debug.Log ("Sauvegarde à charger: " + SaveToLoad.ToString ());
+			loadSave (SaveToLoad);
 			break;
 		default:
 			Debug.LogError ("Ca ne devrait pas arriver.");
@@ -307,11 +320,11 @@ public class LoadManager : MonoBehaviour {
 	}
 
 	public void savePrefabricatedMap(string name) {
-		if (!Directory.Exists (Application.persistentDataPath + "/PrefabricatedMaps")) {
-			Directory.CreateDirectory (Application.persistentDataPath + "/PrefabricatedMaps");
+		if (!Directory.Exists (GlobalVariables.pathMaps)) {
+			Directory.CreateDirectory (GlobalVariables.pathMaps);
 		}
 		BinaryFormatter bf = new BinaryFormatter();
-		FileStream saveFile = File.Open(Application.persistentDataPath + "/PrefabricatedMaps/" + name + ".map", FileMode.OpenOrCreate);
+		FileStream saveFile = File.Open(GlobalVariables.pathMaps + name + ".map", FileMode.OpenOrCreate);
 
 		// 2. Construct a SurrogateSelector object
 		SurrogateSelector ss = new SurrogateSelector();
@@ -326,7 +339,7 @@ public class LoadManager : MonoBehaviour {
 
 		Debug.Log ("Saving...");
 		bf.Serialize (saveFile, MapLoaded.SaveMap ());
-		Debug.Log (Application.persistentDataPath + "/PrefabricatedMaps/" + name + ".map");
+		Debug.Log (GlobalVariables.pathMaps + name + ".map");
 		saveFile.Close ();
 	}
 
@@ -351,5 +364,53 @@ public class LoadManager : MonoBehaviour {
 		MapFile saveMap = (MapFile)bf.Deserialize (saveFile);
 
 		loadWorld (saveMap);
+	}
+
+	public void save(string name) {
+		if (!Directory.Exists (GlobalVariables.pathSaves)) {
+			Directory.CreateDirectory (GlobalVariables.pathSaves);
+		}
+		BinaryFormatter bf = new BinaryFormatter();
+		FileStream saveFile = File.Open(GlobalVariables.pathSaves + name + ".save", FileMode.OpenOrCreate);
+
+		// 2. Construct a SurrogateSelector object
+		SurrogateSelector ss = new SurrogateSelector();
+
+		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ss.AddSurrogate(typeof(Vector3),
+			new StreamingContext(StreamingContextStates.All),
+			v3ss);
+
+		// 5. Have the formatter use our surrogate selector
+		bf.SurrogateSelector = ss;
+
+		Debug.Log ("Saving save...");
+
+		SaveFile saveObject = new SaveFile (MapLoaded.SaveMap ());
+
+		bf.Serialize (saveFile, saveObject);
+		Debug.Log (GlobalVariables.pathSaves + name + ".map");
+		saveFile.Close ();
+	}
+
+	public void loadSave(string path) {
+		FileStream saveFile = File.OpenRead (path);
+		BinaryFormatter bf = new BinaryFormatter();
+
+		// 2. Construct a SurrogateSelector object
+		SurrogateSelector ss = new SurrogateSelector();
+
+		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ss.AddSurrogate(typeof(Vector3),
+			new StreamingContext(StreamingContextStates.All),
+			v3ss);
+
+		// 5. Have the formatter use our surrogate selector
+		bf.SurrogateSelector = ss;
+
+		Debug.Log ("Loading...");
+		SaveFile saveObject = (SaveFile)bf.Deserialize (saveFile);
+
+		loadSave (saveObject);
 	}
 }
