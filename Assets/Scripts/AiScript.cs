@@ -63,7 +63,7 @@ public class AiScript {
         Debug.Log("AI turn");
         int state = 0;
 
-        while (state <= aiGame.Count)
+        while (state < aiGame.Count)
         {
             //We want the ai to get at least X boats
             if ((string)aiGame[state] == "nbboat")
