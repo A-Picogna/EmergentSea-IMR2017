@@ -67,6 +67,32 @@ public class HelpPanel : MonoBehaviour {
 			string text = lang.getString ("help_fishing") + "//n" + lang.getString ("help_cost") + "<color=red> -" + GlobalVariables.energyFishing.ToString() + " " + lang.getString ("energy") + "</color> " +
 				"//n" + lang.getString ("help_gain") + "<color=green> " + lang.getString ("food") + "</color> ";
 			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 12) { // Amiral
+			string text = lang.getString ("admiral") + "//n" + formatString(lang.getString ("help_admiral"));
+			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 13) { // Flibustier
+			string text = lang.getString ("filibuster") + "//n" + formatString(lang.getString ("help_filibuster"));
+			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 14) { // Artificier
+			string text = lang.getString ("powder_monkey") + "//n" + formatString(lang.getString ("help_powder_monkey"));
+			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 15) { // Lanceur de maléfices
+			string text = lang.getString ("conjurer") + "//n" + formatString(lang.getString ("help_conjurer"));
+			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 16) { // Taverne
+			textHelp.text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.healthCost.ToString() + " " + lang.getString ("gold") + "</color>/" + lang.getString ("pv");
+		} else if (type == 17) { // Vendre Nourriture
+			textHelp.text = lang.getString ("help_gain") + "<color=green> " + GlobalVariables.changeFoodGold.ToString() + " " + lang.getString ("gold") + "</color>/" + lang.getString ("food");
+		} else if (type == 18) { // Engager flibustier
+			textHelp.text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.filibusterCost.ToString() + " " + lang.getString ("gold") + "</color>";
+		} else if (type == 19) { // Engager artificier
+			textHelp.text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.powderMonkeyCost.ToString() + " " + lang.getString ("gold") + "</color>";
+		} else if (type == 20) { // Engager lanceur de maléfices
+			textHelp.text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.conjurerCost.ToString() + " " + lang.getString ("gold") + "</color>";
+		} else if (type == 21) { // Construction navire
+			string text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.admiralCost.ToString() + " " + lang.getString ("gold") + "</color>//n" +
+				lang.getString ("help_time") + " " + GlobalVariables.buildingTime + " " + lang.getString ("help_round") + "s";
+			textHelp.text = text.Replace("//n", "\n");
 		}
 	}
 	public void changeText(int tp) {

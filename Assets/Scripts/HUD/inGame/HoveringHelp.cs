@@ -11,6 +11,10 @@ public class HoveringHelp : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
 	// Use this for initialization
 	void Start () {
+		if (panelHelp == null) {
+			PanelHandler pnlH = GetComponentInParent<Canvas>().GetComponent<PanelHandler>();
+			panelHelp = pnlH.panelHelp2;
+		}
 		panelHelp.SetActive(false);
 		activated = false;
 		helpPanel = panelHelp.GetComponent<HelpPanel> ();

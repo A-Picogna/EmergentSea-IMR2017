@@ -18,6 +18,7 @@ public class CrewItemButton : MonoBehaviour {
 	}
 
 	public void Setup (CrewMember currentItem) {
+		print(transform.GetChild (0).GetComponent<HoveringHelp>());
 		item = currentItem;
 		if (item.Type == 0)
 			type.sprite =  Resources.Load<Sprite>("Images/admiral_icon");
