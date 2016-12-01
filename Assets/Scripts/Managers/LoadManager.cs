@@ -44,9 +44,11 @@ public class LoadManager : MonoBehaviour {
     public GameObject harborPrefab;
     public GameObject coastPrefab;
 	public GameObject gameManagerPrefab;
+	public GameObject mapEditorPrefab;
 
 	// Private variables
 	private Map MapLoaded;
+	private MapEditor MapLoadedEditor;
 	public string MapPrefabToLoad;
 	public string SaveToLoad;
 	private int nbCasesTerre;
@@ -216,12 +218,12 @@ public class LoadManager : MonoBehaviour {
 		return mapSettings;
 	}
 
-	private Map initEditorMap() {
+	private MapEditor initEditorMap() {
 		//////////// POUR L'EDITEUR
-		GameObject newObject = Instantiate(mapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		GameObject newObject = Instantiate(mapEditorPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
 		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
 
-		Map mapSettings = newObject.GetComponent<Map>();
+		MapEditor mapSettings = newObject.GetComponent<MapEditor>();
 
 		mapSettings.hexPrefab = hexPrefab;
 		mapSettings.landPrefab = landPrefab;
@@ -231,8 +233,6 @@ public class LoadManager : MonoBehaviour {
 
 		mapSettings.height = MapY;
 		mapSettings.width = MapX;
-
-		mapSettings.LaunchEditorMap ();
 
 
 		return mapSettings;
@@ -280,7 +280,7 @@ public class LoadManager : MonoBehaviour {
 
 	private void initEditor() {
 		//////////// POUR L'EDITEUR
-		MapLoaded = initEditorMap ();
+		MapLoadedEditor = initEditorMap ();
 	}
 
 	private void linkObjects(Map MapLoaded, GameManager gameManager) {
@@ -369,6 +369,31 @@ public class LoadManager : MonoBehaviour {
 
 		Debug.Log ("Saving...");
 		bf.Serialize (saveFile, MapLoaded.SaveMap ());
+		Debug.Log (GlobalVariables.pathMaps + name + ".map");
+		saveFile.Close ();
+	}
+
+	public void savePrefabricatedMapEditor(string name) {
+		//////////////// POUR L'EDITEUR
+		if (!Directory.Exists (GlobalVariables.pathMaps)) {
+			Directory.CreateDirectory (GlobalVariables.pathMaps);
+		}
+		BinaryFormatter bf = new BinaryFormatter();
+		FileStream saveFile = File.Open(GlobalVariables.pathMaps + name + ".map", FileMode.OpenOrCreate);
+
+		// 2. Construct a SurrogateSelector object
+		SurrogateSelector ss = new SurrogateSelector();
+
+		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ss.AddSurrogate(typeof(Vector3),
+			new StreamingContext(StreamingContextStates.All),
+			v3ss);
+
+		// 5. Have the formatter use our surrogate selector
+		bf.SurrogateSelector = ss;
+
+		Debug.Log ("Saving...");
+		bf.Serialize (saveFile, MapLoadedEditor.SaveMap ());
 		Debug.Log (GlobalVariables.pathMaps + name + ".map");
 		saveFile.Close ();
 	}

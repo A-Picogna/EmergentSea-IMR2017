@@ -133,4 +133,45 @@ public class MapEditor : MonoBehaviour {
 		res[1] = y + 0.5f * Mathf.Sin (angle_rad);
 		return res;
 	}
+
+	public MapFile SaveMap() {
+		int index = 0;
+		MapFile mapSaved = new MapFile();
+		mapSaved.height = this.height;
+		Debug.Log ("Height: "+this.height.ToString());
+		mapSaved.width = this.width;
+		Debug.Log ("Width: "+this.width.ToString());
+		mapSaved.graph = new NodeStruct[(this.height * this.width)];
+
+		Debug.Log ("MapSaved_size=" + (this.height * this.width));
+
+		int k = 0;
+		Sea SeaBuffer;
+		Land LandBuffer;
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.height; j++) {
+				index = (i * this.height) + j;
+
+				mapSaved.graph [index] = new NodeStruct(this.graph [i, j].x, 
+					this.graph [i, j].y, 
+					this.graph [i, j].isWalkable, 
+					this.graph [i, j].type,
+					this.graph [i, j].tag
+				);
+				if(this.graph[i,j].type == "sea") {
+					SeaBuffer = (GameObject.Find ("Hex_" + i + "_" + j)).GetComponent<Sea> ();
+
+					mapSaved.graph [index].SeaFood = SeaBuffer.FoodQuantity;
+					mapSaved.graph [index].SeaTreasure = SeaBuffer.Treasure;
+				}
+				if (this.graph [i, j].type == "land") {
+					LandBuffer = (GameObject.Find ("Hex_" + i + "_" + j)).GetComponent<Land> ();
+					mapSaved.graph [index].LandIsCoast = LandBuffer.IsCoast;
+				}
+
+			}
+		}
+
+		return mapSaved;
+	}
 }
