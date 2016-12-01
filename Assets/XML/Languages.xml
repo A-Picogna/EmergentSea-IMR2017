@@ -39,9 +39,19 @@
         <string name="dark_arts_academy_description">Engager un mage</string>
         <string name="shipyard">Chantier naval</string>
         <string name="shipyard_description">Construire un navire</string>
+        <string name="inn_action">Soigner l'équipage</string>
+        <string name="storehouse_action">Vendre toute sa nourriture</string>
+        <string name="warehouse_action">Engager un flibustier</string>
+        <string name="slums_action">Engager un artificier</string>
+        <string name="dark_arts_academy_action">Engager un lanceur de maléfices</string>
+        <string name="shipyard_action">Construire un navire</string>
         <string name="trade">Echange</string>
         <string name="give">Donner</string>
         <string name="energy">Energie</string>
+        <string name="admiral">Amiral</string>
+        <string name="filibuster">Flibustier</string>
+        <string name="powder_monkey">Artificier</string>
+        <string name="conjurer">Lanceur de maléfices</string>
 
         <string name="help_trade">Cliquez sur les membres d'équipage que vous voulez échanger. S'il n'y a plus de place, sélectionnez un membre puis un autre pour les échanger. Les amiraux ne peuvent être échangés.</string>
         <string name="help_trading">Echanger des ressources</string>
@@ -49,7 +59,13 @@
         <string name="help_attack">Attaquer le navire ennemi</string>
         <string name="help_treasure">Hisser le trésor</string>
         <string name="help_harbor">Prendre/Accoster au port</string>
+        <string name="help_admiral">Il tient la barre et ne peut pas attaquer. Il sera toujours le dernier homme à bord et ne peut donc pas être échangé.</string>
+        <string name="help_filibuster">Il répare les dommages infligés au navire. Il ne peut attaquer que les cases adjacentes.</string>
+        <string name="help_powder_monkey">Il manie les canons. Il ne peut attaquer que sur les flancs du navire et jusqu'à 3 cases.</string>
+        <string name="help_conjurer">C'est un puissant magicien. Il peut attaquer dans toutes les directions jusqu'à 2 cases.</string>
         <string name="help_cost">Coût :</string>
         <string name="help_gain">Gain :</string>
+        <string name="help_time">Durée :</string>
+        <string name="help_round">Tour</string>
     </French>
 </languages>

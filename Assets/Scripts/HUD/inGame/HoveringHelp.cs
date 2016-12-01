@@ -6,32 +6,42 @@ public class HoveringHelp : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 	public GameObject panelHelp;
 	public int type;
 	private HelpPanel helpPanel;
-	private MouseFollower mouseFollower;
 	private bool activated;
 
 	// Use this for initialization
 	void Start () {
+		if (panelHelp == null) {
+			PanelHandler pnlH = GetComponentInParent<Canvas>().GetComponent<PanelHandler>();
+			panelHelp = pnlH.panelHelp2;
+		}
 		panelHelp.SetActive(false);
 		activated = false;
 		helpPanel = panelHelp.GetComponent<HelpPanel> ();
-		mouseFollower = panelHelp.transform.GetComponent<MouseFollower> ();
 	}
 
 	void Update() {
-		if (activated)
-			mouseFollower.refreshPosition ();
+		if (activated) {
+			helpPanel.refreshPosition ();
+		}
 	}
 	
 	public void OnPointerEnter(PointerEventData eventData)
 	{
-		activated = true;
+		print (helpPanel);
+		print ("Change text");
 		helpPanel.changeText (type);
+		print ("Refresh");
 		helpPanel.refresh ();
-		panelHelp.SetActive(true);
+		print ("Active");
+		activated = true;
+		print ("Show");
+		helpPanel.showPanel ();
+		print (panelHelp.activeSelf);
 	}
 	public void OnPointerExit(PointerEventData eventData)
 	{
+		print ("Out");
 		activated = false;
-		panelHelp.SetActive(false);
+		helpPanel.hidePanel ();
 	}
 }

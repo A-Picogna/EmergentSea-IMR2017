@@ -7,8 +7,10 @@ public class Admiral : CrewMember
 {
 
     // Use this for initialization
-    public Admiral(){
+	public Admiral() : base(){
 		//Initialise the variables
+		baseEnergyQuantity = 5;
+		energyQuantity = baseEnergyQuantity;
 		BaseAtk = 0;
 		BaseLpMax = 300;
 		LpMax = BaseLpMax;

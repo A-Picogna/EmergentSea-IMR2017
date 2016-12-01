@@ -5,7 +5,7 @@ using System.Collections;
 
 public class CrewMember
 {
-	private int baseLpMax,
+	protected int baseLpMax,
 	lp, 
 	lpMax, 
 	baseEnergyQuantity,
