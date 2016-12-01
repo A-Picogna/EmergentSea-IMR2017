@@ -18,13 +18,18 @@ public class HelpPanel : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		canvas = GetComponentInParent<Canvas>();
+		//canvas = GetComponentInParent<Canvas>();
+		canvas = GameObject.Find("HUDCanvas").GetComponent<Canvas>();
 		hidePanel ();
 		refresh ();
 	}
 
 	public void refreshPosition() {
 		Vector2 pos;
+		if (canvas == null) {
+			//canvas = GetComponentInParent<Canvas>();
+			canvas = GameObject.Find("HUDCanvas").GetComponent<Canvas>();
+		}
 		RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Input.mousePosition, canvas.worldCamera, out pos);
 		if (positionMode == 0) {
 			pos.x += 75;
@@ -127,14 +132,6 @@ public class HelpPanel : MonoBehaviour {
 		if (tmp.Length > 0) {
 			result += tmp;
 		}
-		/*
-		for (int i = 0; i < size; i += lineSize) {
-			if (i + lineSize <= size) {
-				result += text.Substring (i, lineSize) + "//n";
-			} else {
-				result += text.Substring (i, size);
-			}
-		}*/
 		return result;
 	}
 }
