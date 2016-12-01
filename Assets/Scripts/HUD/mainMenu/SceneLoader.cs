@@ -31,6 +31,11 @@ public class SceneLoader : MonoBehaviour {
 		}
 	}
 
+	public void BackToMenu(){
+		LoadManager.instance.LoadManagerState = LoadManager.state.Inactive;
+		SceneManager.LoadSceneAsync("main");
+	}
+
 	void Update() {
 		if (loadingAScene == true) {
 			if (supercount == 19) {
