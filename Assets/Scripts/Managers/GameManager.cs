@@ -221,21 +221,7 @@ public class GameManager : MonoBehaviour {
 					ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 					Ship ship = ship_go.GetComponent<Ship> ();
 					ship.Owner = player;
-					CrewMember cm = new Conjurer ();
-					cm.Lp = 80;
-					cm.LpMax = 100;
-					cm.Xp = 20;
-					ship.addCrewMember(cm);
-					ship.addCrewMember(new Conjurer());
 					ship.addCrewMember(new Filibuster());
-					ship.addCrewMember(new PowderMonkey());
-					if (count > 5) {
-						cm = new PowderMonkey ();
-						cm.Lp = 75;
-						cm.Xp = 40;
-						ship.addCrewMember (cm);
-					}
-					ship.addCrewMember(new PowderMonkey());
 					player.Fleet.Add (ship);
 					mouseManager.map.graph [x, y].isWalkable = false;
 					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
