@@ -2,6 +2,7 @@
 using System.Collections;
 using System.IO;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class SaveUI : MonoBehaviour {
 
@@ -14,13 +15,13 @@ public class SaveUI : MonoBehaviour {
 	public GameObject LaunchButton;
 	public GameObject DeleteButton;
 	public GameObject LoadedSaveUI;
-
+	public GameObject NewSaveTextInput;
+	public GameObject NewSaveButton;	
+	private List<GameObject> SaveFileLine;
 	public string[] saveList;
 
 	public void OnClickNewSave() {
 		changeState (State.Saving);
-
-		SaveUIState = State.Saving;
 	}
 
 	void Start() {
@@ -36,15 +37,22 @@ public class SaveUI : MonoBehaviour {
 			saveList = Directory.GetFiles (GlobalVariables.pathSaves);
 		}
 		int offset = 0;
-		//foreach (string saveFile in saveList) {
-			GameObject SaveFileLine = (GameObject)Instantiate(SaveUIPrefab);
-			SaveFileLine.transform.SetParent(SaveList.transform, false);
-			SaveFileLine.transform.Translate (new Vector3 (0, offset * -17, 0));
-			(SaveFileLine.GetComponentInChildren <Text> ()).text = "Test_X";
-			(SaveFileLine.GetComponent<Button>()).onClick.AddListener (() => {
-				SelectSave("saveFile");
+		foreach (string saveFile in saveList) {
+			SaveFileLine.Add((GameObject)Instantiate(SaveUIPrefab));
+			SaveFileLine [offset].name = "Save_" + offset;
+			SaveFileLine [offset].transform.SetParent(SaveList.transform, false);
+			SaveFileLine [offset].transform.Translate (new Vector3 (0, offset * -17, 0));
+			(SaveFileLine [offset].GetComponentInChildren <Text> ()).text = Path.GetFileName(saveFile);
+			(SaveFileLine [offset].GetComponent<Button>()).onClick.AddListener (() => {
+				SelectSave(saveFile);
 			});
-		//}
+		}
+	}
+
+	private void resetSaveList() {
+		foreach (GameObject saveFileObject in SaveFileLine) {
+			Destroy (saveFileObject);
+		}
 	}
 
 	private void SelectSave(string saveFile) {
@@ -53,8 +61,19 @@ public class SaveUI : MonoBehaviour {
 		LoadManager.instance.SaveToLoad = saveFile;
 		LoadManager.instance.LoadManagerState = LoadManager.state.LoadSave;
 
-		(LoadedSaveUI.GetComponentInChildren<Text> ()).text = "Save_X";
+		(LoadedSaveUI.GetComponentInChildren<Text> ()).text = Path.GetFileName(saveFile);
 	}
+
+	public void DeleteSave() {
+		File.Delete (LoadManager.instance.SaveToLoad);
+		LoadManager.instance.SaveToLoad = "";
+		changeState (State.Nothing);
+	}
+
+	public void Save() {
+		string saveName = (NewSaveTextInput.GetComponent<InputField> ()).text;
+		LoadManager.instance.save (saveName);
+	} 
 
 	private void changeState(State state) {
 		this.SaveUIState = state;
