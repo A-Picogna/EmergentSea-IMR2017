@@ -7,6 +7,9 @@ public class MapEditor : MonoBehaviour {
 	public GameObject hexPrefab;
 	public GameObject landPrefab;
 	public GameObject seaPrefab;
+	public GameObject coastPrefab;
+	public GameObject harborPrefab;
+	public GameObject treasurePrefab;
 	public GameObject shipPrefab;
 	public int width;
 	public int height;
@@ -95,8 +98,8 @@ public class MapEditor : MonoBehaviour {
 					xPos += xOffset / 2f;
 				}
 				Vector3 worldPosition = new Vector3 (xPos, 0, y * zOffset);
-				GameObject hex_go = (GameObject)Instantiate (hexPrefab, worldPosition, Quaternion.identity);
-				graph [x, y] = new Node (x, y, worldPosition, false, "hex");
+				GameObject hex_go = (GameObject)Instantiate (seaPrefab, worldPosition, Quaternion.identity);
+				graph [x, y] = new Node (x, y, worldPosition, false, "sea");
 				DrawEdgesLines(hex_go);
 				hex_go.name = "Hex_" + x + "_" + y;
 				hex_go.GetComponent<Hex> ().x = x;
