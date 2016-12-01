@@ -14,6 +14,8 @@ public class NodeStruct
 	public int SeaFood;
 	public int SeaTreasure;
 
+	public bool LandIsCoast;
+
 	public NodeStruct(int x, int y, bool isWalkable, string type, bool tag) {
 		this.x = x;
 		this.y = y;
