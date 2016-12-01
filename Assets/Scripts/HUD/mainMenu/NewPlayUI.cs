@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -130,7 +130,9 @@ public class NewPlayUI : MonoBehaviour {
 	}
 
 	private void updateMapListChoiceCallback(int number) {
-		LoadManager.instance.MapPrefabToLoad = mapList [number];
+		if (mapList.GetLength != 0) {
+			LoadManager.instance.MapPrefabToLoad = mapList [number];
+		}
 	}
 
 	private void updateValuesMap() {
