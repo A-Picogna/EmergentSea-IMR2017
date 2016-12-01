@@ -130,6 +130,31 @@ public class Map : MonoBehaviour {
 		AddNeighboursToNodes ();
 	}
 
+	public void LaunchEditorMap() {
+		//////////// POUR L'EDITEUR
+		size = width * height;
+		rand = new System.Random();
+		GroupLand = new List<Node>();
+		GroupListPossibleHarbor = new List<List<Node>>();
+		worldCoord = new Vector3(0, 0, 0);
+		mapFausse = false;
+		regenerateCount = 1;
+		worldCoordFood = new Vector3(0, 0, 0);
+		worldCoordTreasure = new Vector3(0, 0, 0);
+
+		// Init map
+		InitializeMap();
+
+		// INVOCATIOOOOON
+		InstantiateMap ();
+
+		// La nourriture
+		generateFood ();
+
+		// Touche finale
+		AddNeighboursToNodes ();
+	}
+
 	// Update is called once per frame
 	void Update () {
 	

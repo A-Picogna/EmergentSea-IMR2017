@@ -21,7 +21,7 @@ public class LoadManager : MonoBehaviour {
 	// The magic works here : You can use the singleton just by indicating nager.instance
 
 	// Object Enum
-	public enum state { Inactive, StartNewMap, StartLoadedMap, LoadSave }
+	public enum state { Inactive, StartNewMap, StartLoadedMap, LoadSave, StartEditor }
 
 	// LoadManager Info
 	public state LoadManagerState;
@@ -216,6 +216,28 @@ public class LoadManager : MonoBehaviour {
 		return mapSettings;
 	}
 
+	private Map initEditorMap() {
+		//////////// POUR L'EDITEUR
+		GameObject newObject = Instantiate(mapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
+
+		Map mapSettings = newObject.GetComponent<Map>();
+
+		mapSettings.hexPrefab = hexPrefab;
+		mapSettings.landPrefab = landPrefab;
+		mapSettings.seaPrefab = seaPrefab;
+		mapSettings.harborPrefab = harborPrefab;
+		mapSettings.coastPrefab = coastPrefab;
+
+		mapSettings.height = MapY;
+		mapSettings.width = MapX;
+
+		mapSettings.LaunchEditorMap ();
+
+
+		return mapSettings;
+	}
+
 	private Map loadMap(MapFile saveMap) {
 		GameObject newObject = Instantiate(mapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
 		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
@@ -256,6 +278,11 @@ public class LoadManager : MonoBehaviour {
 		linkObjects (MapLoaded, gameManager);
 	}
 
+	private void initEditor() {
+		//////////// POUR L'EDITEUR
+		MapLoaded = initEditorMap ();
+	}
+
 	private void linkObjects(Map MapLoaded, GameManager gameManager) {
 		GameObject mouseSettings = GameObject.Find ("MouseManager");
 		((MouseManager)mouseSettings.GetComponent<MouseManager> ()).map = MapLoaded;
@@ -278,8 +305,7 @@ public class LoadManager : MonoBehaviour {
 	void OnLevelWasLoaded() {
 		switch (LoadManagerState) {
 		case state.Inactive:
-			Debug.Log ("PAS BON, mais on laisse passer");
-			initWorld ();
+			Debug.Log ("Normalement je devrais revenir au menu, je fais rien");
 			break;
 		case state.StartNewMap:
 			Debug.Log ("Génération de la map ;)");
@@ -295,6 +321,10 @@ public class LoadManager : MonoBehaviour {
 			Debug.Log ("Chargement d'une sauvegarde ! :o");
 			Debug.Log ("Sauvegarde à charger: " + SaveToLoad.ToString ());
 			loadSave (SaveToLoad);
+			break;
+		case state.StartEditor:
+			Debug.Log ("Chargement de l'éditeur !");
+			initEditor ();
 			break;
 		default:
 			Debug.LogError ("Ca ne devrait pas arriver.");

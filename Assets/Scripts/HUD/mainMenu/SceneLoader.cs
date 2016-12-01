@@ -21,6 +21,16 @@ public class SceneLoader : MonoBehaviour {
 		}
 	}
 
+	public void Editor() {
+		if (loadingAScene == false) {
+			loadingAScene = true;
+
+			gameObject.SetActive (true);
+
+			StartCoroutine (EditorCoroutine ());
+		}
+	}
+
 	void Update() {
 		if (loadingAScene == true) {
 			if (supercount == 19) {
@@ -48,6 +58,20 @@ public class SceneLoader : MonoBehaviour {
 
 		// Start an ansync operation to load the scene
 		AsyncOperation async = SceneManager.LoadSceneAsync("map");
+
+		while (!async.isDone) {
+			yield return null;
+		}
+
+		loadingAScene = false;
+	}
+
+	IEnumerator EditorCoroutine() {
+		// We wait just 3 seconds to feel the loading
+		yield return new WaitForSeconds (1);
+
+		// Start an ansync operation to load the scene
+		AsyncOperation async = SceneManager.LoadSceneAsync("map_editor");
 
 		while (!async.isDone) {
 			yield return null;

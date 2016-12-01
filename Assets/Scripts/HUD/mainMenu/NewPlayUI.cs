@@ -44,6 +44,7 @@ public class NewPlayUI : MonoBehaviour {
 		MapYSliderComponent = MapYSlider.gameObject.GetComponent<Slider> ();
 
 		populateMapList ();
+		updateValuesMap ();
 
 		MapTypeInputDropdownCallback(0);
 		updateMapListChoiceCallback (0);
@@ -73,11 +74,7 @@ public class NewPlayUI : MonoBehaviour {
 			MapYDescGroup.gameObject.SetActive (true);
 			MapYInputGroup.gameObject.SetActive (true);
 
-			MapXFeedbackTextComponent.text = LoadManager.instance.MapX.ToString ();
-			MapYFeedbackTextComponent.text = LoadManager.instance.MapY.ToString ();
 
-			MapXSliderComponent.value = LoadManager.instance.MapX;
-			MapYSliderComponent.value = LoadManager.instance.MapY;
 		} else {
 			
 			MapXDescGroup.gameObject.SetActive (false);
@@ -134,5 +131,13 @@ public class NewPlayUI : MonoBehaviour {
 
 	private void updateMapListChoiceCallback(int number) {
 		LoadManager.instance.MapPrefabToLoad = mapList [number];
+	}
+
+	private void updateValuesMap() {
+		MapXFeedbackTextComponent.text = LoadManager.instance.MapX.ToString ();
+		MapYFeedbackTextComponent.text = LoadManager.instance.MapY.ToString ();
+
+		MapXSliderComponent.value = LoadManager.instance.MapX;
+		MapYSliderComponent.value = LoadManager.instance.MapY;
 	}
 }
