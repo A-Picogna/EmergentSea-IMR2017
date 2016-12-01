@@ -49,6 +49,10 @@ public class NewPlayUI : MonoBehaviour {
 		updateMapListChoiceCallback (0);
 	}
 
+	void OnEnable() {
+		MapTypeInputDropdownCallback ((MapTypeInputDropdown.GetComponent<Dropdown>()).value);
+	}
+
 	public void OnMapXSlideValueChanged(float number) {
 		if(MapXFeedbackTextComponent != null){
 			MapXFeedbackTextComponent.text = number.ToString ();
@@ -105,7 +109,13 @@ public class NewPlayUI : MonoBehaviour {
 	}
 
 	private void populateMapList() {
-		mapList = Directory.GetFiles (Application.persistentDataPath + "/PrefabricatedMaps/");
+		try {
+			mapList = Directory.GetFiles (GlobalVariables.pathMaps);
+		}
+		catch (DirectoryNotFoundException) {
+			Directory.CreateDirectory (GlobalVariables.pathMaps);
+			mapList = Directory.GetFiles (GlobalVariables.pathMaps);
+		}
 		MapListDropdownComponent = MapListInputDropdown.GetComponent<Dropdown> ();
 
 		MapListDropdownComponent.ClearOptions ();
