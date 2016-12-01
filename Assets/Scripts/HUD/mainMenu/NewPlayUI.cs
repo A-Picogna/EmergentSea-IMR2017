@@ -130,7 +130,7 @@ public class NewPlayUI : MonoBehaviour {
 	}
 
 	private void updateMapListChoiceCallback(int number) {
-		if (mapList.GetLength != 0) {
+		if (mapList.Length != 0) {
 			LoadManager.instance.MapPrefabToLoad = mapList [number];
 		}
 	}
