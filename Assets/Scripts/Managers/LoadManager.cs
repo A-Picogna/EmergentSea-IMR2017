@@ -183,15 +183,11 @@ public class LoadManager : MonoBehaviour {
 	}
 
 	public void MapXSliderCallBack(float MapX) {
-		if (MapWidthParameter == 6) {
-			this.MapX = Mathf.FloorToInt (MapX);
-		}
+		this.MapX = Mathf.FloorToInt (MapX);
 	}
 
 	public void MapYSliderCallBack(float MapY) {
-		if (MapWidthParameter == 6) {
-			this.MapY = Mathf.FloorToInt (MapY);
-		}
+		this.MapY = Mathf.FloorToInt (MapY);
 	}
 
 	private Map initMap() {
@@ -231,6 +227,7 @@ public class LoadManager : MonoBehaviour {
 		mapSettings.harborPrefab = harborPrefab;
 		mapSettings.coastPrefab = coastPrefab;
 
+		Debug.Log (MapX.ToString()+ " " + MapY.ToString ());
 		mapSettings.height = MapY;
 		mapSettings.width = MapX;
 
