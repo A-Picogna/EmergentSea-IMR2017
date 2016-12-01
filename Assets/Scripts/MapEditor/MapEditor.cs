@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class MapEditor : MonoBehaviour {
 
@@ -20,12 +21,34 @@ public class MapEditor : MonoBehaviour {
 	private float zOffset = 0.75f;
 	private GameObject newHex;
 	private Vector3 mousePos;
-	private string selectedType = "sea";
+	private int selectedType = 0;
+	System.Random rand;
+
+	public Button btn_selectSea;
+	public Button btn_selectLand;
+	public Button btn_selectCoast;
+	public Button btn_selectHarbor;
+	public Button btn_selectTreasure;
 
 	void Start () {
 		size = width * height;
 		InitializeMap();
-	
+		btn_selectSea = (Button) GameObject.Find("btn_selectSea").GetComponent<Button>();
+		btn_selectLand = (Button) GameObject.Find("btn_selectLand").GetComponent<Button>();
+		btn_selectCoast = (Button) GameObject.Find("btn_selectCoast").GetComponent<Button>();
+		btn_selectHarbor = (Button) GameObject.Find("btn_selectHarbor").GetComponent<Button>();
+		btn_selectTreasure = (Button) GameObject.Find("btn_selectTreasure").GetComponent<Button>();
+
+		btn_selectSea.onClick.AddListener(() => selectedType = 0);
+		btn_selectLand.onClick.AddListener(() => selectedType = 1);
+		btn_selectCoast.onClick.AddListener(() => selectedType = 2);
+		btn_selectHarbor.onClick.AddListener(() => selectedType = 3);
+		btn_selectTreasure.onClick.AddListener(() => selectedType = 4);
+
+		Button btn_save = GameObject.Find ("btn_save").GetComponent<Button>();
+		btn_save.onClick.AddListener (() => {
+			LoadManager.instance.savePrefabricatedMapEditor ("test");
+		});
 	}
 
 	void Update () {
@@ -37,9 +60,19 @@ public class MapEditor : MonoBehaviour {
 				ReplaceElement (selectedType);
 			}
 		}
+		if (Input.GetMouseButton (1)) {
+			ReplaceElement (selectedType);
+		}
 	}
 
-	void ReplaceElement(string newElementType){
+	void ReplaceElement(int newElementType){
+		/*
+		 * 0 : Sea
+		 * 1 : Land
+		 * 2 : Coast
+		 * 3 : Harbor
+		 * 4 : Treasure
+		 */
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hitInfo;
 		if (Physics.Raycast (ray, out hitInfo)) {			
@@ -48,7 +81,7 @@ public class MapEditor : MonoBehaviour {
 			int x = ourHitObject.GetComponent<Hex> ().x;
 			int y = ourHitObject.GetComponent<Hex> ().y;
 			switch (newElementType) {
-			case "sea":
+			case 0:
 				Destroy (ourHitObject);	
 				GameObject sea_go = (GameObject)Instantiate (seaPrefab, worldPos, Quaternion.identity);
 				graph [x,y] = new Node (x, y, worldPos, true, "sea");
@@ -59,10 +92,10 @@ public class MapEditor : MonoBehaviour {
 				sea_go.isStatic = true;
 				DrawEdgesLines(sea_go);
 				break;
-			case "land":
+			case 1:
 				Destroy (ourHitObject);	
 				GameObject land_go = (GameObject)Instantiate (landPrefab, worldPos, Quaternion.identity);
-				graph [x,y] = new Node (x, y, worldPos, false, "sea");
+				graph [x,y] = new Node (x, y, worldPos, false, "land");
 				land_go.name = "Hex_" + x + "_" + y;
 				land_go.GetComponent<Land> ().x = x;
 				land_go.GetComponent<Land> ().y = y;
@@ -70,19 +103,37 @@ public class MapEditor : MonoBehaviour {
 				land_go.isStatic = true;
 				DrawEdgesLines(land_go);
 				break;
-			case "harbor":
+			case 2:
 				Destroy (ourHitObject);	
-				GameObject harbor_go;
-				graph [x,y] = new Node (x, y, worldPos, false, "harbor");
-				//harbor_go.name = "Hex_" + x + "_" + y;
-				//harbor_go.GetComponent<Harbor> ().x = x;
-				//harbor_go.GetComponent<Harbor> ().y = y;
-				//harbor_go.transform.SetParent(this.transform);
-				//harbor_go.isStatic = true;
-				//drawEdgesLines(harbor_go);
+				GameObject coast_go = (GameObject)Instantiate (coastPrefab, worldPos, Quaternion.identity);
+				graph [x,y] = new Node (x, y, worldPos, false, "land");
+				coast_go.name = "Hex_" + x + "_" + y;
+				coast_go.GetComponent<Land> ().x = x;
+				coast_go.GetComponent<Land> ().y = y;
+				coast_go.GetComponent<Land> ().IsCoast = true;
+				coast_go.transform.SetParent(this.transform);
+				coast_go.isStatic = true;
+				DrawEdgesLines(coast_go);
 				break;
-			case "ship":
-				GameObject ship_go = (GameObject)Instantiate (shipPrefab, worldPos, Quaternion.identity);
+			case 3:
+				Destroy (ourHitObject);	
+				GameObject harbor_go = (GameObject)Instantiate (harborPrefab, worldPos, Quaternion.identity);
+				graph [x,y] = new Node (x, y, worldPos, false, "harbor");
+				harbor_go.name = "Hex_" + x + "_" + y;
+				harbor_go.GetComponent<Harbor> ().x = x;
+				harbor_go.GetComponent<Harbor> ().y = y;
+				harbor_go.transform.SetParent(this.transform);
+				harbor_go.isStatic = true;
+				DrawEdgesLines(harbor_go);
+				break;
+			case 4:
+				if (ourHitObject.GetComponent<Sea> () != null) {
+					GameObject treasure_go = (GameObject)Instantiate (treasurePrefab, worldPos, Quaternion.identity);
+					treasure_go.name = ourHitObject.GetComponent<Sea> ().name + "_Treasure";
+					treasure_go.transform.SetParent (ourHitObject.GetComponent<Sea> ().transform);
+					ourHitObject.GetComponent<Sea> ().GetComponent<Sea> ().AddTreasure (1000, treasure_go);
+					graph [ourHitObject.GetComponent<Sea> ().x, ourHitObject.GetComponent<Sea> ().y].isWalkable = false;
+				}
 				break;
 			}
 		}		
