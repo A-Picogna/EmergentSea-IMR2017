@@ -81,6 +81,6 @@
         <string name="infoMessage_welcome_joueur">Bienvenue Commandant, vous êtes le joueur </string>
         <string name="infoMessage_welcome_objectif1">. Votre objectif est de détuire tout les autres navires</string>
         <string name="mapEditor_firstExplaination">Bienvenu dans l'éditeur de carte d'Emergent-Sea, vous disposez d'une carte entièrement recouverte d'eau. Pour ajouter des éléments cliquez avec le bouton gauche de la souris pour selectionnez une case. Vous pouvez alors la placer sur la carte avec un clic gauche. Si vous souhaites "peindre" la carte avec votre selection, utilisez le clic droit de la souris</string>
-    	<string name="mapEditor_explaination">Pour séléctionner un élément utiliser le bouton gauche de la souris. Pour placer un élément, cliquer sur la carte avec le bouton gauche. Pour "Peindre" avec un élément, Cliquez avec le bouton droit.</string>
+    	<string name="mapEditor_explaination">Pour séléctionner un élément, utilisez le bouton gauche de la souris. Pour placer un élément, cliquez sur la carte avec le bouton gauche. Pour "Peindre" avec un élément, Cliquez avec le bouton droit.</string>
     </French>
 </languages>
