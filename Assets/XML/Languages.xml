@@ -32,17 +32,17 @@
         <string name="storehouse">Réserve</string>
         <string name="storehouse_description">Vendre ou acheter de la nourriture</string>
         <string name="warehouse">Entrepôt</string>
-        <string name="warehouse_description">Engager un flibustier</string>
+        <string name="warehouse_description">Engager un artificier</string>
         <string name="slums">Bas-fonds</string>
-        <string name="slums_description">Engager un artificier</string>
+        <string name="slums_description">Engager un flibustier</string>
         <string name="dark_arts_academy">Académie des arts obscurs</string>
         <string name="dark_arts_academy_description">Engager un mage</string>
         <string name="shipyard">Chantier naval</string>
         <string name="shipyard_description">Construire un navire</string>
         <string name="inn_action">Soigner l'équipage</string>
         <string name="storehouse_action">Vendre toute sa nourriture</string>
-        <string name="warehouse_action">Engager un flibustier</string>
-        <string name="slums_action">Engager un artificier</string>
+        <string name="warehouse_action">Engager un artificier</string>
+        <string name="slums_action">Engager un flibustier</string>
         <string name="dark_arts_academy_action">Engager un lanceur de maléfices</string>
         <string name="shipyard_action">Construire un navire</string>
         <string name="trade">Echange</string>
@@ -63,9 +63,19 @@
         <string name="help_filibuster">Il répare les dommages infligés au navire. Il ne peut attaquer que les cases adjacentes.</string>
         <string name="help_powder_monkey">Il manie les canons. Il ne peut attaquer que sur les flancs du navire et jusqu'à 3 cases.</string>
         <string name="help_conjurer">C'est un puissant magicien. Il peut attaquer dans toutes les directions jusqu'à 2 cases.</string>
+        <string name="help_life_desc">Un membre d'équipage peut en perdre lorsque son navire se fait attaquer. Il peut les récupérer à la taverne d'un port.</string>
+        <string name="help_xp_desc">Un membre d'équipage prend de la bouteille au combat, ce qui lui permet de passer des niveaux et de devenir plus fort.</string>
+        <string name="help_attack_filibuster">Zone d'attaque d'un flibustier</string>
+        <string name="help_attack_powder_monkey">Zone d'attaque d'un artificier</string>
+        <string name="help_attack_conjurer">Zone d'attaque d'un lanceur de maléfices</string>
         <string name="help_cost">Coût :</string>
         <string name="help_gain">Gain :</string>
         <string name="help_time">Durée :</string>
         <string name="help_round">Tour</string>
+        <string name="help_value_attack">Attaque :</string>
+        <string name="help_value_life">Points de vie :</string>
+        <string name="help_life">Points de vie</string>
+        <string name="help_xp">Points d'expérience</string>
+        <string name="help_level">Niveau</string>
     </French>
 </languages>

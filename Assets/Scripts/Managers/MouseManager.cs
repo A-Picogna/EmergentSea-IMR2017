@@ -51,6 +51,9 @@ public class MouseManager : MonoBehaviour {
 			RayCast ();
 		} else {
 			Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+			panelHandler.hidePanelHelper();
+			panelHandler.hidePanelHelper2();
+			panelHandler.hidePanelHelper3();
 		}
 
 		if (selectedUnit != null) {
@@ -88,6 +91,11 @@ public class MouseManager : MonoBehaviour {
 			} else if (ourHitObject.GetComponent<Ship> () != null) {
 				// if we are over a unit
 				MouseOver_Unit (ourHitObject);
+			} else {
+				Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+				panelHandler.hidePanelHelper();
+				panelHandler.hidePanelHelper2();
+				panelHandler.hidePanelHelper3();
 			}
 		} else {
 			// if we are over nothing important
@@ -97,12 +105,15 @@ public class MouseManager : MonoBehaviour {
 
 	void MouseOver_NothingImportant(){
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
-		pathProjector.transform.position = new Vector3 (0, -5f, 0);
 		panelHandler.hidePanelHelper();
+		panelHandler.hidePanelHelper2();
+		panelHandler.hidePanelHelper3();
+		pathProjector.transform.position = new Vector3 (0, -5f, 0);
 		if (Input.GetMouseButtonUp (0)) {
 			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 				selectedUnit = null;
 				panelHandler.hideAllBottom ();
+				panelHandler.hideAllModals ();
 			}
 		}
 	}
@@ -132,6 +143,7 @@ public class MouseManager : MonoBehaviour {
 			}
 
 			if (Input.GetMouseButtonUp (1)) {
+				panelHandler.hideAllModals ();
 				selectedUnit.Interact (target);
 				panelHandler.hidePanelHarbor ();
 			}
@@ -151,6 +163,7 @@ public class MouseManager : MonoBehaviour {
 			selectedUnit = ourHitObject.GetComponent<Sea> ().ShipContained;
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
+			panelHandler.hideAllModals ();
 		}
 	}
 
@@ -164,6 +177,7 @@ public class MouseManager : MonoBehaviour {
 				Sea target = ourHitObject.GetComponent<Sea> ();
 				selectedUnit.HoistTreasure (target);
 				panelHandler.hidePanelHarbor ();
+				panelHandler.hideAllModals ();
 			}
 		} else {
 			panelHandler.changeTextHelper (5);
@@ -179,6 +193,7 @@ public class MouseManager : MonoBehaviour {
 			panelHandler.refreshHelper ();
 			panelHandler.showPanelHelper ();
 			if (Input.GetMouseButtonUp (1)) {
+				panelHandler.hideAllModals ();
 				harbor = ourHitObject.GetComponent<Harbor> ().Interact (selectedUnit, map);
 				if (harbor) {
 					currentHarbor = ourHitObject.GetComponent<Harbor> ().getHarbor ();
@@ -234,11 +249,13 @@ public class MouseManager : MonoBehaviour {
 				panelHandler.showPanelHelper ();
 			}
 			if (Input.GetMouseButtonUp (1)) {
+				panelHandler.hideAllModals ();
 				selectedUnit.Interact (target);
 				panelHandler.hidePanelHarbor();
 			}
 		}
 		if (Input.GetMouseButtonUp(0) && target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
+			panelHandler.hideAllModals ();
 			selectedUnit = target;
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
@@ -248,7 +265,9 @@ public class MouseManager : MonoBehaviour {
 	void MouseOver_VoidSea(GameObject ourHitObject) {
 
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
-		panelHandler.hidePanelHelper ();
+		panelHandler.hidePanelHelper();
+		panelHandler.hidePanelHelper2();
+		panelHandler.hidePanelHelper3();
 
 		if (selectedUnit != null) {
 			pathProjector.transform.position = ourHitObject.transform.position+new Vector3(0,5f,0);
@@ -256,6 +275,7 @@ public class MouseManager : MonoBehaviour {
 
 		if (Input.GetMouseButtonUp (1)) {
 			if (selectedUnit != null && selectedUnit.Playable) {
+				panelHandler.hideAllModals ();
 				pathfinder.PathRequest (selectedUnit, ourHitObject);
 				panelHandler.hidePanelHarbor();
 			}
@@ -264,6 +284,7 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonUp (0)) {
 			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 				selectedUnit = null;
+				panelHandler.hideAllModals ();
 				panelHandler.hideAllBottom ();
 			}
 		}

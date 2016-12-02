@@ -36,6 +36,9 @@ public class HelpPanel : MonoBehaviour {
 		} else if (positionMode == 1) {
 			pos.x -= 20;
 			pos.y += 20;
+		} else if (positionMode == 2) {
+			pos.x -= 20;
+			pos.y -= 20;
 		}
 		transform.position = canvas.transform.TransformPoint(pos);
 	}
@@ -89,15 +92,44 @@ public class HelpPanel : MonoBehaviour {
 		} else if (type == 17) { // Vendre Nourriture
 			textHelp.text = lang.getString ("help_gain") + "<color=green> " + GlobalVariables.changeFoodGold.ToString() + " " + lang.getString ("gold") + "</color>/" + lang.getString ("food");
 		} else if (type == 18) { // Engager flibustier
-			textHelp.text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.filibusterCost.ToString() + " " + lang.getString ("gold") + "</color>";
+			string text = formatString(lang.getString ("help_filibuster")) + "//n" + 
+				lang.getString ("help_value_attack") + " " + GlobalVariables.filibusterAttack + "//n" +
+				lang.getString ("help_value_life") + " " + GlobalVariables.filibusterLife + "//n" +
+				lang.getString ("help_cost") + "<color=red> " + GlobalVariables.filibusterCost.ToString() + " " + lang.getString ("gold") + "</color>";
+			textHelp.text = text.Replace("//n", "\n");
 		} else if (type == 19) { // Engager artificier
-			textHelp.text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.powderMonkeyCost.ToString() + " " + lang.getString ("gold") + "</color>";
+			string text = formatString(lang.getString ("help_powder_monkey")) + "//n" + 
+				lang.getString ("help_value_attack") + " " + GlobalVariables.powderMonkeyAttack + "//n" +
+				lang.getString ("help_value_life") + " " + GlobalVariables.powderMonkeyLife + "//n" +
+				lang.getString ("help_cost") + "<color=red> " + GlobalVariables.powderMonkeyCost.ToString() + " " + lang.getString ("gold") + "</color>";
+			textHelp.text = text.Replace("//n", "\n");
 		} else if (type == 20) { // Engager lanceur de maléfices
-			textHelp.text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.conjurerCost.ToString() + " " + lang.getString ("gold") + "</color>";
+			string text = formatString(lang.getString ("help_conjurer")) + "//n" + 
+				lang.getString ("help_value_attack") + " " + GlobalVariables.conjurerAttack + "//n" +
+				lang.getString ("help_value_life") + " " + GlobalVariables.conjurerLife + "//n" +
+				lang.getString ("help_cost") + "<color=red> " + GlobalVariables.conjurerCost.ToString() + " " + lang.getString ("gold") + "</color>";
+			textHelp.text = text.Replace("//n", "\n");
 		} else if (type == 21) { // Construction navire
 			string text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.admiralCost.ToString() + " " + lang.getString ("gold") + "</color>//n" +
 				lang.getString ("help_time") + " " + GlobalVariables.buildingTime + " " + lang.getString ("help_round") + "s";
 			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 22) { // Points de vie
+			string text = lang.getString ("help_life") + "//n" + formatString(lang.getString ("help_life_desc"));
+			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 23) { // Points d'expérience
+			string text = lang.getString ("help_xp") + "//n" + formatString(lang.getString ("help_xp_desc"));
+			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 24) { // Points d'expérience
+			textHelp.text = lang.getString ("help_level");
+		} else if (type == 25) { // Zone attaque flibustier
+			textHelp.text = lang.getString ("help_attack_filibuster");
+		} else if (type == 26) { // Zone attaque artificier
+			textHelp.text = lang.getString ("help_attack_powder_monkey");
+		} else if (type == 27) { // Zone attaque lanceur de maléfices
+			string text = formatString(lang.getString ("help_attack_conjurer"));
+			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 28) { // Menu
+			textHelp.text = lang.getString ("menu");
 		}
 	}
 	public void changeText(int tp) {
