@@ -17,9 +17,15 @@ public class AiScript {
 
     private bool notEnoughGold;
 
+    private Ship movingShip;
+
+    System.Random rand;
+
     public AiScript(/*string difficulty*/)
     {
+        rand = new System.Random();
         notEnoughGold = false;
+        movingShip = null;
         //Set the price
         Admiral a = new Admiral();
         shipPrice = a.RecruitmentCost;
@@ -40,13 +46,13 @@ public class AiScript {
         tmp0.Add("default");
         actions.Add(tmp0);
         ArrayList tmp1 = new ArrayList();
-        tmp1.Add("nbboat");
+        /*tmp1.Add("nbboat");
         tmp1.Add(3);
         tmp1.Add("nbcrew");
         tmp1.Add("each");
         tmp1.Add(1);
         tmp1.Add("gold");
-        tmp1.Add(600);
+        tmp1.Add(600);*/
         actions.Add(tmp1);
 
         for (int i = 0; i < actions.Count; i += 2)
@@ -58,9 +64,16 @@ public class AiScript {
         }
     }
 
-    public void turn(Player player)
+    public bool turn(Player player, Map map)
     {
-        Debug.Log("AI turn");
+        if(movingShip != null && movingShip.IsMoving && movingShip.CurrentPath.Count > 0)
+        {
+            return true;
+        }
+        else
+        {
+            movingShip = null;
+        }
         int state = 0;
 
         while (state < aiGame.Count)
@@ -206,9 +219,51 @@ public class AiScript {
         {
             if(!ship.Used)
             {
-                //doAction
+                explore(ship, map);
                 ship.Used = true;
+                if (ship.CurrentPath.Count > 0)
+                {
+                    movingShip = ship;
+                    return true;
+                }
             }
         }
+        return false;
+    }
+
+    public void explore(Ship ship, Map map)
+    {
+        bool ok = false;
+        while (!ok)
+        {
+            //Set a new direction
+            if (ship.DirectionLifeTime == 0)
+            {
+                ship.DirectionX = rand.Next(1, map.width);
+                ship.DirectionY = rand.Next(1, map.height);
+                while (map.graph[ship.DirectionX, ship.DirectionY].isWalkable == false)
+                {
+                    ship.DirectionX = rand.Next(1, map.width);
+                    ship.DirectionY = rand.Next(1, map.height);
+                }
+                ship.DirectionLifeTime = 10;
+            }
+
+            //Check if we are at the destination
+            if (ship.DirectionX != ship.ShipX || ship.DirectionY != ship.ShipY)
+            {
+                ok = true;
+            }
+            else
+            {
+                ship.DirectionLifeTime = 0;
+            }
+        }
+
+        //Move to destination
+        Pathfinder pathfinder = GameObject.Find("Pathfinder").GetComponent<Pathfinder>();
+        GameObject hex = GameObject.Find("Hex_" + ship.DirectionX + "_" + ship.DirectionY);
+        pathfinder.PathRequest(ship, hex);
+        ship.DirectionLifeTime--;
     }
 }

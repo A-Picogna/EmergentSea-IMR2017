@@ -47,17 +47,19 @@ public class Ship : MonoBehaviour {
         addCrewMember(admiral);
 		destination = transform.position;
 		panelHandler = GameObject.Find ("HUDCanvas").GetComponent<PanelHandler> ();
+        directionLifeTime = 0;
 	}
 
 	// Update is called once per frame
 	void Update () {
 		if (!dead) {
-			if (currentPath != null) {
+			if (currentPath != null && energyQuantity > 0) {
 				if (Vector3.Distance (transform.position, destination) < 0.1f) {
 					MoveShipToNextHex ();
 				}
 			} else {
 				if (Vector3.Distance (transform.position, destination) < 0.1f) {
+                    //currentPath = null;
 					isMoving = false;
 				}
 			}
@@ -67,12 +69,17 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void MoveShipToNextHex(){
-		// here we control the remaining energy quantity before moving
-		if(currentPath==null)
-			return;
+        Debug.Log("path " +currentPath.Count);
+        // here we control the remaining energy quantity before moving
+        if (currentPath == null)
+        {
+            return;
+        }
 
-		if(energyQuantity <= 0)
-			return;
+        if (energyQuantity <= 0)
+        {
+            return;
+        }
 		
 		if (currentPath.Count > 0) {
 			isMoving = true;
@@ -455,8 +462,11 @@ public class Ship : MonoBehaviour {
 		MeshRenderer[] meshRenderers;
 		Node newNode;
 
-		// Reveal Ship and ship Hex
-		currentHex.GetComponent<Hex>().setVisibility(2);
+        // Reveal Ship and ship Hex
+        if (owner.Type != "IA")
+        {
+            currentHex.GetComponent<Hex>().setVisibility(2);
+        }
 		newNode = new Node(this.ShipX, this.ShipY, new Vector3(0,0,0), false, "ship");
 		if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 			owner.ExploredHex.Add(newNode);
@@ -464,24 +474,36 @@ public class Ship : MonoBehaviour {
 
 		// Reveal 1st Neighbours
 		firstNeighboursToReveal = currentHex.GetComponent<Hex>().getNeighbours();
-		foreach (GameObject n1 in firstNeighboursToReveal) {
-			n1.GetComponent<Hex> ().setVisibility (2);
+		foreach (GameObject n1 in firstNeighboursToReveal)
+        {
+            if (owner.Type != "IA")
+            {
+                n1.GetComponent<Hex>().setVisibility(2);
+            }
 			newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 			if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 				owner.ExploredHex.Add(newNode);
 			}
 			// Reveal 2nd Neighbours
 			secondNeighboursToReveal = n1.GetComponent<Hex> ().getNeighbours ();
-			foreach (GameObject n2 in secondNeighboursToReveal) {
-				n2.GetComponent<Hex> ().setVisibility (2);
+			foreach (GameObject n2 in secondNeighboursToReveal)
+            {
+                if (owner.Type != "IA")
+                {
+                    n2.GetComponent<Hex>().setVisibility(2);
+                }
 				newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 				if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 					owner.ExploredHex.Add(newNode);
 				}
 				// Reveal 3rd Neighbours
 				thirdNeighboursToReveal = n2.GetComponent<Hex> ().getNeighbours ();
-				foreach (GameObject n3 in thirdNeighboursToReveal) {
-					n3.GetComponent<Hex> ().setVisibility (2);
+				foreach (GameObject n3 in thirdNeighboursToReveal)
+                {
+                    if (owner.Type != "IA")
+                    {
+                        n3.GetComponent<Hex>().setVisibility(2);
+                    }
 					newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 					if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 						owner.ExploredHex.Add(newNode);

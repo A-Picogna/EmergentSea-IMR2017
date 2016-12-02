@@ -40,12 +40,14 @@ public class GameManager : MonoBehaviour {
 
     //AI
     AiScript AI;
+    bool aiIsPlaying;
 
 
 	// Use this for initialization
 
 	void Start () {
         aiTurn = false;
+        aiIsPlaying = false;
         AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
@@ -56,7 +58,7 @@ public class GameManager : MonoBehaviour {
 		currentPlayer = players [currentPlayerNumber];
 		endTurnButton.onClick.AddListener(() => NextPlayer());
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
-		AddShips (10);
+		AddShips (5);
 		foreach(Player player in players){
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.UpdateShipHp ();
@@ -116,7 +118,13 @@ public class GameManager : MonoBehaviour {
 			panelHandler.initPanelEnnemyShip ();
             panelHandler.hidePanelHarbor();
 		}
-	}
+
+        if (aiTurn)
+        {
+            aiTurn = false;
+            NextPlayer();
+        }
+    }
 
 	void CheckShipsToDestroy(Player player){
 		Ship shipToDestroy = null;
@@ -148,35 +156,42 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void NextPlayer(){
-		mouseManager.selectedUnit = null;
-        if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
-			foreach (Ship ship in currentPlayer.Fleet) {
-				ship.Playable = false;
-			}
-		}
-		currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
-		if (currentPlayerNumber == 0) {
-			NextTurn ();
-		}
-		currentPlayer = players [currentPlayerNumber];
-        foreach (Harbor harbor in currentPlayer.Harbors)
+        if (!aiIsPlaying)
         {
-            if (harbor.Building)
+            mouseManager.selectedUnit = null;
+            if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0)
             {
-                if (harbor.RemainingBuildingTime > 1)
+                foreach (Ship ship in currentPlayer.Fleet)
                 {
-                    harbor.RemainingBuildingTime--;
-                    Debug.Log(harbor.RemainingBuildingTime);
+                    ship.Playable = false;
                 }
-                else
+            }
+            currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
+            if (currentPlayerNumber == 0)
+            {
+                NextTurn();
+            }
+            currentPlayer = players[currentPlayerNumber];
+            foreach (Harbor harbor in currentPlayer.Harbors)
+            {
+                if (harbor.Building)
                 {
-                    harbor.Build(map);
+                    if (harbor.RemainingBuildingTime > 1)
+                    {
+                        harbor.RemainingBuildingTime--;
+                        Debug.Log(harbor.RemainingBuildingTime);
+                    }
+                    else
+                    {
+                        harbor.Build(map);
+                    }
                 }
             }
         }
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
             if(currentPlayer.Type == "Humain")
             {
+                Debug.Log("Human turn");
                 foreach (Ship ship in currentPlayer.Fleet)
                 {
                     ship.Playable = true;
@@ -185,21 +200,20 @@ public class GameManager : MonoBehaviour {
             }
             else
             {
-                foreach (Ship ship in currentPlayer.Fleet)
+                Debug.Log("AI playing...");
+                if (!aiIsPlaying)
                 {
-                    ship.Used = false;
-                    ship.RefuelEnergy();
+                    foreach (Ship ship in currentPlayer.Fleet)
+                    {
+                        ship.Used = false;
+                        ship.RefuelEnergy();
+                    }
                 }
-                AI.turn(currentPlayer);
+                aiIsPlaying = AI.turn(currentPlayer, map);
                 aiTurn = true;
             }
 		}
 		checkInit = false;
-        if(aiTurn)
-        {
-            aiTurn = false;
-            NextPlayer();
-        }
 		// We reset fow for next player
 		ResetFOW ();
 		RevealAreaAlreadyExplored ();
@@ -233,14 +247,19 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void ResetFOW(){
-		map = mouseManager.map;
-		GameObject currentHex;
-		for (int x = 0; x < map.width; x++) {
-			for (int y = 0; y < map.height; y++) {
-				currentHex = (GameObject) GameObject.Find ("Hex_" + x + "_" + y);
-				currentHex.GetComponent<Hex>().setVisibility(0);
-			}
-		}
+        if (!aiIsPlaying)
+        {
+            map = mouseManager.map;
+            GameObject currentHex;
+            for (int x = 0; x < map.width; x++)
+            {
+                for (int y = 0; y < map.height; y++)
+                {
+                    currentHex = (GameObject)GameObject.Find("Hex_" + x + "_" + y);
+                    currentHex.GetComponent<Hex>().setVisibility(0);
+                }
+            }
+        }
 	}
 
 	public void RevealAreaAroundCurrentPlayerShips(){
@@ -253,8 +272,11 @@ public class GameManager : MonoBehaviour {
 			MeshRenderer[] meshRenderers;
 			Node newNode;
 
-			// Reveal Ship and ship Hex
-			currentHex.GetComponent<Hex>().setVisibility(2);
+            // Reveal Ship and ship Hex
+            if (!aiIsPlaying)
+            {
+                currentHex.GetComponent<Hex>().setVisibility(2);
+            }
 			newNode = new Node(ship.ShipX, ship.ShipY, new Vector3(0,0,0), false, "ship");
 			if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 				currentPlayer.ExploredHex.Add(newNode);
@@ -263,7 +285,10 @@ public class GameManager : MonoBehaviour {
 			// Reveal 1st Neighbours
 			firstNeighboursToReveal = currentHex.GetComponent<Hex>().getNeighbours();
 			foreach (GameObject n1 in firstNeighboursToReveal) {
-				n1.GetComponent<Hex> ().setVisibility (2);
+                if (!aiIsPlaying)
+                {
+                    n1.GetComponent<Hex>().setVisibility(2);
+                }
 				newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 				if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 					currentPlayer.ExploredHex.Add(newNode);
@@ -271,7 +296,10 @@ public class GameManager : MonoBehaviour {
 				// Reveal 2nd Neighbours
 				secondNeighboursToReveal = n1.GetComponent<Hex> ().getNeighbours ();
 				foreach (GameObject n2 in secondNeighboursToReveal) {
-					n2.GetComponent<Hex> ().setVisibility (2);
+                    if (!aiIsPlaying)
+                    {
+                        n2.GetComponent<Hex>().setVisibility(2);
+                    }
 					newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 					if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 						currentPlayer.ExploredHex.Add(newNode);
@@ -279,7 +307,10 @@ public class GameManager : MonoBehaviour {
 					// Reveal 3rd Neighbours
 					thirdNeighboursToReveal = n2.GetComponent<Hex> ().getNeighbours ();
 					foreach (GameObject n3 in thirdNeighboursToReveal) {
-						n3.GetComponent<Hex> ().setVisibility (2);
+                        if (!aiIsPlaying)
+                        {
+                            n3.GetComponent<Hex>().setVisibility(2);
+                        }
 						newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 						if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 							currentPlayer.ExploredHex.Add(newNode);
@@ -291,13 +322,17 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void RevealAreaAlreadyExplored(){
-		Player cp = currentPlayer;
-		GameObject currentHex;
-		MeshRenderer[] meshRenderers;
-		foreach (Node n in currentPlayer.ExploredHex){			
-			currentHex = (GameObject) GameObject.Find ("Hex_" + n.x + "_" + n.y);
-			currentHex.GetComponent<Hex> ().setVisibility (1);
-		}
+        if (!aiIsPlaying)
+        {
+            Player cp = currentPlayer;
+            GameObject currentHex;
+            MeshRenderer[] meshRenderers;
+            foreach (Node n in currentPlayer.ExploredHex)
+            {
+                currentHex = (GameObject)GameObject.Find("Hex_" + n.x + "_" + n.y);
+                currentHex.GetComponent<Hex>().setVisibility(1);
+            }
+        }
 	}
 
 }
