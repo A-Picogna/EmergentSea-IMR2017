@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.IO;
 
 public class MapEditor : MonoBehaviour {
 
@@ -29,8 +30,16 @@ public class MapEditor : MonoBehaviour {
 	public Button btn_selectCoast;
 	public Button btn_selectHarbor;
 	public Button btn_selectTreasure;
+	private Lang lang;
+
+	public Texture2D seaHexCursor;
+	public Texture2D landHexCursor;
+	public Texture2D coastHexCursor;
+	public Texture2D harborHexCursor;
+	public Texture2D treasureHexCursor;
 
 	void Start () {
+		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		size = width * height;
 		InitializeMap();
 		btn_selectSea = (Button) GameObject.Find("btn_selectSea").GetComponent<Button>();
@@ -39,16 +48,20 @@ public class MapEditor : MonoBehaviour {
 		btn_selectHarbor = (Button) GameObject.Find("btn_selectHarbor").GetComponent<Button>();
 		btn_selectTreasure = (Button) GameObject.Find("btn_selectTreasure").GetComponent<Button>();
 
-		btn_selectSea.onClick.AddListener(() => selectedType = 0);
-		btn_selectLand.onClick.AddListener(() => selectedType = 1);
-		btn_selectCoast.onClick.AddListener(() => selectedType = 2);
-		btn_selectHarbor.onClick.AddListener(() => selectedType = 3);
-		btn_selectTreasure.onClick.AddListener(() => selectedType = 4);
+		btn_selectSea.onClick.AddListener (() => setListener (0, seaHexCursor));
+		btn_selectLand.onClick.AddListener(() => setListener (1, landHexCursor));
+		btn_selectCoast.onClick.AddListener(() => setListener (2, coastHexCursor));
+		btn_selectHarbor.onClick.AddListener(() => setListener (3, harborHexCursor));
+		btn_selectTreasure.onClick.AddListener(() => setListener (4, treasureHexCursor));
 
 		//Button btn_save = GameObject.Find ("btn_save").GetComponent<Button>();
 		//btn_save.onClick.AddListener (() => {
 		//	LoadManager.instance.savePrefabricatedMapEditor ("test");
 		//});
+		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
+		ip.DisplayInfo(lang.getString ("mapEditor_firstExplaination"), 20f); 
+		HelpPanel hp = GameObject.Find ("pnl_help").GetComponent<HelpPanel> ();
+		hp.textHelp.text = lang.getString ("mapEditor_explaination");
 	}
 
 	void Update () {
@@ -63,6 +76,11 @@ public class MapEditor : MonoBehaviour {
 		if (Input.GetMouseButton (1)) {
 			ReplaceElement (selectedType);
 		}
+	}
+
+	public void setListener(int i, Texture2D cursor){
+		selectedType = i;
+		Cursor.SetCursor (cursor, new Vector2 (cursor.width / 2, cursor.height / 2), CursorMode.Auto);
 	}
 
 	void ReplaceElement(int newElementType){
