@@ -90,6 +90,7 @@ public class MapEditor : MonoBehaviour {
 				sea_go.GetComponent<Sea> ().y = y;
 				sea_go.transform.SetParent(this.transform);
 				sea_go.isStatic = true;
+				graph [x, y].isWalkable = true;
 				DrawEdgesLines(sea_go);
 				break;
 			case 1:
@@ -101,6 +102,7 @@ public class MapEditor : MonoBehaviour {
 				land_go.GetComponent<Land> ().y = y;
 				land_go.transform.SetParent(this.transform);
 				land_go.isStatic = true;
+				graph [x, y].isWalkable = false;
 				DrawEdgesLines(land_go);
 				break;
 			case 2:
@@ -113,6 +115,7 @@ public class MapEditor : MonoBehaviour {
 				coast_go.GetComponent<Land> ().IsCoast = true;
 				coast_go.transform.SetParent(this.transform);
 				coast_go.isStatic = true;
+				graph [x, y].isWalkable = false;
 				DrawEdgesLines(coast_go);
 				break;
 			case 3:
@@ -124,6 +127,7 @@ public class MapEditor : MonoBehaviour {
 				harbor_go.GetComponent<Harbor> ().y = y;
 				harbor_go.transform.SetParent(this.transform);
 				harbor_go.isStatic = true;
+				graph [x, y].isWalkable = false;
 				DrawEdgesLines(harbor_go);
 				break;
 			case 4:
@@ -151,6 +155,8 @@ public class MapEditor : MonoBehaviour {
 				Vector3 worldPosition = new Vector3 (xPos, 0, y * zOffset);
 				GameObject hex_go = (GameObject)Instantiate (seaPrefab, worldPosition, Quaternion.identity);
 				graph [x, y] = new Node (x, y, worldPosition, false, "sea");
+				graph [x, y].tag = true;
+				graph [x, y].isWalkable = true;
 				DrawEdgesLines(hex_go);
 				hex_go.name = "Hex_" + x + "_" + y;
 				hex_go.GetComponent<Hex> ().x = x;
