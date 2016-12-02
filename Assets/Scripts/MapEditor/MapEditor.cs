@@ -45,10 +45,10 @@ public class MapEditor : MonoBehaviour {
 		btn_selectHarbor.onClick.AddListener(() => selectedType = 3);
 		btn_selectTreasure.onClick.AddListener(() => selectedType = 4);
 
-		Button btn_save = GameObject.Find ("btn_save").GetComponent<Button>();
-		btn_save.onClick.AddListener (() => {
-			LoadManager.instance.savePrefabricatedMapEditor ("test");
-		});
+		//Button btn_save = GameObject.Find ("btn_save").GetComponent<Button>();
+		//btn_save.onClick.AddListener (() => {
+		//	LoadManager.instance.savePrefabricatedMapEditor ("test");
+		//});
 	}
 
 	void Update () {
