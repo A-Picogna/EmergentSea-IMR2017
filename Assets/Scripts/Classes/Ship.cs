@@ -527,13 +527,13 @@ public class Ship : MonoBehaviour {
 	public int Food
 	{
 		get { return food; }
-		set { food = value; }
+		set { food = value;panelHandler.updateShip (); }
 	}
 
 	public int Gold
 	{
 		get { return gold; }
-		set { gold = value; }
+		set { gold = value;panelHandler.updateShip (); }
 	}
 
 	public int Hp
