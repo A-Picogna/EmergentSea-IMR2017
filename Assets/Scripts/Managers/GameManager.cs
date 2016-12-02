@@ -42,6 +42,10 @@ public class GameManager : MonoBehaviour {
     AiScript AI;
     bool aiIsPlaying;
 
+	// Public attibutes
+	public int FleetSize;
+	public int GoldAmount;
+
 
 	// Use this for initialization
 
@@ -58,7 +62,7 @@ public class GameManager : MonoBehaviour {
 		currentPlayer = players [currentPlayerNumber];
 		endTurnButton.onClick.AddListener(() => NextPlayer());
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
-		AddShips (5);
+		AddShips (FleetSize);
 		foreach(Player player in players){
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.UpdateShipHp ();
@@ -232,6 +236,7 @@ public class GameManager : MonoBehaviour {
 					ship_go.GetComponent<Ship> ().ShipX = x;
 					ship_go.GetComponent<Ship> ().ShipY = y;
 					ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + player.NbTotalShip;
+					ship_go.GetComponent<Ship> ().Gold = GoldAmount;
 					ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 					Ship ship = ship_go.GetComponent<Ship> ();
 					ship.Owner = player;

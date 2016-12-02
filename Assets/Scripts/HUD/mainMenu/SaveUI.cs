@@ -17,8 +17,9 @@ public class SaveUI : MonoBehaviour {
 	public GameObject LoadedSaveUI;
 	public GameObject NewSaveTextInput;
 	public GameObject NewSaveButton;	
-	private List<GameObject> SaveFileLine;
+	private List<GameObject> SaveFileLine = new List<GameObject>();
 	public string[] saveList;
+	private bool amIInGame;
 
 	public void OnClickNewSave() {
 		changeState (State.Saving);
@@ -26,7 +27,19 @@ public class SaveUI : MonoBehaviour {
 
 	void Start() {
 		changeState (State.Nothing);
+		checkGame ();
 		populateSaveList ();
+		if (amIInGame)
+			gameObject.transform.parent.transform.SetAsLastSibling ();
+	}
+
+	private void checkGame() {
+		if (LoadManager.instance.LoadManagerState == LoadManager.state.Inactive) {
+			amIInGame = false;
+		} else {
+			amIInGame = true;
+		}
+		NewSaveButton.SetActive (amIInGame);
 	}
 
 	private void populateSaveList() {
@@ -36,23 +49,51 @@ public class SaveUI : MonoBehaviour {
 			Directory.CreateDirectory (GlobalVariables.pathSaves);
 			saveList = Directory.GetFiles (GlobalVariables.pathSaves);
 		}
-		int offset = 0;
-		foreach (string saveFile in saveList) {
-			SaveFileLine.Add((GameObject)Instantiate(SaveUIPrefab));
-			SaveFileLine [offset].name = "Save_" + offset;
-			SaveFileLine [offset].transform.SetParent(SaveList.transform, false);
-			SaveFileLine [offset].transform.Translate (new Vector3 (0, offset * -17, 0));
-			(SaveFileLine [offset].GetComponentInChildren <Text> ()).text = Path.GetFileName(saveFile);
-			(SaveFileLine [offset].GetComponent<Button>()).onClick.AddListener (() => {
-				SelectSave(saveFile);
-			});
+
+		for(int i=0; i<saveList.Length; i++){
+			GameObject saveObject = (GameObject)Instantiate (SaveUIPrefab, SaveList.transform, false);
+			Debug.Log (saveObject.ToString ());
+			SaveFileLine.Add(saveObject);
+			SaveFileLine [i].name = "Save_" + i;
+			///SaveFileLine [offset].transform.SetParent(SaveList.transform, false);
+			Debug.Log("lol");
+			SaveFileLine [i].transform.Translate (new Vector3 (0, i * -30, 0));
+			if(!amIInGame)
+			{
+				SaveFileLine [i].transform.Translate (new Vector3 (0, 2 * 15, 0));
+			}
+			else {
+				SaveFileLine [i].transform.Translate (new Vector3 (0, i* (30-17), 0));
+			}
+			setText (SaveFileLine [i].GetComponentInChildren <Text> (), Path.GetFileName (saveList [i]));
+			setButtonOnClickListener ((SaveFileLine [i].GetComponent<Button> ()), saveList [i]);
+			//(SaveFileLine [i].GetComponentInChildren <Text> ()).text = Path.GetFileName(saveList[i]);
+			//(SaveFileLine [i].GetComponent<Button>()).onClick.AddListener (() => {
+			//	Debug.Log(saveList[i].ToString());
+			//	SelectSave(saveList[i]);
+			//});
 		}
+	}
+
+	private void setButtonOnClickListener(Button button, string str) {
+			button.onClick.AddListener (() => {
+				SelectSave(str);
+			});
+	}
+
+	private void setText(Text txt, string str) {
+		txt.text = str;
 	}
 
 	private void resetSaveList() {
 		foreach (GameObject saveFileObject in SaveFileLine) {
 			Destroy (saveFileObject);
 		}
+	}
+
+	private void updateSaveList() {
+		resetSaveList ();
+		populateSaveList ();
 	}
 
 	private void SelectSave(string saveFile) {
@@ -68,11 +109,13 @@ public class SaveUI : MonoBehaviour {
 		File.Delete (LoadManager.instance.SaveToLoad);
 		LoadManager.instance.SaveToLoad = "";
 		changeState (State.Nothing);
+		updateSaveList ();
 	}
 
 	public void Save() {
 		string saveName = (NewSaveTextInput.GetComponent<InputField> ()).text;
 		LoadManager.instance.save (saveName);
+		updateSaveList ();	
 	} 
 
 	private void changeState(State state) {

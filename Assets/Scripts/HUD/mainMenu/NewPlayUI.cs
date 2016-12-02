@@ -31,6 +31,16 @@ public class NewPlayUI : MonoBehaviour {
 	public GameObject MapListInputDropdown;
 	private Dropdown MapListDropdownComponent;
 
+	public GameObject ShipNumberFeedbackText;
+	public GameObject ShipNumberSlider;
+	public GameObject GoldQuantityFeedbackText;
+	public GameObject GoldQuantitySlider;
+
+	private Text ShipNumberTextComponent;
+	private Slider ShipNumberSliderComponent;
+	private Text GoldQuantityTextComponent;
+	private Slider GoldQuantitySliderComponent;
+
 	public GameObject LaunchGameButton;
 
 	private string[] mapList;
@@ -43,8 +53,15 @@ public class NewPlayUI : MonoBehaviour {
 		MapXSliderComponent = MapXSlider.gameObject.GetComponent<Slider> ();
 		MapYSliderComponent = MapYSlider.gameObject.GetComponent<Slider> ();
 
+		ShipNumberTextComponent = ShipNumberFeedbackText.gameObject.GetComponent<Text> ();
+		GoldQuantityTextComponent = GoldQuantityFeedbackText.gameObject.GetComponent<Text> ();
+
+		ShipNumberSliderComponent = ShipNumberSlider.gameObject.GetComponent<Slider> ();
+		GoldQuantitySliderComponent = GoldQuantitySlider.gameObject.GetComponent<Slider> ();
+
 		populateMapList ();
 		updateValuesMap ();
+		updateValuesGame ();
 
 		MapTypeInputDropdownCallback(0);
 		updateMapListChoiceCallback (0);
@@ -63,6 +80,18 @@ public class NewPlayUI : MonoBehaviour {
 	public void OnMapYSlideValueChanged(float number) {
 		if (MapYFeedbackTextComponent != null) {
 			MapYFeedbackTextComponent.text = number.ToString ();
+		}
+	}
+
+	public void OnShipNumberSlideValueChanged(float number) {
+		if (ShipNumberTextComponent != null) {
+			ShipNumberTextComponent.text = number.ToString ();
+		}
+	}
+
+	public void OnGoldQuantitySlideValueChanged(float number) {
+		if (GoldQuantityTextComponent != null) {
+			GoldQuantityTextComponent.text = number.ToString ();
 		}
 	}
 
@@ -129,7 +158,7 @@ public class NewPlayUI : MonoBehaviour {
 		MapListDropdownComponent.AddOptions (options);
 	}
 
-	private void updateMapListChoiceCallback(int number) {
+	public void updateMapListChoiceCallback(int number) {
 		if (mapList.Length != 0) {
 			LoadManager.instance.MapPrefabToLoad = mapList [number];
 		}
@@ -141,5 +170,13 @@ public class NewPlayUI : MonoBehaviour {
 
 		MapXSliderComponent.value = LoadManager.instance.MapX;
 		MapYSliderComponent.value = LoadManager.instance.MapY;
+	}
+
+	private void updateValuesGame() {
+		ShipNumberTextComponent.text = LoadManager.instance.FleetSize.ToString();
+		GoldQuantityTextComponent.text = LoadManager.instance.goldAmountPerFleet.ToString();
+
+		ShipNumberSliderComponent.value = LoadManager.instance.FleetSize;
+		GoldQuantitySliderComponent.value = LoadManager.instance.goldAmountPerFleet;
 	}
 }

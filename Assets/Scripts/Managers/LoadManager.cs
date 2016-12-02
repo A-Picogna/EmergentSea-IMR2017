@@ -35,6 +35,9 @@ public class LoadManager : MonoBehaviour {
 	public int TreasureFrequencyParameter = 1;
 	public int MapX = 0;
 	public int MapY = 0;
+	public int FleetSize = 2;
+	public int goldAmountPerFleet = 200;
+
 	//public int Parameter =;
 	//public int Parameter =;
 	public GameObject hexPrefab;
@@ -45,6 +48,9 @@ public class LoadManager : MonoBehaviour {
     public GameObject coastPrefab;
 	public GameObject gameManagerPrefab;
 	public GameObject mapEditorPrefab;
+	public GameObject saveLoadMenuPrefab;
+	public GameObject loadingScreenPrefab;
+	public GameObject CanvasPrefab;
 
 	// Private variables
 	private Map MapLoaded;
@@ -53,6 +59,7 @@ public class LoadManager : MonoBehaviour {
 	public string SaveToLoad;
 	private int nbCasesTerre;
 	private int nbCasesTresors;
+	private MapFile MapAsStarted;
 
 
 	// Use this before initialization (and between loading Maps)
@@ -190,6 +197,14 @@ public class LoadManager : MonoBehaviour {
 		this.MapY = Mathf.FloorToInt (MapY);
 	}
 
+	public void ShipNumberSliderCallBack(float number) {
+		this.FleetSize = Mathf.FloorToInt (number);
+	}
+
+	public void GoldQuantitySliderCallBack(float number) {
+		this.goldAmountPerFleet = Mathf.FloorToInt (number);
+	}
+
 	private Map initMap() {
 		GameObject newObject = Instantiate(mapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
 		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
@@ -266,6 +281,7 @@ public class LoadManager : MonoBehaviour {
 		MapLoaded = loadMap (saveMap);
 		GameManager gameManager = initGame (MapLoaded);
 		linkObjects (MapLoaded, gameManager);
+		MapAsStarted = MapLoaded.SaveMap ();
 	}
 
 	private void loadSave(SaveFile save) {
@@ -273,6 +289,7 @@ public class LoadManager : MonoBehaviour {
 		// Pour l'instant on refait un GameManager
 		GameManager gameManager = initGame (MapLoaded);
 		linkObjects (MapLoaded, gameManager);
+		MapAsStarted = MapLoaded.SaveMap ();
 	}
 
 	private void initEditor() {
@@ -289,14 +306,39 @@ public class LoadManager : MonoBehaviour {
 		((Pathfinder)pathfinder.GetComponent<Pathfinder> ()).map = MapLoaded;
 
 		GameObject btn_save = GameObject.Find ("btn_save");
-		Debug.Log ("Linking save button...");
-		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
-			LoadManager.instance.savePrefabricatedMap ("hello");
-		});
 
 		GameObject HUDCanvas = GameObject.Find ("HUDCanvas");
 		PanelHandler panelHandler = HUDCanvas.GetComponent<PanelHandler> ();
 		panelHandler.gameManager = gameManager;
+
+		// Création d'un GameObject avec Canvas
+		GameObject canvas = Instantiate(CanvasPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		canvas.transform.SetAsLastSibling	 ();
+
+		// Instanciation de l'outil pour charger une carte
+		GameObject saveLoadMenu = Instantiate(saveLoadMenuPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		saveLoadMenu.transform.SetParent(canvas.transform, false);
+		//saveLoadMenu.transform.localScale = new Vector3 (2.0f, 2.0f, 2.0f);
+
+		Debug.Log ("Linking save button...");
+		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			saveLoadMenu.SetActive (true);
+		});
+
+		// Instanciation du loading Screen
+		GameObject loadingScreen = Instantiate(loadingScreenPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		loadingScreen.transform.SetParent(canvas.transform, false);
+		loadingScreen.SetActive (true);
+
+		// Reconfiguration du loading Screen
+		GameObject LoadButton = GameObject.Find ("LoadButton");
+		((UnityEngine.UI.Button)LoadButton.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			((SceneLoader)loadingScreen.GetComponent<SceneLoader> ()).NewMap();
+		});
+
+		// Cacher le menu de chargement
+		saveLoadMenu.SetActive (false);
+		loadingScreen.SetActive (false);
 	}
 
 	void OnLevelWasLoaded() {
@@ -341,6 +383,9 @@ public class LoadManager : MonoBehaviour {
 		gameSettings.panelHandler = (GameObject.Find ("HUDCanvas")).GetComponent<PanelHandler> ();
 	
 		gameSettings.map = worldMap;
+
+		gameSettings.FleetSize = this.FleetSize;
+		gameSettings.GoldAmount = this.goldAmountPerFleet;
 
 
 		return gameSettings;
