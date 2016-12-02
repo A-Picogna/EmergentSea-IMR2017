@@ -24,5 +24,6 @@ public class InfoPanel : MonoBehaviour {
 		this.GetComponent<Text>().CrossFadeAlpha(0.0f, duration/2, false);
 		yield return new WaitForSeconds(duration/2);
 		this.GetComponent<Text>().text = "";
+		this.GetComponent<Text>().CrossFadeAlpha(1.0f, 0, false);
 	}
 }

@@ -52,7 +52,6 @@
         <string name="filibuster">Flibustier</string>
         <string name="powder_monkey">Artificier</string>
         <string name="conjurer">Lanceur de maléfices</string>
-
         <string name="help_trade">Cliquez sur les membres d'équipage que vous voulez échanger. S'il n'y a plus de place, sélectionnez un membre puis un autre pour les échanger. Les amiraux ne peuvent être échangés.</string>
         <string name="help_trading">Echanger des ressources</string>
         <string name="help_fishing">Pêcher</string>
@@ -77,5 +76,9 @@
         <string name="help_life">Points de vie</string>
         <string name="help_xp">Points d'expérience</string>
         <string name="help_level">Niveau</string>
+        <string name="color_FF0000">Rouge</string>
+        <string name="color_0000FF">Bleu</string>
+        <string name="infoMessage_welcome_joueur">Bienvenue Commandant, vous êtes le joueur </string>
+        <string name="infoMessage_welcome_objectif1">. Votre objectif est de détuire tout les autres navires</string>
     </French>
 </languages>

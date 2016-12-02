@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
+using System.IO;
 
 public class GameManager : MonoBehaviour {
 
@@ -36,7 +37,8 @@ public class GameManager : MonoBehaviour {
 	int turnNumber;
 	System.Random rand;
     string lastSelected = "";
-    bool aiTurn;
+	bool aiTurn;
+	private Lang lang;
 
     //AI
     AiScript AI;
@@ -50,6 +52,7 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 
 	void Start () {
+		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
         aiTurn = false;
         aiIsPlaying = false;
         AI = new AiScript();
@@ -76,7 +79,7 @@ public class GameManager : MonoBehaviour {
 		// We init the fow
 		ResetFOW ();
 		RevealAreaAroundCurrentPlayerShips ();
-		GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ().DisplayInfo("Bienvenu Commandant, vous êtes le joueur <color=red>rouge</color>. Votre objectif est de détuire tout les navires <color=blue>bleu</color>", 6f);
+		WelcomeMessage ();
 	}
 	
 	// Update is called once per frame
@@ -196,7 +199,10 @@ public class GameManager : MonoBehaviour {
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
             if(currentPlayer.Type == "Humain")
             {
-                Debug.Log("Human turn");
+				Debug.Log("Human turn");
+				if (turnNumber == 1) {
+					WelcomeMessage ();
+				}
                 foreach (Ship ship in currentPlayer.Fleet)
                 {
                     ship.Playable = true;
@@ -339,6 +345,19 @@ public class GameManager : MonoBehaviour {
                 currentHex.GetComponent<Hex>().setVisibility(1);
             }
         }
+	}
+
+	private void WelcomeMessage(){
+		Color32 color = currentPlayer.Color;
+		string hexaCodeColor = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
+		Debug.Log (hexaCodeColor);
+		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
+		ip.DisplayInfo(lang.getString ("infoMessage_welcome_joueur") + 
+			"<color=#"+ hexaCodeColor + "ff>" + 
+			lang.getString ("color_"+hexaCodeColor) + 
+			"</color>" + 
+			lang.getString ("infoMessage_welcome_objectif1")
+			, 6f);
 	}
 
 }
