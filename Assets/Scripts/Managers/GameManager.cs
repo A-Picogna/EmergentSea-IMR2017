@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour {
 		// We init the fow
 		ResetFOW ();
 		RevealAreaAroundCurrentPlayerShips ();
+		GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ().DisplayInfo("Bienvenu Commandant, vous êtes le joueur <color=red>rouge</color>. Votre objectif est de détuire tout les navires <color=blue>bleu</color>", 6f);
 	}
 	
 	// Update is called once per frame
