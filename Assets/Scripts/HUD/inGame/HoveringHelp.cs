@@ -14,34 +14,34 @@ public class HoveringHelp : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 			PanelHandler pnlH = GetComponentInParent<Canvas>().GetComponent<PanelHandler>();
 			panelHelp = pnlH.panelHelp2;
 		}
+		helpPanel = panelHelp.GetComponent<HelpPanel> ();
 		panelHelp.SetActive(false);
 		activated = false;
-		helpPanel = panelHelp.GetComponent<HelpPanel> ();
 	}
 
 	void Update() {
 		if (activated) {
+			helpPanel.showPanel ();
 			helpPanel.refreshPosition ();
 		}
 	}
 	
 	public void OnPointerEnter(PointerEventData eventData)
 	{
-		print (helpPanel);
-		print ("Change text");
 		helpPanel.changeText (type);
-		print ("Refresh");
 		helpPanel.refresh ();
-		print ("Active");
 		activated = true;
-		print ("Show");
 		helpPanel.showPanel ();
-		print (panelHelp.activeSelf);
 	}
 	public void OnPointerExit(PointerEventData eventData)
 	{
-		print ("Out");
 		activated = false;
 		helpPanel.hidePanel ();
+	}
+	public HelpPanel getHelpPanel() {
+		return helpPanel;
+	}
+	public void setHelpPanel(HelpPanel hp) {
+		helpPanel = hp;
 	}
 }

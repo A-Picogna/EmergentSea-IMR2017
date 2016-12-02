@@ -144,6 +144,9 @@ public class Ship : MonoBehaviour {
 		if (!this.playable) {
 			return;
 		}
+		if (target == this) {
+			fishing ();
+		}
 		if (target.owner.Name.Equals (owner.Name) && target != this) {
 			Debug.Log ("It's a friend dammit! Don't Shoot!!!");
 			if (AtTradeRange (target)) {

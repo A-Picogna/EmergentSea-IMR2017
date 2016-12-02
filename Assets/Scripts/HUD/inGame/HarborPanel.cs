@@ -30,6 +30,13 @@ public class HarborPanel : MonoBehaviour {
 	private Text darkArtsAcademyAction;
 	private Text shipyardAction;
 
+	private HelpPanel innHelp;
+	private HelpPanel storehouseHelp;
+	private HelpPanel warehouseHelp;
+	private HelpPanel slumsHelp;
+	private HelpPanel darkArtsAcademyHelp;
+	private HelpPanel shipyardHelp;
+
     public string buttonClicked;
 
     public bool selected;
@@ -51,6 +58,15 @@ public class HarborPanel : MonoBehaviour {
 		slumsAction = slumsButton.transform.GetChild(0).GetComponent<Text>();
 		darkArtsAcademyAction = darkArtsAcademyButton.transform.GetChild(0).GetComponent<Text>();
 		shipyardAction = shipyardButton.transform.GetChild(0).GetComponent<Text>();
+
+		/*
+		innHelp = innAction.GetComponent<HoveringHelp> ().getHelpPanel ();
+		storehouseHelp = innAction.GetComponent<HoveringHelp> ().getHelpPanel ();
+		warehouseHelp = innAction.GetComponent<HoveringHelp> ().getHelpPanel ();
+		slumsHelp = innAction.GetComponent<HoveringHelp> ().getHelpPanel ();
+		darkArtsAcademyHelp = innAction.GetComponent<HoveringHelp> ().getHelpPanel ();
+		shipyardHelp = innAction.GetComponent<HoveringHelp> ().getHelpPanel ();
+		*/
 
 		refresh ();
 
