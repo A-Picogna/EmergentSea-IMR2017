@@ -131,7 +131,7 @@ public class MapEditor : MonoBehaviour {
 				DrawEdgesLines(harbor_go);
 				break;
 			case 4:
-				if (ourHitObject.GetComponent<Sea> () != null) {
+				if (ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().Treasure_go == null) {
 					GameObject treasure_go = (GameObject)Instantiate (treasurePrefab, worldPos, Quaternion.identity);
 					treasure_go.name = ourHitObject.GetComponent<Sea> ().name + "_Treasure";
 					treasure_go.transform.SetParent (ourHitObject.GetComponent<Sea> ().transform);
