@@ -159,7 +159,7 @@ public class MouseManager : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetMouseButtonUp (0)) {
+		if (Input.GetMouseButtonUp (0) && target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
 			selectedUnit = ourHitObject.GetComponent<Sea> ().ShipContained;
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
