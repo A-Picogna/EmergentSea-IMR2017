@@ -60,8 +60,6 @@ public class MapEditor : MonoBehaviour {
 		//});
 		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
 		ip.DisplayInfo(lang.getString ("mapEditor_firstExplaination"), 20f); 
-		HelpPanel hp = GameObject.Find ("pnl_help").GetComponent<HelpPanel> ();
-		hp.textHelp.text = lang.getString ("mapEditor_explaination");
 	}
 
 	void Update () {

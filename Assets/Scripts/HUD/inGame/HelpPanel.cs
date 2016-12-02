@@ -130,6 +130,9 @@ public class HelpPanel : MonoBehaviour {
 			textHelp.text = text.Replace("//n", "\n");
 		} else if (type == 28) { // Menu
 			textHelp.text = lang.getString ("menu");
+		} else if (type == 29) { // MapEditor
+			string text = formatString(lang.getString ("mapEditor_explaination"));
+			textHelp.text = text.Replace("//n", "\n");
 		}
 	}
 	public void changeText(int tp) {
