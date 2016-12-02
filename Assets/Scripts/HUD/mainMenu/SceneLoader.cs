@@ -61,8 +61,10 @@ public class SceneLoader : MonoBehaviour {
 		// We wait just 3 seconds to feel the loading
 		yield return new WaitForSeconds (1);
 
+		Debug.Log ("LoadSceneAsync");
+
 		// Start an ansync operation to load the scene
-		AsyncOperation async = SceneManager.LoadSceneAsync("map");
+		AsyncOperation async = SceneManager.LoadSceneAsync("map", LoadSceneMode.Single);
 
 		while (!async.isDone) {
 			yield return null;
@@ -76,7 +78,7 @@ public class SceneLoader : MonoBehaviour {
 		yield return new WaitForSeconds (1);
 
 		// Start an ansync operation to load the scene
-		AsyncOperation async = SceneManager.LoadSceneAsync("map_editor");
+		AsyncOperation async = SceneManager.LoadSceneAsync("map_editor", LoadSceneMode.Single);
 
 		while (!async.isDone) {
 			yield return null;

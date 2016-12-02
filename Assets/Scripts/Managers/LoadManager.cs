@@ -51,6 +51,7 @@ public class LoadManager : MonoBehaviour {
 	public GameObject saveLoadMenuPrefab;
 	public GameObject loadingScreenPrefab;
 	public GameObject CanvasPrefab;
+	public GameObject NewMapPrefab;
 
 	// Private variables
 	private Map MapLoaded;
@@ -295,6 +296,7 @@ public class LoadManager : MonoBehaviour {
 	private void initEditor() {
 		//////////// POUR L'EDITEUR
 		MapLoadedEditor = initEditorMap ();
+		linkObjectsEditor ();
 	}
 
 	private void linkObjects(Map MapLoaded, GameManager gameManager) {
@@ -333,6 +335,7 @@ public class LoadManager : MonoBehaviour {
 		// Reconfiguration du loading Screen
 		GameObject LoadButton = GameObject.Find ("LoadButton");
 		((UnityEngine.UI.Button)LoadButton.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			Debug.Log("Lancement nouvelle map");
 			((SceneLoader)loadingScreen.GetComponent<SceneLoader> ()).NewMap();
 		});
 
@@ -341,7 +344,32 @@ public class LoadManager : MonoBehaviour {
 		loadingScreen.SetActive (false);
 	}
 
+	private void linkObjectsEditor() {
+		GameObject btn_save = GameObject.Find ("btn_save");
+
+		// Création d'un GameObject avec Canvas
+		GameObject canvas = Instantiate(CanvasPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		canvas.transform.SetAsLastSibling();
+
+		// Instanciation du menu pour nommer la sauvegarde
+		GameObject NewMapMenu = Instantiate(NewMapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		NewMapMenu.transform.SetParent(canvas.transform, false);
+		//saveLoadMenu.transform.localScale = new Vector3 (2.0f, 2.0f, 2.0f);
+
+		Debug.Log ("Linking save button...");
+		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			NewMapMenu.SetActive (true);
+		});
+
+		NewMapMenu.SetActive (false);
+	}
+
 	void OnLevelWasLoaded() {
+		
+		this.MapLoaded = null;
+		this.MapLoadedEditor = null;
+		this.MapAsStarted = null;
+
 		switch (LoadManagerState) {
 		case state.Inactive:
 			Debug.Log ("Normalement je devrais revenir au menu, je fais rien");
