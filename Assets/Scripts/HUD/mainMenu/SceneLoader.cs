@@ -4,40 +4,38 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SceneLoader : MonoBehaviour {
-	private bool loadingAScene = false;
+//	private bool loadingAScene = false;
 	private int count = 0;
 	private int supercount = 0;
+//	AsyncOperation async;
 
 	[SerializeField]
 	private Text loadingText;
 
 	public void NewMap() {
-		if (loadingAScene == false) {
-			loadingAScene = true;
+//		Resources.UnloadUnusedAssets ();
+		if (LoadManager.instance.loadingAScene == false) {
+			LoadManager.instance.loadingAScene = true;
 
 			gameObject.SetActive (true);
 
-			StartCoroutine (LoadMapCoroutine ());
+			LoadManager.instance.LoadSceneRoutine("map");
 		}
 	}
 
 	public void Editor() {
-		if (loadingAScene == false) {
-			loadingAScene = true;
+//		Resources.UnloadUnusedAssets ();
+		if (LoadManager.instance.loadingAScene == false) {
+			LoadManager.instance.loadingAScene = true;
 
 			gameObject.SetActive (true);
 
-			StartCoroutine (EditorCoroutine ());
+			LoadManager.instance.LoadSceneRoutine("map_editor");
 		}
 	}
 
-	public void BackToMenu(){
-		LoadManager.instance.LoadManagerState = LoadManager.state.Inactive;
-		SceneManager.LoadSceneAsync("main");
-	}
-
 	void Update() {
-		if (loadingAScene == true) {
+		if (LoadManager.instance.loadingAScene = true) {
 			if (supercount == 19) {
 				switch (count) 
 				{
@@ -57,33 +55,33 @@ public class SceneLoader : MonoBehaviour {
 		}
 	}
 
-	IEnumerator LoadMapCoroutine() {
-		// We wait just 3 seconds to feel the loading
-		yield return new WaitForSeconds (1);
-
-		Debug.Log ("LoadSceneAsync");
-
-		// Start an ansync operation to load the scene
-		AsyncOperation async = SceneManager.LoadSceneAsync("map", LoadSceneMode.Single);
-
-		while (!async.isDone) {
-			yield return null;
-		}
-
-		loadingAScene = false;
-	}
-
-	IEnumerator EditorCoroutine() {
-		// We wait just 3 seconds to feel the loading
-		yield return new WaitForSeconds (1);
-
-		// Start an ansync operation to load the scene
-		AsyncOperation async = SceneManager.LoadSceneAsync("map_editor", LoadSceneMode.Single);
-
-		while (!async.isDone) {
-			yield return null;
-		}
-
-		loadingAScene = false;
-	}
+//	IEnumerator LoadMapCoroutine() {
+//		// We wait just 3 seconds to feel the loading
+//		yield return new WaitForSeconds (1);
+//
+//		Debug.Log ("LoadSceneAsync");
+//
+//		// Start an ansync operation to load the scene
+//		async = SceneManager.LoadSceneAsync("map", LoadSceneMode.Single);
+//
+//		while (!async.isDone) {
+//			yield return null;
+//		}
+//
+//		loadingAScene = false;
+//	}
+//
+//	IEnumerator EditorCoroutine() {
+//		// We wait just 3 seconds to feel the loading
+//		yield return new WaitForSeconds (1);
+//
+//		// Start an ansync operation to load the scene
+//		async = SceneManager.LoadSceneAsync("map_editor", LoadSceneMode.Single);
+//
+//		while (!async.isDone) {
+//			yield return null;
+//		}
+//
+//		loadingAScene = false;
+//	}
 }

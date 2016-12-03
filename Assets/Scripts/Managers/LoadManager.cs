@@ -4,6 +4,7 @@ using System.IO;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using UnityEngine.SceneManagement;
 
 
 public class LoadManager : MonoBehaviour {
@@ -61,6 +62,9 @@ public class LoadManager : MonoBehaviour {
 	private int nbCasesTerre;
 	private int nbCasesTresors;
 	private MapFile MapAsStarted;
+	private AsyncOperation async;
+	public bool loadingAScene;
+	private Coroutine cor;
 
 
 	// Use this before initialization (and between loading Maps)
@@ -327,21 +331,27 @@ public class LoadManager : MonoBehaviour {
 			saveLoadMenu.SetActive (true);
 		});
 
+		Debug.Log ("Linking return button...");
+		GameObject btn_return = GameObject.Find ("btn_load");
+		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.RemoveAllListeners ();
+		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			LoadManager.instance.BackToMenu();
+		});
 		// Instanciation du loading Screen
-		GameObject loadingScreen = Instantiate(loadingScreenPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
-		loadingScreen.transform.SetParent(canvas.transform, false);
-		loadingScreen.SetActive (true);
+		//GameObject loadingScreen = Instantiate(loadingScreenPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		//loadingScreen.transform.SetParent(canvas.transform, false);
+		//loadingScreen.SetActive (true);
 
 		// Reconfiguration du loading Screen
 		GameObject LoadButton = GameObject.Find ("LoadButton");
-		((UnityEngine.UI.Button)LoadButton.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
-			Debug.Log("Lancement nouvelle map");
-			((SceneLoader)loadingScreen.GetComponent<SceneLoader> ()).NewMap();
-		});
+		//((UnityEngine.UI.Button)LoadButton.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+		//	Debug.Log("Lancement nouvelle map");
+		//	((SceneLoader)loadingScreen.GetComponent<SceneLoader> ()).NewMap();
+		//});
 
 		// Cacher le menu de chargement
 		saveLoadMenu.SetActive (false);
-		loadingScreen.SetActive (false);
+		//loadingScreen.SetActive (false);
 	}
 
 	private void linkObjectsEditor() {
@@ -372,7 +382,7 @@ public class LoadManager : MonoBehaviour {
 
 		switch (LoadManagerState) {
 		case state.Inactive:
-			Debug.Log ("Normalement je devrais revenir au menu, je fais rien");
+			Debug.Log ("Normalement je devrais revenir au menu, je fais rien.");
 			break;
 		case state.StartNewMap:
 			Debug.Log ("Génération de la map ;)");
@@ -537,5 +547,39 @@ public class LoadManager : MonoBehaviour {
 		SaveFile saveObject = (SaveFile)bf.Deserialize (saveFile);
 
 		loadSave (saveObject);
+	}
+
+	public void BackToMenu(){
+		this.LoadManagerState = LoadManager.state.Inactive;
+		Time.timeScale = 1;
+		SceneManager.LoadScene("main", LoadSceneMode.Single);
+	}
+
+	public void LoadSceneRoutine(string map) {
+		StopAllCoroutines ();
+		Debug.Log ("StartCoroutine");
+		cor = StartCoroutine (LoadManager.instance.LoadSceneCoroutine(map));
+		Debug.Log ("StartCoroutineFinished");
+	}
+
+	public IEnumerator LoadSceneCoroutine(string map) {
+		// We wait just 3 seconds to feel the loading
+		Debug.Log ("Start wait");
+		yield return new WaitForSeconds (1);
+		Debug.Log ("Wait is over");
+		Debug.Log ("LoadSceneAsync");
+
+		// Start an ansync operation to load the scene
+		async = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
+		Debug.Log ("LoadSceneAsync launched");
+		while (!async.isDone) {
+			Debug.Log (async.progress.ToString());
+			yield return null;
+		}
+		Debug.Log ("LoadSceneAsync done");
+		loadingAScene = false;
+		Debug.Log ("LoadingAScene false !");
+		yield break;
+		Debug.Log ("yield break !");
 	}
 }

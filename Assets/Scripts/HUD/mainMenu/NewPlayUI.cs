@@ -23,6 +23,10 @@ public class NewPlayUI : MonoBehaviour {
 
 	public GameObject MapTypeInputDropdown;
 
+	public GameObject GroundFrequencyInputDropdown;
+	public GameObject TreasureFrequencyInputDropdown;
+	public GameObject PortFrequencyInputDropdown;
+
 	public GameObject MapGenerationDescGroup;
 	public GameObject MapGenerationInputGroup;
 	public GameObject MapListDescGroup;
@@ -169,7 +173,12 @@ public class NewPlayUI : MonoBehaviour {
 		MapYFeedbackTextComponent.text = LoadManager.instance.MapY.ToString ();
 
 		MapXSliderComponent.value = LoadManager.instance.MapX;
-		MapYSliderComponent.value = LoadManager.instance.MapY;
+		MapYSliderComponent.value = LoadManager.instance.MapY;
+
+		(GroundFrequencyInputDropdown.GetComponent<Dropdown> ()).value = LoadManager.instance.GroundFrequencyParameter;
+		(TreasureFrequencyInputDropdown.GetComponent<Dropdown> ()).value = LoadManager.instance.TreasureFrequencyParameter;
+		(PortFrequencyInputDropdown.GetComponent<Dropdown> ()).value = LoadManager.instance.PortFrequencyParameter;
+
 	}
 
 	private void updateValuesGame() {

@@ -122,32 +122,38 @@ public class SaveUI : MonoBehaviour {
 		this.SaveUIState = state;
 
 		switch (state) {
-			case State.Loading:
-				NewSaveUI.SetActive (false);
-				SaveButton.SetActive (false);
+		case State.Loading:
+			NewSaveUI.SetActive (false);
+			SaveButton.SetActive (false);
 
-				DeleteButton.SetActive (true);
+			DeleteButton.SetActive (true);
+
+			if (amIInGame) {
+				LaunchButton.SetActive (false);
+			} else { 
 				LaunchButton.SetActive (true);
-				LoadedSaveUI.SetActive (true);
-				break;
-			case State.Saving:
-				NewSaveUI.SetActive (true);
-				SaveButton.SetActive (true);
+			}
+			
+			LoadedSaveUI.SetActive (true);
+			break;
+		case State.Saving:
+			NewSaveUI.SetActive (true);
+			SaveButton.SetActive (true);
 
-				DeleteButton.SetActive (false);
-				LaunchButton.SetActive (false);
-				LoadedSaveUI.SetActive (false);
-				
-				break;
-			case State.Nothing:
-				NewSaveUI.SetActive (false);
-				SaveButton.SetActive (false);
-				
-				DeleteButton.SetActive (false);
-				LaunchButton.SetActive (false);
-				LoadedSaveUI.SetActive (false);	
-				
-				break;
+			DeleteButton.SetActive (false);
+			LaunchButton.SetActive (false);
+			LoadedSaveUI.SetActive (false);
+			
+			break;
+		case State.Nothing:
+			NewSaveUI.SetActive (false);
+			SaveButton.SetActive (false);
+			
+			DeleteButton.SetActive (false);
+			LaunchButton.SetActive (false);
+			LoadedSaveUI.SetActive (false);	
+			
+			break;
 		}
 		
 	}
