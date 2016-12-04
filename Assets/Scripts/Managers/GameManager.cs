@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour {
 	// UI
 	public PanelHandler panelHandler;
 	private bool checkInit = false;
+	private bool gameover = false;
 
 	// Attributes
 	public Player currentPlayer;
@@ -173,7 +174,8 @@ public class GameManager : MonoBehaviour {
 		List<Player> playersCopy = players;
 		List<Ship> currentPlayerFleet = currentPlayer.Fleet;
 		foreach(Player player in playersCopy){
-			if ( (player.Fleet == null || player.Fleet.Count == 0) && (player.Harbors == null || player.Harbors.Count == 0)) {
+			if ( (player.Fleet == null || player.Fleet.Count == 0) && (player.Harbors == null || player.Harbors.Count == 0) && !gameover) {
+				gameover = true;
 				GameOver (player);
 			}
 			CheckShipsToDestroy (player);

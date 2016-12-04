@@ -236,7 +236,9 @@ public class Ship : MonoBehaviour {
 				errorCode = 1;
 			}
 		}
-		panelHandler.updateShip ();
+		if (owner.Type.Equals ("Humain")) {
+			panelHandler.updateShip ();
+		}
 		return errorCode;
 	}
 
