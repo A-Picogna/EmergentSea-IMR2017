@@ -57,7 +57,16 @@ public class Map : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-
+		GameObject miniMapCamera_go = GameObject.Find ("Minimap camera");
+		Camera miniMapCamera = miniMapCamera_go.GetComponent<Camera> ();
+		float maxWidth = width * Mathf.Sqrt (3f) / 2f;
+		float maxHeight = height * 0.75f;
+		miniMapCamera_go.transform.position = new Vector3 (maxWidth / 2f, 10, maxHeight / 2f);
+		if (maxWidth > maxHeight) {
+			miniMapCamera.orthographicSize = maxWidth/2;
+		} else {
+			miniMapCamera.orthographicSize = maxHeight/2;
+		}
 	}
 
 	public void LaunchMapGeneration () {
