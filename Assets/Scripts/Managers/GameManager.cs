@@ -156,7 +156,7 @@ public class GameManager : MonoBehaviour {
 
 	void GameOver(){		
 		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
-		ip.DisplayInfo(lang.getString ("gameover_winner"));
+		ip.DisplayInfo(lang.getString ("gameover_winner"), 20f);
 	}
 
 	void NextTurn(){
