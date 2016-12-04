@@ -276,7 +276,7 @@ public class GameManager : MonoBehaviour {
 			GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_looserLabel");
 			GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_looser");
 		}
-		GameObject.Find ("GameoverCanvas").GetComponent<PauseManager> ().Pause ();
+		GameObject.Find ("GameoverCanvas").GetComponent<GameoverManager> ().Pause ();
 	}
 
 	void NextTurn(){
@@ -285,7 +285,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void NextPlayer()
-    {
+	{
         if (!aiIsPlaying)
         {
             ResetFOW();
