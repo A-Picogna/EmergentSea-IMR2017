@@ -47,7 +47,7 @@ public class NewPlayUI : MonoBehaviour {
 
 	public GameObject LaunchGameButton;
 
-	private string[] mapList;
+	private string[] mapList =  new string[] {};
 
 	void Start(){
 		// Initilialize Components
@@ -68,7 +68,6 @@ public class NewPlayUI : MonoBehaviour {
 		updateValuesGame ();
 
 		MapTypeInputDropdownCallback(0);
-		updateMapListChoiceCallback (0);
 	}
 
 	void OnEnable() {
@@ -121,10 +120,15 @@ public class NewPlayUI : MonoBehaviour {
 	public void MapTypeInputDropdownCallback(int MapType) {
 		//On change l'interface en fonction du paramêtre
 		bool MapGenerationIsActive = false;
+		if (mapList.Length >= 0) {
+			(MapTypeInputDropdown.GetComponent<Dropdown> ()).value = 1;
+			MapType = 1;
+		}
 		switch (MapType) {
 		case 0: //Préfabriquée
 			MapGenerationIsActive = false;
 			LoadManager.instance.LoadManagerState = LoadManager.state.StartLoadedMap;
+			updateMapListChoiceCallback (0);
 			break;
 		case 1: //Générée
 			MapGenerationIsActive = true;
