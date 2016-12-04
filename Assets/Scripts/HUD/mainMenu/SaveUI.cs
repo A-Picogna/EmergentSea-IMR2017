@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class SaveUI : MonoBehaviour {
 
@@ -36,7 +37,7 @@ public class SaveUI : MonoBehaviour {
 	}
 
 	private void checkGame() {
-		if (LoadManager.instance.LoadManagerState == LoadManager.state.Inactive) {
+		if (SceneManager.GetActiveScene().name.Equals("main")) {
 			amIInGame = false;
 		} else {
 			amIInGame = true;
