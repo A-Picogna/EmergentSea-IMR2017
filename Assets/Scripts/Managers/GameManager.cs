@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour {
 		} else {
 			loadGameManager (game);
 		}
+		gameover = false;
 	}
 
 	public void initGameManager() {
@@ -174,8 +175,12 @@ public class GameManager : MonoBehaviour {
 		List<Player> playersCopy = players;
 		List<Ship> currentPlayerFleet = currentPlayer.Fleet;
 		foreach(Player player in playersCopy){
+			/*
 			if ( (player.Fleet == null || player.Fleet.Count == 0) && (player.Harbors == null || player.Harbors.Count == 0) && !gameover) {
-				gameover = true;
+				GameOver (player);
+			}
+			*/
+			if ( (player.Fleet == null || player.Fleet.Count == 0) && !gameover) {
 				GameOver (player);
 			}
 			CheckShipsToDestroy (player);
@@ -269,6 +274,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void GameOver(Player player){
+		gameover = true;
 		if (player.Type.Equals ("IA")) {
 			GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_winnerLabel");
 			GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner");
