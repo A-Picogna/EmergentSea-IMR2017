@@ -179,8 +179,19 @@ public class Harbor : Land
         return this;
     }
 
-    public void doAction(Ship selected, Map map, string select)
-    {
+    public int doAction(Ship selected, Map map, string select)
+	{
+		int errorCode = 0;
+		/*
+		 * return error code on call
+		 * 0 : OK
+		 * 1 : Not Enough Money
+		 * 2 : Ship is full
+		 * 3 : No place to build a ship
+		 * 4 : Already building a ship
+		 * 5 : No food to sell
+		 * 6 : crew already healed
+		 */
         Node[,] graph = map.graph;
         //Shipyard - new ship
         if (select == "shipyard")
@@ -191,7 +202,8 @@ public class Harbor : Land
                 if (admiral.RecruitmentCost > selected.Gold)
                 {
                     Debug.Log("Not enough money to build a new ship");
-                    selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
+                    //selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
+					errorCode = 1;
                     admiral = null;
                 }
                 else
@@ -222,13 +234,15 @@ public class Harbor : Land
                     }
                     if (!placeable)
                     {
-                        selected.displayFloatingInfo(Color.magenta, "No place to build a ship !", selected.transform.position);
+                        //selected.displayFloatingInfo(Color.magenta, "No place to build a ship !", selected.transform.position);
+						errorCode = 3;
                     }
                 }
             }
             else
             {
-                selected.displayFloatingInfo(Color.magenta, "Already building a ship !", selected.transform.position);
+                //selected.displayFloatingInfo(Color.magenta, "Already building a ship !", selected.transform.position);
+				errorCode = 4;
             }
         }
 
@@ -247,7 +261,8 @@ public class Harbor : Land
             else
             {
                 Debug.Log("No food to sell !");
-                selected.displayFloatingInfo(Color.magenta, "No food to sell !", selected.transform.position);
+                //selected.displayFloatingInfo(Color.magenta, "No food to sell !", selected.transform.position);
+				errorCode = 5;
             }
         }
 
@@ -302,7 +317,8 @@ public class Harbor : Land
                 }
             }
             else
-            {
+			{
+				errorCode = 6;
                 Debug.Log("No lp needed");
             }
             Debug.Log("Realy Healed : " + total);
@@ -322,8 +338,9 @@ public class Harbor : Land
                 Conjurer conjurer = new Conjurer();
                 if (conjurer.RecruitmentCost > selected.Gold)
                 {
-                    Debug.Log("Not enough money to recruit a conjurer");
-                    selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
+					Debug.Log("Not enough money to recruit a conjurer");
+					//selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
+					errorCode = 1;
                     conjurer = null;
                 }
                 else
@@ -337,7 +354,8 @@ public class Harbor : Land
             else
             {
                 Debug.Log("Too many members in the crew");
-                selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
+				//selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
+				errorCode = 2;
             }
             Debug.Log("Nb member : " + selected.Crew.Count);
             Debug.Log("Hp : " + selected.Hp);
@@ -356,8 +374,9 @@ public class Harbor : Land
                 PowderMonkey PM = new PowderMonkey();
                 if (PM.RecruitmentCost > selected.Gold)
                 {
-                    Debug.Log("Not enough money to recruit a PowderMonkey");
-                    selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
+					Debug.Log("Not enough money to recruit a PowderMonkey");
+					//selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
+					errorCode = 1;
                     PM = null;
                 }
                 else
@@ -370,8 +389,9 @@ public class Harbor : Land
             }
             else
             {
-                Debug.Log("Too many members in the crew");
-                selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
+				Debug.Log("Too many members in the crew");
+				//selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
+				errorCode = 2;
             }
             Debug.Log("Nb member : " + selected.Crew.Count);
             Debug.Log("Hp : " + selected.Hp);
@@ -390,8 +410,9 @@ public class Harbor : Land
                 Filibuster filibuster = new Filibuster();
                 if (filibuster.RecruitmentCost > selected.Gold)
                 {
-                    Debug.Log("Not enough money to recruit a filibuster");
-                    selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
+					Debug.Log("Not enough money to recruit a filibuster");
+					//selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
+					errorCode = 1;
                     filibuster = null;
                 }
                 else
@@ -404,12 +425,14 @@ public class Harbor : Land
             }
             else
             {
-                Debug.Log("Too many members in the crew");
-                selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
+				Debug.Log("Too many members in the crew");
+				//selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
+				errorCode = 2;
             }
             Debug.Log("Nb member : " + selected.Crew.Count);
             Debug.Log("Hp : " + selected.Hp);
             Debug.Log("Gold : " + selected.Gold);
-        }
+		}
+		return errorCode;
     }
 }

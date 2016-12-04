@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour {
     string lastSelected = "";
 	bool aiTurn;
 	private Lang lang;
+	private int returnInteractionCode;
 
     //AI
     AiScript AI;
@@ -193,7 +194,28 @@ public class GameManager : MonoBehaviour {
         if(panelHandler.panelHarbor.GetComponent<HarborPanel>().selected)
         {
             panelHandler.panelHarbor.GetComponent<HarborPanel>().selected = false;
-            mouseManager.currentHarbor.doAction(mouseManager.selectedUnit, map, panelHandler.panelHarbor.GetComponent<HarborPanel>().buttonClicked);
+			returnInteractionCode = mouseManager.currentHarbor.doAction(mouseManager.selectedUnit, map, panelHandler.panelHarbor.GetComponent<HarborPanel>().buttonClicked);
+			switch (returnInteractionCode) {
+			case 1:
+				mouseManager.ip.DisplayInfo (lang.getString("notEnoughGold"), 6f);
+				break;
+			case 2:
+				mouseManager.ip.DisplayInfo (lang.getString("shipIsFull"), 6f);
+				break;
+			case 3:
+				mouseManager.ip.DisplayInfo (lang.getString("noPlaceToBuildAShip"), 6f);
+				break;
+			case 4:
+				mouseManager.ip.DisplayInfo (lang.getString("alreadyBuildingShip"), 6f);
+				break;
+			case 5:
+				mouseManager.ip.DisplayInfo (lang.getString("notEnoughFood"), 6f);
+				break;
+			case 6:
+				mouseManager.ip.DisplayInfo (lang.getString("noHealNeeded"), 6f);
+				break;
+			}
+
         }
         if (mouseManager.selectedUnit == null) {
 			panelHandler.hidePanelUnkown ();

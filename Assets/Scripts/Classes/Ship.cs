@@ -181,18 +181,30 @@ public class Ship : MonoBehaviour {
 		return angle;
 	}
 
-	public void Interact(Ship target){
+	public int Interact(Ship target){
+		int errorCode = 0;
+		/*
+		 * return error code on call
+		 * 0 : OK
+		 * 1 : Not Enough Energy
+		 * 2 : Not in range - ally
+		 * 3 : Not in range - enemy
+		 * 4 : this ship is not playable
+		 */
 		if (!this.playable) {
-			return;
+			errorCode = 4;
+			return errorCode;
 		}
 		if (target == this) {
-			fishing ();
-		}
-		if (target.owner.Name.Equals (owner.Name) && target != this) {
-			Debug.Log ("It's a friend dammit! Don't Shoot!!!");
+			bool resFishing = fishing ();
+			if (!resFishing) {
+				errorCode = 1;
+			}
+		} else if (target.owner.Name.Equals (owner.Name)) {
 			if (AtTradeRange (target)) {
-				Debug.Log ("Friendly ship at range, ready to trade !");
 				Trade (target);
+			} else {
+				errorCode = 2;
 			}
 		} else if (!target.owner.Name.Equals (owner.Name)) {
 			if (energyQuantity >= 5) {
@@ -212,10 +224,15 @@ public class Ship : MonoBehaviour {
 				if (attackValue > 0) {
 					displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
 					energyQuantity -= 5;
+				} else {
+					errorCode = 3;
 				}
+			} else {
+				errorCode = 1;
 			}
 		}
 		panelHandler.updateShip ();
+		return errorCode;
 	}
 
 	public bool AtFilibusterRange(Ship target){

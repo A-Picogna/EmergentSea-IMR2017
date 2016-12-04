@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class InfoPanel : MonoBehaviour {
 
+	Coroutine co;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -15,14 +17,17 @@ public class InfoPanel : MonoBehaviour {
 	}
 
 	public void DisplayInfo(string message, float duration){
-		StartCoroutine (MessageForPlayer(message, duration));
+		co = StartCoroutine (MessageForPlayer(message, duration));
 	}
 
 	IEnumerator MessageForPlayer (string message, float duration){
+		if (duration < 3f) {
+			duration = 3f;
+		}
 		this.GetComponent<Text>().text = message;    
-		yield return new WaitForSeconds(duration/2);
-		this.GetComponent<Text>().CrossFadeAlpha(0.0f, duration/2, false);
-		yield return new WaitForSeconds(duration/2);
+		yield return new WaitForSeconds(duration-2f);
+		this.GetComponent<Text>().CrossFadeAlpha(0.0f, 2f, false);
+		yield return new WaitForSeconds(2f);
 		this.GetComponent<Text>().text = "";
 		this.GetComponent<Text>().CrossFadeAlpha(1.0f, 0, false);
 	}
