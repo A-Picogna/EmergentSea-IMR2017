@@ -148,7 +148,9 @@ public class Ship : MonoBehaviour {
 		dead = true;
 		Destroy (this.GetComponentInChildren<MeshCollider> ());
 		StartCoroutine (Sink ());
-		panelHandler.updateShip ();
+		if (owner.Type.Equals ("IA")) {
+			panelHandler.updateShip ();
+		}
 	}
 
 	public void RefuelEnergy(){
@@ -409,7 +411,9 @@ public class Ship : MonoBehaviour {
 			}
 		} while (takingDamages);
 		UpdateShipHp ();
-		panelHandler.updateShip ();
+		if (owner.Type.Equals ("IA")) {
+			panelHandler.updateShip ();
+		}
 	}
 
 	public void UpdateShipHp(){

@@ -389,6 +389,10 @@ public class GameManager : MonoBehaviour {
 					Ship ship = ship_go.GetComponent<Ship> ();
 					ship.Owner = player;
 					ship.addCrewMember(new Filibuster());
+					if (player.Type.Equals ("IA")) {
+						ship.addCrewMember(new PowderMonkey());
+						ship.addCrewMember(new Conjurer());
+					}
 					player.Fleet.Add (ship);
 					mouseManager.map.graph [x, y].isWalkable = false;
 					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
