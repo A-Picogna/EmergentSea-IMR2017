@@ -95,7 +95,9 @@ public class Ship : MonoBehaviour {
 		} else {
 			currentPath = null;
 		}
-		panelHandler.updateShip ();
+		if (owner.Type.Equals ("Humain")) {
+			panelHandler.updateShip ();
+		}
 	}
 
 	public void Die(){
@@ -458,6 +460,7 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void UpdateFOW (){
+		bool visibleByHumain = false;
 		GameObject currentHex = (GameObject) GameObject.Find ("Hex_" + this.ShipX + "_" + this.ShipY);
 		List<GameObject> firstNeighboursToReveal;
 		List<GameObject> secondNeighboursToReveal;
@@ -466,8 +469,7 @@ public class Ship : MonoBehaviour {
 		Node newNode;
 
         // Reveal Ship and ship Hex
-        if (owner.Type != "IA")
-        {
+        if (owner.Type != "IA") {
             currentHex.GetComponent<Hex>().setVisibility(2);
         }
 		newNode = new Node(this.ShipX, this.ShipY, new Vector3(0,0,0), false, "ship");
@@ -477,24 +479,28 @@ public class Ship : MonoBehaviour {
 
 		// Reveal 1st Neighbours
 		firstNeighboursToReveal = currentHex.GetComponent<Hex>().getNeighbours();
-		foreach (GameObject n1 in firstNeighboursToReveal)
-        {
-            if (owner.Type != "IA")
-            {
-                n1.GetComponent<Hex>().setVisibility(2);
-            }
+		foreach (GameObject n1 in firstNeighboursToReveal) {
+			if (owner.Type.Equals ("IA")) {
+				if (n1.GetComponent<Sea> () != null && n1.GetComponent<Sea> ().ShipContained != null && !n1.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
+					visibleByHumain = true;
+				}
+			} else {
+				n1.GetComponent<Hex> ().setVisibility (2);
+			}
 			newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 			if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 				owner.ExploredHex.Add(newNode);
 			}
 			// Reveal 2nd Neighbours
 			secondNeighboursToReveal = n1.GetComponent<Hex> ().getNeighbours ();
-			foreach (GameObject n2 in secondNeighboursToReveal)
-            {
-                if (owner.Type != "IA")
-                {
-                    n2.GetComponent<Hex>().setVisibility(2);
-                }
+			foreach (GameObject n2 in secondNeighboursToReveal) {
+				if (owner.Type.Equals("IA")) {
+					if (n2.GetComponent<Sea> () != null && n2.GetComponent<Sea> ().ShipContained != null && !(n2.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) ) {
+						visibleByHumain = true;
+					}
+				} else {
+					n2.GetComponent<Hex> ().setVisibility (2);
+				}
 				newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 				if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 					owner.ExploredHex.Add(newNode);
@@ -503,15 +509,25 @@ public class Ship : MonoBehaviour {
 				thirdNeighboursToReveal = n2.GetComponent<Hex> ().getNeighbours ();
 				foreach (GameObject n3 in thirdNeighboursToReveal)
                 {
-                    if (owner.Type != "IA")
-                    {
-                        n3.GetComponent<Hex>().setVisibility(2);
-                    }
+					if (owner.Type.Equals("IA")) {
+						if (n3.GetComponent<Sea> () != null && n3.GetComponent<Sea> ().ShipContained != null && !n3.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
+							visibleByHumain = true;
+						}
+					} else {
+						n3.GetComponent<Hex> ().setVisibility (2);
+					}
 					newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 					if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 						owner.ExploredHex.Add(newNode);
 					}
 				}
+			}
+		}
+		if (owner.Type.Equals ("IA")) {
+			if (visibleByHumain) {
+				this.GetComponentInChildren<MeshRenderer> ().enabled = true;
+			} else {
+				this.GetComponentInChildren<MeshRenderer> ().enabled = false;
 			}
 		}
 	}

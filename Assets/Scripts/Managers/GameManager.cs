@@ -154,8 +154,9 @@ public class GameManager : MonoBehaviour {
 		ship.Die ();
 	}
 
-	void GameOver(){
-
+	void GameOver(){		
+		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
+		ip.DisplayInfo(lang.getString ("gameover_winner"));
 	}
 
 	void NextTurn(){
@@ -164,6 +165,13 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void NextPlayer(){
+		if (currentPlayer.Type == "Humain") {
+			// We reset fow before change current player
+			ResetFOW ();
+			RevealAreaAlreadyExplored ();
+			RevealAreaAroundCurrentPlayerShips ();
+		}
+
         if (!aiIsPlaying)
         {
             mouseManager.selectedUnit = null;
@@ -173,7 +181,8 @@ public class GameManager : MonoBehaviour {
                 {
                     ship.Playable = false;
                 }
-            }
+			}
+
             currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
             if (currentPlayerNumber == 0)
             {
@@ -207,7 +216,7 @@ public class GameManager : MonoBehaviour {
                 {
                     ship.Playable = true;
                     ship.RefuelEnergy();
-                }
+				}
             }
             else
             {
@@ -225,10 +234,6 @@ public class GameManager : MonoBehaviour {
             }
 		}
 		checkInit = false;
-		// We reset fow for next player
-		ResetFOW ();
-		RevealAreaAlreadyExplored ();
-		RevealAreaAroundCurrentPlayerShips ();
 	}
 
 	void AddShips(int n){
