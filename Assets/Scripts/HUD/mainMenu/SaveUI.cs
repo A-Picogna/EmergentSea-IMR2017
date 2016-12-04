@@ -146,7 +146,11 @@ public class SaveUI : MonoBehaviour {
 			break;
 		case State.Saving:
 			NewSaveUI.SetActive (true);
-			SaveButton.SetActive (true);
+			if(LoadManager.instance.gameManager.aiIsPlaying == false){
+				SaveButton.SetActive (true);
+			} else {
+				SaveButton.SetActive (false);
+			}
 
 			DeleteButton.SetActive (false);
 			LaunchButton.SetActive (false);

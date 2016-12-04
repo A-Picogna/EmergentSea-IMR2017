@@ -65,7 +65,7 @@ public class LoadManager : MonoBehaviour {
 	private AsyncOperation async;
 	public bool loadingAScene;
 	private Coroutine cor;
-	private GameManager gameManager;
+	public GameManager gameManager;
 
 
 	// Use this before initialization (and between loading Maps)

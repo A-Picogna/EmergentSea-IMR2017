@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour {
 
     //AI
     AiScript AI;
-    bool aiIsPlaying;
+    public bool aiIsPlaying;
 
 	// Public attibutes
 	public int FleetSize;
