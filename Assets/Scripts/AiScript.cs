@@ -46,7 +46,7 @@ public class AiScript {
         tmp0.Add("default");
         actions.Add(tmp0);
         ArrayList tmp1 = new ArrayList();
-        /*tmp1.Add("nbboat");
+        /*tmp1.Add("nbship");
         tmp1.Add(3);
         tmp1.Add("nbcrew");
         tmp1.Add("each");
@@ -66,9 +66,16 @@ public class AiScript {
 
     public bool turn(Player player, Map map)
     {
-        if(movingShip != null && movingShip.IsMoving && movingShip.CurrentPath.Count > 0)
+        if(movingShip != null && movingShip.CurrentPath != null && movingShip.CurrentPath.Count > 0)
         {
             return true;
+        }
+        else if(movingShip != null && movingShip.TargetDistance == -1)
+        {
+            //if the ship still got enough energy, fishing
+            movingShip.fishing();
+            movingShip.Used = true;
+            movingShip = null;
         }
         else
         {
@@ -79,7 +86,7 @@ public class AiScript {
         while (state < aiGame.Count)
         {
             //We want the ai to get at least X boats
-            if ((string)aiGame[state] == "nbboat")
+            if ((string)aiGame[state] == "nbship")
             {
                 int nbBuilding = 0;
                 foreach (Harbor harbor in player.Harbors)
@@ -219,12 +226,24 @@ public class AiScript {
         {
             if(!ship.Used)
             {
-                explore(ship, map);
-                ship.Used = true;
-                if (ship.CurrentPath.Count > 0)
+                Debug.Log(ship.TargetDistance);
+                if (ship.TargetDistance != -1)
                 {
+                    Debug.Log("Ship near");
+                    goToTarget(ship, map);
                     movingShip = ship;
                     return true;
+                }
+                else
+                {
+                    explore(ship, map);
+                    //Debug.Log(ship.CurrentPath.Count);
+                    if (ship.CurrentPath.Count > 0)
+                    {
+                        movingShip = ship;
+                        //Debug.Log(movingShip);
+                        return true;
+                    }
                 }
             }
         }
@@ -233,37 +252,138 @@ public class AiScript {
 
     public void explore(Ship ship, Map map)
     {
-        bool ok = false;
-        while (!ok)
+        Debug.Log("exploring");
+        bool ok2 = false;
+        while (!ok2)
         {
-            //Set a new direction
-            if (ship.DirectionLifeTime == 0)
+            bool ok = false;
+            while (!ok)
             {
-                ship.DirectionX = rand.Next(1, map.width);
-                ship.DirectionY = rand.Next(1, map.height);
-                while (map.graph[ship.DirectionX, ship.DirectionY].isWalkable == false)
+                //Set a new direction
+                if (ship.DirectionLifeTime == 0)
                 {
                     ship.DirectionX = rand.Next(1, map.width);
                     ship.DirectionY = rand.Next(1, map.height);
+                    while (map.graph[ship.DirectionX, ship.DirectionY].isWalkable == false)
+                    {
+                        ship.DirectionX = rand.Next(1, map.width);
+                        ship.DirectionY = rand.Next(1, map.height);
+                    }
+                    ship.DirectionLifeTime = 10;
                 }
-                ship.DirectionLifeTime = 10;
+
+                //Check if we are at the destination
+                if (ship.DirectionX != ship.ShipX || ship.DirectionY != ship.ShipY)
+                {
+                    ok = true;
+                }
+                else
+                {
+                    ship.DirectionLifeTime = 0;
+                }
             }
 
-            //Check if we are at the destination
-            if (ship.DirectionX != ship.ShipX || ship.DirectionY != ship.ShipY)
+            //Move to destination
+            Pathfinder pathfinder = GameObject.Find("Pathfinder").GetComponent<Pathfinder>();
+            GameObject hex = GameObject.Find("Hex_" + ship.DirectionX + "_" + ship.DirectionY);
+            pathfinder.PathRequest(ship, hex);
+            if (ship.CurrentPath != null)
             {
-                ok = true;
+                ok2 = true;
             }
             else
             {
                 ship.DirectionLifeTime = 0;
             }
         }
-
-        //Move to destination
-        Pathfinder pathfinder = GameObject.Find("Pathfinder").GetComponent<Pathfinder>();
-        GameObject hex = GameObject.Find("Hex_" + ship.DirectionX + "_" + ship.DirectionY);
-        pathfinder.PathRequest(ship, hex);
         ship.DirectionLifeTime--;
+    }
+
+    public void goToTarget(Ship ship, Map map)
+    {
+        Debug.Log("Check if atk is possible");
+        Debug.Log("Distance "+ship.TargetDistance);
+
+        bool canAtk = false;
+        Ship target = GameObject.Find("Hex_" + ship.TargetX + "_" + ship.TargetY).GetComponent<Sea>().ShipContained;
+
+        if (target != null)
+        {
+            if (ship.CurrentPath != null)
+            {
+                if (ship.CurrentPath.Count > 0)
+                {
+                    //Put the original destination to walkable and the current place to unwalkable
+                    map.graph[ship.CurrentPath[ship.CurrentPath.Count - 1].x, ship.CurrentPath[ship.CurrentPath.Count - 1].y].isWalkable = false;
+                    GameObject.Find("Hex_" + ship.CurrentPath[ship.CurrentPath.Count - 1].x + "_" + ship.CurrentPath[ship.CurrentPath.Count - 1].y).GetComponent<Sea>().ShipContained = ship;
+
+                    map.graph[ship.CurrentPath[ship.CurrentPath.Count - 1].x, ship.CurrentPath[ship.CurrentPath.Count - 1].y].isWalkable = true;
+                    GameObject.Find("Hex_" + ship.CurrentPath[ship.CurrentPath.Count - 1].x + "_" + ship.CurrentPath[ship.CurrentPath.Count - 1].y).GetComponent<Sea>().RemoveShip();
+                }
+                ship.DirectionLifeTime = 0;
+                ship.CurrentPath = null;
+            }
+            ship.Used = true;
+            if (ship.AtConjurerRange(target))
+            {
+                canAtk = true;
+            }
+            if (ship.AtFilibusterRange(target))
+            {
+                canAtk = true;
+            }
+            if (ship.AtPowderMonkeyRange(target))
+            {
+                canAtk = true;
+            }
+            if (canAtk && ship.EnergyQuantity >= ship.AtkCost)
+            {
+                Debug.Log("Attacking target");
+                ship.Interact(target);
+            }
+            else if(ship.EnergyQuantity > 0 && ship.TargetDistance > 0)
+            { //can still move
+                int max = ship.EnergyQuantity;
+                List<Node> bestPath = null;
+                List<GameObject> neigh = GameObject.Find("Hex_"+ship.TargetX+"_"+ship.TargetY).GetComponent<Hex>().getNeighbours();
+                Pathfinder pathfinder = GameObject.Find("Pathfinder").GetComponent<Pathfinder>();
+                foreach (GameObject n in neigh)
+                {
+                    pathfinder.PathRequest(ship, n);
+                    if (ship.CurrentPath != null && ship.CurrentPath.Count <= max)
+                    {
+                        bestPath = ship.CurrentPath;
+                    }
+                }
+                if(bestPath != null)
+                {
+                    Debug.Log("Going near the target");
+                    ship.CurrentPath = bestPath;
+                    ship.TargetDistance = -1;
+                    ship.Used = false;
+                }
+                else
+                {
+                    Debug.Log("Can't move or atk anymore");
+                    ship.TargetDistance = -1;
+                }
+            }
+            else
+            {
+                Debug.Log("Can't move or atk anymore, nearest or no energy");
+                ship.TargetDistance = -1;
+            }
+        }
+        else
+        {
+            Debug.Log("Nothing to attack");
+            ship.TargetDistance = -1;
+        }
+    }
+
+    public Ship MovingShip
+    {
+        get { return movingShip; }
+        set { movingShip = value; }
     }
 }

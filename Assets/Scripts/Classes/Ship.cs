@@ -13,6 +13,7 @@ public class Ship : MonoBehaviour {
 	private int shipY = -1;
 	private int orientation = 0;
 	private Player owner;
+    private int atkCost = 5;
 	/*
 	 * Orientation in degree
 	 * 0 : right
@@ -39,9 +40,13 @@ public class Ship : MonoBehaviour {
     private int directionX;
     private int directionY;
     private int directionLifeTime;
+    private int targetX;
+    private int targetY;
+    private int targetDistance;
 
     // Use this for initialization
     void Awake () {
+        targetDistance = -1;
 		//There is always an amiral when the ship is construct so we create one and add it to the ship
 		Admiral admiral = new Admiral();
         addCrewMember(admiral);
@@ -108,7 +113,7 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void MoveShipToNextHex(){
-        Debug.Log("path " +currentPath.Count);
+        //Debug.Log("path " +currentPath.Count);
         // here we control the remaining energy quantity before moving
         if (currentPath == null)
         {
@@ -191,7 +196,7 @@ public class Ship : MonoBehaviour {
 		 * 3 : Not in range - enemy
 		 * 4 : this ship is not playable
 		 */
-		if (!this.playable) {
+		if (!this.playable && this.owner.Type == "Humain" ) {
 			errorCode = 4;
 			return errorCode;
 		}
@@ -207,7 +212,7 @@ public class Ship : MonoBehaviour {
 				errorCode = 2;
 			}
 		} else if (!target.owner.Name.Equals (owner.Name)) {
-			if (energyQuantity >= 5) {
+			if (energyQuantity >= atkCost) {
 				int attackValue = 0;
 				if (AtFilibusterRange (target)) {
 					// 1 is the type code of Filibusters
@@ -223,7 +228,7 @@ public class Ship : MonoBehaviour {
 				}
 				if (attackValue > 0) {
 					displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
-					energyQuantity -= 5;
+					energyQuantity -= atkCost;
 				} else {
 					errorCode = 3;
 				}
@@ -245,7 +250,7 @@ public class Ship : MonoBehaviour {
 		if (!found) {
 			return false;
 		}
-		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
+		float distance = Mathf.Abs (Vector3.Distance (destination, target.transform.position));
 		// 1 Hex dist
 		if (distance < 1f) {
 			return true;
@@ -255,7 +260,7 @@ public class Ship : MonoBehaviour {
 	}
 
 	public bool AtTradeRange(Ship target){
-		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
+		float distance = Mathf.Abs (Vector3.Distance (destination, target.transform.position));
 		// 1 Hex dist
 		if (distance < 1f) {
 			return true;
@@ -274,7 +279,7 @@ public class Ship : MonoBehaviour {
 		if (!found) {
 			return false;
 		}
-		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
+		float distance = Mathf.Abs (Vector3.Distance (destination, target.transform.position));
 		// 3 Hex dist
 		if (distance > 2.9f) {
 			return false;
@@ -523,7 +528,6 @@ public class Ship : MonoBehaviour {
 		List<GameObject> thirdNeighboursToReveal;
 		MeshRenderer[] meshRenderers;
 		Node newNode;
-
         // Reveal Ship and ship Hex
         if (owner.Type != "IA") {
             currentHex.GetComponent<Hex>().setVisibility(2);
@@ -544,7 +548,12 @@ public class Ship : MonoBehaviour {
 				n1.GetComponent<Hex> ().setVisibility (2);
 			}
 			newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-			if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+            if (!used)
+            {
+                getTarget(n1, 0);
+            }
+            
+            if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 				owner.ExploredHex.Add(newNode);
 			}
 			// Reveal 2nd Neighbours
@@ -558,7 +567,13 @@ public class Ship : MonoBehaviour {
 					n2.GetComponent<Hex> ().setVisibility (2);
 				}
 				newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-				if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+
+                if (!used)
+                {
+                    getTarget(n2, 1);
+                }
+
+                if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 					owner.ExploredHex.Add(newNode);
 				}
 				// Reveal 3rd Neighbours
@@ -573,7 +588,13 @@ public class Ship : MonoBehaviour {
 						n3.GetComponent<Hex> ().setVisibility (2);
 					}
 					newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-					if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+
+                    if (!used)
+                    {
+                        getTarget(n3, 2);
+                    }
+
+                    if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 						owner.ExploredHex.Add(newNode);
 					}
 				}
@@ -587,6 +608,37 @@ public class Ship : MonoBehaviour {
 			}
 		}
 	}
+
+    public void getTarget(GameObject hex, int dist)
+    {
+        if (targetDistance == -1 || dist < targetDistance)
+        {
+            Node targetNode = GameObject.Find("Map").GetComponent<Map>().graph[hex.GetComponent<Hex>().x, hex.GetComponent<Hex>().y];
+            if (targetNode.type == "sea" && !targetNode.isWalkable)
+            {
+                //Can be treasure or ship or destination
+                if (hex.GetComponentInChildren<Sea>().Treasure > 0)
+                { //It's a treasure
+                    //Debug.Log("treasure near");
+                    //doAction
+                }
+                else
+                {
+                    if(hex.GetComponent<Sea>().ShipContained.shipName != shipName)
+                    { //if the targeted ship isn't this one
+                        Debug.Log("Ship near");
+                        if (hex.GetComponent<Sea>().ShipContained.Owner.Name != owner.Name)
+                        { //if the targeted ship is an ennemy
+                            Debug.Log("Setting dist");
+                            targetDistance = dist;
+                            targetX = targetNode.x;
+                            targetY = targetNode.y;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
 
@@ -715,10 +767,34 @@ public class Ship : MonoBehaviour {
         set { directionY = value; }
     }
 
+    public int TargetX
+    {
+        get { return targetX; }
+        set { targetX = value; }
+    }
+
+    public int TargetY
+    {
+        get { return targetY; }
+        set { targetY = value; }
+    }
+
+    public int TargetDistance
+    {
+        get { return targetDistance; }
+        set { targetDistance = value; }
+    }
+
     public int DirectionLifeTime
     {
         get { return directionLifeTime; }
         set { directionLifeTime = value; }
+    }
+
+    public int AtkCost
+    {
+        get { return atkCost; }
+        set { atkCost = value; }
     }
 
     // ====================
