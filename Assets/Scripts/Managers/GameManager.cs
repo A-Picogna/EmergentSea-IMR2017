@@ -180,11 +180,16 @@ public class GameManager : MonoBehaviour {
 		}
 		if (!checkInit) {
 			panelHandler.removeAllShip ();
-			foreach(Ship ship in currentPlayerFleet){
-				panelHandler.addShip (ship);
+			if (!aiTurn) {
+				foreach (Ship ship in currentPlayerFleet) {
+					panelHandler.addShip (ship);
+				}
+				panelHandler.refreshListShipDisplay ();
+				checkInit = true;
+			} else {
+				panelHandler.refreshListShipDisplay ();
+				checkInit = true;
 			}
-			panelHandler.refreshListShipDisplay ();
-			checkInit = true;
 		}
         if(mouseManager.harbor == true)
         {

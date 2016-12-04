@@ -157,7 +157,7 @@ public class Ship : MonoBehaviour {
 			res += c.EnergyQuantity;
 		}
 		energyQuantity = res;
-		panelHandler.updateShip ();
+		//panelHandler.updateShip ();
 	}
 
 	IEnumerator Sink (){
