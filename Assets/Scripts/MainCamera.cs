@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class MainCamera : MonoBehaviour {
 	
@@ -18,9 +19,20 @@ public class MainCamera : MonoBehaviour {
 	Vector3 prevPos;
 	// Use this for initialization
 	void Start () {
-		Map tmpMap = GameObject.Find ("Map").GetComponent<Map> ();
-		maxWidth = tmpMap.width * Mathf.Sqrt (3f) / 2f;
-		maxHeight = tmpMap.height * 0.75f;
+		int MapWidth;
+		int MapHeight;
+		Debug.Log (SceneManager.GetActiveScene ().name.ToString ());
+		if(SceneManager.GetActiveScene().name.Equals("map")) {
+			Map tmpMap = GameObject.Find ("Map").GetComponent<Map> ();
+			MapWidth = tmpMap.width;
+			MapHeight = tmpMap.height;
+		} else {
+			MapEditor tmpMapEditor = GameObject.Find ("MapEditor").GetComponent<MapEditor> ();
+			MapWidth = tmpMapEditor.width;
+			MapHeight = tmpMapEditor.height;
+		}
+		maxWidth = MapWidth * Mathf.Sqrt (3f) / 2f;
+		maxHeight = MapHeight * 0.75f;
 	}
 	
 	// Update is called once per frame
