@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour {
 				ship.Playable = true;
 			}
 		}
+		checkInit = false;
 		// We init the fow
 		ResetFOW ();
 		RevealAreaAroundCurrentPlayerShips ();
@@ -138,7 +139,7 @@ public class GameManager : MonoBehaviour {
 				ship.Playable = true;
 			}
 		}
-
+		//checkInit = false;
 		ResetFOW ();
 		RevealAreaAlreadyExplored ();
 		RevealAreaAroundCurrentPlayerShips ();
