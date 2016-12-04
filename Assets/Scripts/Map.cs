@@ -17,7 +17,8 @@ public class Map : MonoBehaviour {
     public GameObject harborPrefab;
 	public GameObject foodPrefab;
 	public GameObject treasurePrefab;
-    public GameObject shipPrefab;
+	public GameObject shipPrefab;
+	public GameObject MapBorderPrefab;
 
     // Map in graph to calculate pathfinding
     public Node[,] graph;
@@ -354,10 +355,10 @@ public class Map : MonoBehaviour {
 	}
 
 	void InstantiateMap(){
+		GameObject hex_go = null;
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				string hexType = graph [x, y].type;
-				GameObject hex_go = null;
 				switch (hexType) {
 				case "sea":
 					hex_go = (GameObject)Instantiate (seaPrefab, graph [x, y].worldPos, Quaternion.identity);
@@ -377,6 +378,7 @@ public class Map : MonoBehaviour {
 				hex_go.isStatic = true;
 			}
 		}
+		GenerateMapBorder (20);
 	}
 
 	void InstantiateMap(MapFile mapSaved) {
@@ -660,6 +662,58 @@ public class Map : MonoBehaviour {
 		}
 
 
+	}
+
+	private void GenerateMapBorder(int borderSize){
+		GameObject hex_go = null;
+		for (int x = -borderSize; x < width+borderSize; x++) {
+			for (int y = -borderSize; y < 0; y++) {
+				float xPos = x * xOffset;
+				if (Mathf.Abs(y) % 2 == 1) {
+					xPos += xOffset / 2f;
+				}
+				hex_go = (GameObject)Instantiate (MapBorderPrefab, new Vector3(xPos, 0, y * zOffset), Quaternion.identity);
+				hex_go.name = "BorderMapHex_" + x + "_" + y;
+				hex_go.transform.SetParent (this.transform);
+				hex_go.isStatic = true;
+			}
+		}
+		for (int x = -borderSize; x < 0; x++) {
+			for (int y = 0; y < height+borderSize; y++) {
+				float xPos = x * xOffset;
+				if (y % 2 == 1) {
+					xPos += xOffset / 2f;
+				}
+				hex_go = (GameObject)Instantiate (MapBorderPrefab, new Vector3(xPos, 0, y * zOffset), Quaternion.identity);
+				hex_go.name = "BorderMapHex_" + x + "_" + y;
+				hex_go.transform.SetParent (this.transform);
+				hex_go.isStatic = true;
+			}
+		}
+		for (int x = 0; x < width+borderSize; x++) {
+			for (int y = height; y < height+borderSize; y++) {
+				float xPos = x * xOffset;
+				if (y % 2 == 1) {
+					xPos += xOffset / 2f;
+				}
+				hex_go = (GameObject)Instantiate (MapBorderPrefab, new Vector3(xPos, 0, y * zOffset), Quaternion.identity);
+				hex_go.name = "BorderMapHex_" + x + "_" + y;
+				hex_go.transform.SetParent (this.transform);
+				hex_go.isStatic = true;
+			}
+		}
+		for (int x = width; x < width+borderSize; x++) {
+			for (int y = 0; y < height; y++) {
+				float xPos = x * xOffset;
+				if (y % 2 == 1) {
+					xPos += xOffset / 2f;
+				}
+				hex_go = (GameObject)Instantiate (MapBorderPrefab, new Vector3(xPos, 0, y * zOffset), Quaternion.identity);
+				hex_go.name = "BorderMapHex_" + x + "_" + y;
+				hex_go.transform.SetParent (this.transform);
+				hex_go.isStatic = true;
+			}
+		}
 	}
 
 }
