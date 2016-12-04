@@ -174,7 +174,7 @@ public class GameManager : MonoBehaviour {
 		List<Ship> currentPlayerFleet = currentPlayer.Fleet;
 		foreach(Player player in playersCopy){
 			if ( (player.Fleet == null || player.Fleet.Count == 0) && (player.Harbors == null || player.Harbors.Count == 0)) {
-				GameOver ();
+				GameOver (player);
 			}
 			CheckShipsToDestroy (player);
 		}
@@ -266,9 +266,15 @@ public class GameManager : MonoBehaviour {
 		ship.Die ();
 	}
 
-	void GameOver(){		
-		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
-		ip.DisplayInfo(lang.getString ("gameover_winner"), 20f);
+	void GameOver(Player player){
+		if (player.Type.Equals ("IA")) {
+			GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_winnerLabel");
+			GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner");
+		} else {
+			GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_looserLabel");
+			GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_looser");
+		}
+		GameObject.Find ("GameoverCanvas").GetComponent<PauseManager> ().Pause ();
 	}
 
 	void NextTurn(){

@@ -61,11 +61,11 @@ public class Map : MonoBehaviour {
 		Camera miniMapCamera = miniMapCamera_go.GetComponent<Camera> ();
 		float maxWidth = width * Mathf.Sqrt (3f) / 2f;
 		float maxHeight = height * 0.75f;
-		miniMapCamera_go.transform.position = new Vector3 (maxWidth / 2f, 10, maxHeight / 2f);
+		miniMapCamera_go.transform.position = new Vector3 (maxWidth / 2f - 0.25f , 10, maxHeight / 2f);
 		if (maxWidth > maxHeight) {
-			miniMapCamera.orthographicSize = maxWidth/2;
+			miniMapCamera.orthographicSize = maxWidth/2+1;
 		} else {
-			miniMapCamera.orthographicSize = maxHeight/2;
+			miniMapCamera.orthographicSize = maxHeight/2+1;
 		}
 	}
 
