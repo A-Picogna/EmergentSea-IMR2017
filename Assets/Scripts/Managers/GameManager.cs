@@ -285,7 +285,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void NextPlayer()
-    {
+	{
         if (!aiIsPlaying)
         {
             ResetFOW();

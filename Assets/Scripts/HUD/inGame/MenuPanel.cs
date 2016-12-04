@@ -16,5 +16,6 @@ public class MenuPanel : MonoBehaviour {
 		resume.text = lang.getString("resume");
 		save.text = lang.getString("save");
 		quit.text = lang.getString("quit");
+		GameObject.Find("btn_gameover_return").GetComponentInChildren<Text>().text = lang.getString("quit");
 	}
 }

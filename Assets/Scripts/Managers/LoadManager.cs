@@ -5,6 +5,7 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class LoadManager : MonoBehaviour {
@@ -356,6 +357,9 @@ public class LoadManager : MonoBehaviour {
 		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
 			LoadManager.instance.BackToMenu();
 		});
+		GameObject.Find ("btn_gameover_return").GetComponent<Button>().onClick.AddListener (() => {
+			LoadManager.instance.BackToMenu();
+		});
 		// Instanciation du loading Screen
 		//GameObject loadingScreen = Instantiate(loadingScreenPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
 		//loadingScreen.transform.SetParent(canvas.transform, false);
@@ -394,6 +398,10 @@ public class LoadManager : MonoBehaviour {
 		GameObject btn_return = GameObject.Find ("btn_return");
 		//((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.RemoveAllListeners ();
 		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			LoadManager.instance.BackToMenu();
+		});
+
+		GameObject.Find ("btn_gameover_return").GetComponent<Button>().onClick.AddListener (() => {
 			LoadManager.instance.BackToMenu();
 		});
 
