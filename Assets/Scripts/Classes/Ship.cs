@@ -6,7 +6,7 @@ public class Ship : MonoBehaviour {
 
 	private List<Node> currentPath = null;
 	private int food = 0;
-	private int gold = 4000;
+	private int gold = 200;
 	private int hp = 0;
 	private int energyQuantity = 0;
 	private int shipX = -1;
@@ -55,6 +55,45 @@ public class Ship : MonoBehaviour {
         directionLifeTime = 0;
 	}
 
+	public void LoadShip(ShipStruct s) {
+		this.food = s.food;
+		this.gold = s.gold;
+		this.hp = s.hp;
+		this.energyQuantity = s.energyQuantity;
+		this.shipX = s.shipX;
+		this.shipY = s.shipY;
+		this.orientation = s.orientation;
+
+		this.playable = s.playable;
+		this.isMoving = s.isMoving;
+		this.shipName = s.shipName;
+
+		this.crew = s.crew;
+
+		// Reinit
+		destination = transform.position;
+	}
+
+	public ShipStruct SaveShip() {
+		ShipStruct s = new ShipStruct();
+
+		s.food = this.food;
+		s.gold = this.gold;
+		s.hp = this.hp;
+		s.energyQuantity = this.energyQuantity;
+		s.shipX = this.shipX;
+		s.shipY = this.shipY;
+		s.orientation = this.orientation;
+
+		s.playable = this.playable;
+		s.isMoving = this.isMoving;
+		s.shipName = this.shipName;
+
+		s.crew = this.crew;
+
+		return s;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (!dead) {
@@ -100,7 +139,9 @@ public class Ship : MonoBehaviour {
 		} else {
 			currentPath = null;
 		}
-		panelHandler.updateShip ();
+		if (owner.Type.Equals ("Humain")) {
+			panelHandler.updateShip ();
+		}
 	}
 
 	public void Die(){
@@ -145,15 +186,30 @@ public class Ship : MonoBehaviour {
 		return angle;
 	}
 
-	public void Interact(Ship target){
+	public int Interact(Ship target){
+		int errorCode = 0;
+		/*
+		 * return error code on call
+		 * 0 : OK
+		 * 1 : Not Enough Energy
+		 * 2 : Not in range - ally
+		 * 3 : Not in range - enemy
+		 * 4 : this ship is not playable
+		 */
 		if (!this.playable && this.owner.Type == "Humain" ) {
-			return;
+			errorCode = 4;
+			return errorCode;
 		}
-		if (target.owner.Name.Equals (owner.Name) && target != this) {
-			Debug.Log ("It's a friend dammit! Don't Shoot!!!");
+		if (target == this) {
+			bool resFishing = fishing ();
+			if (!resFishing) {
+				errorCode = 1;
+			}
+		} else if (target.owner.Name.Equals (owner.Name)) {
 			if (AtTradeRange (target)) {
-				Debug.Log ("Friendly ship at range, ready to trade !");
 				Trade (target);
+			} else {
+				errorCode = 2;
 			}
 		} else if (!target.owner.Name.Equals (owner.Name)) {
 			if (energyQuantity >= atkCost) {
@@ -173,10 +229,15 @@ public class Ship : MonoBehaviour {
 				if (attackValue > 0) {
 					displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
 					energyQuantity -= atkCost;
+				} else {
+					errorCode = 3;
 				}
+			} else {
+				errorCode = 1;
 			}
 		}
 		panelHandler.updateShip ();
+		return errorCode;
 	}
 
 	public bool AtFilibusterRange(Ship target){
@@ -460,6 +521,7 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void UpdateFOW (){
+		bool visibleByHumain = false;
 		GameObject currentHex = (GameObject) GameObject.Find ("Hex_" + this.ShipX + "_" + this.ShipY);
 		List<GameObject> firstNeighboursToReveal;
 		List<GameObject> secondNeighboursToReveal;
@@ -467,8 +529,7 @@ public class Ship : MonoBehaviour {
 		MeshRenderer[] meshRenderers;
 		Node newNode;
         // Reveal Ship and ship Hex
-        if (owner.Type != "IA")
-        {
+        if (owner.Type != "IA") {
             currentHex.GetComponent<Hex>().setVisibility(2);
         }
 		newNode = new Node(this.ShipX, this.ShipY, new Vector3(0,0,0), false, "ship");
@@ -478,12 +539,14 @@ public class Ship : MonoBehaviour {
 
 		// Reveal 1st Neighbours
 		firstNeighboursToReveal = currentHex.GetComponent<Hex>().getNeighbours();
-		foreach (GameObject n1 in firstNeighboursToReveal)
-        {
-            if (owner.Type != "IA")
-            {
-                n1.GetComponent<Hex>().setVisibility(2);
-            }
+		foreach (GameObject n1 in firstNeighboursToReveal) {
+			if (owner.Type.Equals ("IA")) {
+				if (n1.GetComponent<Sea> () != null && n1.GetComponent<Sea> ().ShipContained != null && !n1.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
+					visibleByHumain = true;
+				}
+			} else {
+				n1.GetComponent<Hex> ().setVisibility (2);
+			}
 			newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
             if (!used)
             {
@@ -495,12 +558,14 @@ public class Ship : MonoBehaviour {
 			}
 			// Reveal 2nd Neighbours
 			secondNeighboursToReveal = n1.GetComponent<Hex> ().getNeighbours ();
-			foreach (GameObject n2 in secondNeighboursToReveal)
-            {
-                if (owner.Type != "IA")
-                {
-                    n2.GetComponent<Hex>().setVisibility(2);
-                }
+			foreach (GameObject n2 in secondNeighboursToReveal) {
+				if (owner.Type.Equals("IA")) {
+					if (n2.GetComponent<Sea> () != null && n2.GetComponent<Sea> ().ShipContained != null && !(n2.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) ) {
+						visibleByHumain = true;
+					}
+				} else {
+					n2.GetComponent<Hex> ().setVisibility (2);
+				}
 				newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 
                 if (!used)
@@ -515,10 +580,13 @@ public class Ship : MonoBehaviour {
 				thirdNeighboursToReveal = n2.GetComponent<Hex> ().getNeighbours ();
 				foreach (GameObject n3 in thirdNeighboursToReveal)
                 {
-                    if (owner.Type != "IA")
-                    {
-                        n3.GetComponent<Hex>().setVisibility(2);
-                    }
+					if (owner.Type.Equals("IA")) {
+						if (n3.GetComponent<Sea> () != null && n3.GetComponent<Sea> ().ShipContained != null && !n3.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
+							visibleByHumain = true;
+						}
+					} else {
+						n3.GetComponent<Hex> ().setVisibility (2);
+					}
 					newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 
                     if (!used)
@@ -530,6 +598,13 @@ public class Ship : MonoBehaviour {
 						owner.ExploredHex.Add(newNode);
 					}
 				}
+			}
+		}
+		if (owner.Type.Equals ("IA")) {
+			if (visibleByHumain) {
+				this.GetComponentInChildren<MeshRenderer> ().enabled = true;
+			} else {
+				this.GetComponentInChildren<MeshRenderer> ().enabled = false;
 			}
 		}
 	}
@@ -576,13 +651,13 @@ public class Ship : MonoBehaviour {
 	public int Food
 	{
 		get { return food; }
-		set { food = value; }
+		set { food = value;panelHandler.updateShip (); }
 	}
 
 	public int Gold
 	{
 		get { return gold; }
-		set { gold = value; }
+		set { gold = value;panelHandler.updateShip (); }
 	}
 
 	public int Hp

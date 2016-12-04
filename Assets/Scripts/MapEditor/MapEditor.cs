@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.IO;
 
 public class MapEditor : MonoBehaviour {
 
@@ -29,8 +30,16 @@ public class MapEditor : MonoBehaviour {
 	public Button btn_selectCoast;
 	public Button btn_selectHarbor;
 	public Button btn_selectTreasure;
+	private Lang lang;
+
+	public Texture2D seaHexCursor;
+	public Texture2D landHexCursor;
+	public Texture2D coastHexCursor;
+	public Texture2D harborHexCursor;
+	public Texture2D treasureHexCursor;
 
 	void Start () {
+		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		size = width * height;
 		InitializeMap();
 		btn_selectSea = (Button) GameObject.Find("btn_selectSea").GetComponent<Button>();
@@ -39,16 +48,18 @@ public class MapEditor : MonoBehaviour {
 		btn_selectHarbor = (Button) GameObject.Find("btn_selectHarbor").GetComponent<Button>();
 		btn_selectTreasure = (Button) GameObject.Find("btn_selectTreasure").GetComponent<Button>();
 
-		btn_selectSea.onClick.AddListener(() => selectedType = 0);
-		btn_selectLand.onClick.AddListener(() => selectedType = 1);
-		btn_selectCoast.onClick.AddListener(() => selectedType = 2);
-		btn_selectHarbor.onClick.AddListener(() => selectedType = 3);
-		btn_selectTreasure.onClick.AddListener(() => selectedType = 4);
+		btn_selectSea.onClick.AddListener (() => setListener (0, seaHexCursor));
+		btn_selectLand.onClick.AddListener(() => setListener (1, landHexCursor));
+		btn_selectCoast.onClick.AddListener(() => setListener (2, coastHexCursor));
+		btn_selectHarbor.onClick.AddListener(() => setListener (3, harborHexCursor));
+		btn_selectTreasure.onClick.AddListener(() => setListener (4, treasureHexCursor));
 
-		Button btn_save = GameObject.Find ("btn_save").GetComponent<Button>();
-		btn_save.onClick.AddListener (() => {
-			LoadManager.instance.savePrefabricatedMapEditor ("test");
-		});
+		//Button btn_save = GameObject.Find ("btn_save").GetComponent<Button>();
+		//btn_save.onClick.AddListener (() => {
+		//	LoadManager.instance.savePrefabricatedMapEditor ("test");
+		//});
+		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
+		ip.DisplayInfo(lang.getString ("mapEditor_firstExplaination"), 20f); 
 	}
 
 	void Update () {
@@ -63,6 +74,11 @@ public class MapEditor : MonoBehaviour {
 		if (Input.GetMouseButton (1)) {
 			ReplaceElement (selectedType);
 		}
+	}
+
+	public void setListener(int i, Texture2D cursor){
+		selectedType = i;
+		Cursor.SetCursor (cursor, new Vector2 (cursor.width / 2, cursor.height / 2), CursorMode.Auto);
 	}
 
 	void ReplaceElement(int newElementType){
@@ -90,6 +106,7 @@ public class MapEditor : MonoBehaviour {
 				sea_go.GetComponent<Sea> ().y = y;
 				sea_go.transform.SetParent(this.transform);
 				sea_go.isStatic = true;
+				graph [x, y].isWalkable = true;
 				DrawEdgesLines(sea_go);
 				break;
 			case 1:
@@ -101,6 +118,7 @@ public class MapEditor : MonoBehaviour {
 				land_go.GetComponent<Land> ().y = y;
 				land_go.transform.SetParent(this.transform);
 				land_go.isStatic = true;
+				graph [x, y].isWalkable = false;
 				DrawEdgesLines(land_go);
 				break;
 			case 2:
@@ -113,6 +131,7 @@ public class MapEditor : MonoBehaviour {
 				coast_go.GetComponent<Land> ().IsCoast = true;
 				coast_go.transform.SetParent(this.transform);
 				coast_go.isStatic = true;
+				graph [x, y].isWalkable = false;
 				DrawEdgesLines(coast_go);
 				break;
 			case 3:
@@ -124,10 +143,11 @@ public class MapEditor : MonoBehaviour {
 				harbor_go.GetComponent<Harbor> ().y = y;
 				harbor_go.transform.SetParent(this.transform);
 				harbor_go.isStatic = true;
+				graph [x, y].isWalkable = false;
 				DrawEdgesLines(harbor_go);
 				break;
 			case 4:
-				if (ourHitObject.GetComponent<Sea> () != null) {
+				if (ourHitObject.GetComponent<Sea> () != null && ourHitObject.GetComponent<Sea> ().Treasure_go == null) {
 					GameObject treasure_go = (GameObject)Instantiate (treasurePrefab, worldPos, Quaternion.identity);
 					treasure_go.name = ourHitObject.GetComponent<Sea> ().name + "_Treasure";
 					treasure_go.transform.SetParent (ourHitObject.GetComponent<Sea> ().transform);
@@ -151,6 +171,8 @@ public class MapEditor : MonoBehaviour {
 				Vector3 worldPosition = new Vector3 (xPos, 0, y * zOffset);
 				GameObject hex_go = (GameObject)Instantiate (seaPrefab, worldPosition, Quaternion.identity);
 				graph [x, y] = new Node (x, y, worldPosition, false, "sea");
+				graph [x, y].tag = true;
+				graph [x, y].isWalkable = true;
 				DrawEdgesLines(hex_go);
 				hex_go.name = "Hex_" + x + "_" + y;
 				hex_go.GetComponent<Hex> ().x = x;

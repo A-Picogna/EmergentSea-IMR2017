@@ -10,19 +10,23 @@ public class MainCamera : MonoBehaviour {
 	private int theScreenWidth;
 	private int theScreenHeight;
 	float DragSpeed = 20.0f;
-	float cameraDistance;
 	float minFov = 10f;
 	float maxFov = 40f;
 	float sensitivity = 20f;
-
+	float maxWidth;
+	float maxHeight;
+	Vector3 prevPos;
 	// Use this for initialization
 	void Start () {
-		cameraDistance = this.transform.position.y;
+		Map tmpMap = GameObject.Find ("Map").GetComponent<Map> ();
+		maxWidth = tmpMap.width * Mathf.Sqrt (3f) / 2f;
+		maxHeight = tmpMap.height * 0.75f;
 	}
 	
 	// Update is called once per frame
 	void LateUpdate () {     
 
+		prevPos = transform.position;
 
 		if (!EventSystem.current.IsPointerOverGameObject ()) {   
 			float fov = Camera.main.fieldOfView;
@@ -52,20 +56,10 @@ public class MainCamera : MonoBehaviour {
 						0.0f, Input.GetAxisRaw ("Mouse Y") * Time.deltaTime * DragSpeed);
 				}
 			}
-			/*
-			if (Input.mousePosition.x > theScreenWidth - Boundary){
-				this.transform.position += new Vector3(speed * Time.deltaTime, 0, 0); // move on +X axis
-			}
-			if (Input.mousePosition.x < 0 + Boundary){
-				this.transform.position -= new Vector3(speed * Time.deltaTime, 0, 0); // move on -X axis
-			}
-			if (Input.mousePosition.y > theScreenHeight - Boundary){
-				this.transform.position += new Vector3(0, 0, speed * Time.deltaTime); // move on +Z axis
-			}
-			if (Input.mousePosition.y < 0 + Boundary){
-				this.transform.position -= new Vector3(0, 0, speed * Time.deltaTime); // move on -Z axis
-			}
-			*/
+		}
+
+		if (transform.position.x > maxWidth+5 || transform.position.x < -5 || transform.position.z > maxHeight-5 || transform.position.z < -15) {
+			transform.position = prevPos;
 		}
 
 	}

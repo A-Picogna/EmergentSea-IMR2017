@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 public class CrewItemButton : MonoBehaviour {
@@ -21,9 +22,18 @@ public class CrewItemButton : MonoBehaviour {
 
 	public void Setup (CrewMember currentItem) {
 		HoveringHelp hovHelp = transform.GetChild (0).GetComponent<HoveringHelp>();
-		//print (hovHelp);
-		//hovHelp.panelHelp = helpPanel;
-		item = currentItem;
+		item = currentItem;/*
+		List<string> infos = new List<string> ();
+		infos.Add (item.Atk.ToString());
+		infos.Add (item.Level.ToString());
+		infos.Add (item.Lp.ToString());
+		infos.Add (item.LpMax.ToString());
+		infos.Add (item.Xp.ToString());
+		infos.Add (item.XpMax.ToString());
+		if (hovHelp.getHelpPanel () == null) {
+			hovHelp.setHelpPanel (GetComponentInParent<Canvas> ().GetComponent<PanelHandler> ().panelHelp2.GetComponent<HelpPanel>());
+		}
+		hovHelp.getHelpPanel ().addInfo (infos);*/
 		if (item.Type == 0) {
 			type.sprite = Resources.Load<Sprite> ("Images/admiral_icon");
 			hovHelp.type = 12;

@@ -23,6 +23,20 @@ public class Player : MonoBehaviour {
         nbTotalShip = 0;
 	}
 
+	public Player(PlayerStruct p, List<Node> exploredHex) {
+		this.type = p.type;
+		this.color = p.color;
+		this.name = p.name;
+		this.fleet = new List<Ship> ();
+		//Added directly in the GameManager
+		this.harbors = new List<Harbor>();
+		//Added directly in the GameManager
+		this.exploredHex = exploredHex;
+		// Added directly in the GameManager
+
+		this.nbTotalShip = 0;
+	}
+
 
     // Use this for initialization
     void Start()

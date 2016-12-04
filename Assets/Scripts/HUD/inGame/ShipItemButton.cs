@@ -47,6 +47,12 @@ public class ShipItemButton : MonoBehaviour {
 
 	public void HandleClick() {
 		mouseManager.selectedUnit = item;
+		GameObject cam = GameObject.Find ("Main Camera");
+		cam.transform.position = new Vector3 (
+			mouseManager.map.graph [item.ShipX, item.ShipY].worldPos.x, 
+			cam.transform.position.y,
+			mouseManager.map.graph [item.ShipX, item.ShipY].worldPos.z - 10
+		);																		
 		shipInfoPanel.updateShip (item);
 		panelHandler.showPanelShip ();
 		panelHandler.removeAllCrewMember ();

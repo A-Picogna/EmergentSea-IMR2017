@@ -94,9 +94,12 @@ public class Hex : MonoBehaviour {
 				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshCollider> ().enabled = false;
 			}
 			this.GetComponent<LineRenderer> ().enabled = false;
+			this.GetComponentInChildren<MeshRenderer> ().material = fowm.notVisibleMat;
 			meshRenderers = this.GetComponentsInChildren<MeshRenderer> ();
 			foreach (MeshRenderer mr in meshRenderers) {
-				mr.enabled = false;
+				if (!mr.name.Equals("FlatHexagon")){
+					mr.enabled = false;
+				}
 			}
 			meshColliders = this.GetComponentsInChildren<MeshCollider> ();
 			foreach (MeshCollider mc in meshColliders) {
@@ -129,7 +132,7 @@ public class Hex : MonoBehaviour {
 				this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredWaterMat;
 			}
 			if (this.GetComponent<Harbor> () != null) {
-
+				this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredHarborMat;
 			} else if (this.GetComponent<Land> () != null) {
 				if (this.GetComponent<Land> ().IsCoast) {
 					this.GetComponentInChildren<MeshRenderer> ().material = fowm.exploredCoastMat;
@@ -160,7 +163,7 @@ public class Hex : MonoBehaviour {
 				this.GetComponentInChildren<MeshRenderer> ().material = fowm.waterMat;
 			}
 			if (this.GetComponent<Harbor> () != null) {
-
+				this.GetComponentInChildren<MeshRenderer> ().material = fowm.harborMat;
 			} else if (this.GetComponent<Land> () != null) {
 				if (this.GetComponent<Land> ().IsCoast) {
 					this.GetComponentInChildren<MeshRenderer> ().material = fowm.coastMat;

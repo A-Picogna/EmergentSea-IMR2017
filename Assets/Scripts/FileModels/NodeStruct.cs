@@ -24,4 +24,9 @@ public class NodeStruct
 		this.type = type;
 		this.tag = tag;
 	}
+
+	public NodeStruct(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
 }

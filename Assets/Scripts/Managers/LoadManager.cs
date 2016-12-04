@@ -4,6 +4,7 @@ using System.IO;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using UnityEngine.SceneManagement;
 
 
 public class LoadManager : MonoBehaviour {
@@ -51,6 +52,7 @@ public class LoadManager : MonoBehaviour {
 	public GameObject saveLoadMenuPrefab;
 	public GameObject loadingScreenPrefab;
 	public GameObject CanvasPrefab;
+	public GameObject NewMapPrefab;
 
 	// Private variables
 	private Map MapLoaded;
@@ -60,6 +62,10 @@ public class LoadManager : MonoBehaviour {
 	private int nbCasesTerre;
 	private int nbCasesTresors;
 	private MapFile MapAsStarted;
+	private AsyncOperation async;
+	public bool loadingAScene;
+	private Coroutine cor;
+	public GameManager gameManager;
 
 
 	// Use this before initialization (and between loading Maps)
@@ -271,30 +277,49 @@ public class LoadManager : MonoBehaviour {
 		return mapSettings;
 	}
 
+	private GameManager loadGame(GameFile gameFile, Map worldMap) {
+		GameObject newObject = Instantiate(gameManagerPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
+
+		GameManager gameSettings = newObject.GetComponent<GameManager> ();
+
+		gameSettings.mouseManager = (GameObject.Find ("MouseManager")).GetComponent<MouseManager> ();
+		gameSettings.endTurnButton = (GameObject.Find ("btn_roundEnd")).GetComponent<UnityEngine.UI.Button> ();
+		gameSettings.textEndTurnNumber = (GameObject.Find ("txt_roundNumber")).GetComponent<UnityEngine.UI.Text> ();
+		gameSettings.panelHandler = (GameObject.Find ("HUDCanvas")).GetComponent<PanelHandler> ();
+
+		gameSettings.map = worldMap;
+		gameSettings.game = gameFile;
+		gameSettings.loadingMode = true;
+
+		return gameSettings;
+	}
+
 	private void initWorld() {
 		MapLoaded = initMap ();
-		GameManager gameManager = initGame (MapLoaded);
+		gameManager = initGame (MapLoaded);
 		linkObjects (MapLoaded, gameManager);
+		MapAsStarted = MapLoaded.SaveMap ();
 	}
 
 	private void loadWorld(MapFile saveMap) {
 		MapLoaded = loadMap (saveMap);
-		GameManager gameManager = initGame (MapLoaded);
+		gameManager = initGame (MapLoaded);
 		linkObjects (MapLoaded, gameManager);
 		MapAsStarted = MapLoaded.SaveMap ();
 	}
 
 	private void loadSave(SaveFile save) {
 		MapLoaded = loadMap (save.map);
-		// Pour l'instant on refait un GameManager
-		GameManager gameManager = initGame (MapLoaded);
+		gameManager = loadGame(save.game, MapLoaded);
 		linkObjects (MapLoaded, gameManager);
-		MapAsStarted = MapLoaded.SaveMap ();
+		MapAsStarted = save.startMap;
 	}
 
 	private void initEditor() {
 		//////////// POUR L'EDITEUR
 		MapLoadedEditor = initEditorMap ();
+		linkObjectsEditor ();
 	}
 
 	private void linkObjects(Map MapLoaded, GameManager gameManager) {
@@ -325,26 +350,58 @@ public class LoadManager : MonoBehaviour {
 			saveLoadMenu.SetActive (true);
 		});
 
+		Debug.Log ("Linking return button...");
+		GameObject btn_return = GameObject.Find ("btn_load");
+		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.RemoveAllListeners ();
+		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			LoadManager.instance.BackToMenu();
+		});
 		// Instanciation du loading Screen
-		GameObject loadingScreen = Instantiate(loadingScreenPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
-		loadingScreen.transform.SetParent(canvas.transform, false);
-		loadingScreen.SetActive (true);
+		//GameObject loadingScreen = Instantiate(loadingScreenPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		//loadingScreen.transform.SetParent(canvas.transform, false);
+		//loadingScreen.SetActive (true);
 
 		// Reconfiguration du loading Screen
 		GameObject LoadButton = GameObject.Find ("LoadButton");
-		((UnityEngine.UI.Button)LoadButton.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
-			((SceneLoader)loadingScreen.GetComponent<SceneLoader> ()).NewMap();
-		});
+		//((UnityEngine.UI.Button)LoadButton.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+		//	Debug.Log("Lancement nouvelle map");
+		//	((SceneLoader)loadingScreen.GetComponent<SceneLoader> ()).NewMap();
+		//});
 
 		// Cacher le menu de chargement
 		saveLoadMenu.SetActive (false);
-		loadingScreen.SetActive (false);
+		//loadingScreen.SetActive (false);
+	}
+
+	private void linkObjectsEditor() {
+		GameObject btn_save = GameObject.Find ("btn_save");
+
+		// Création d'un GameObject avec Canvas
+		GameObject canvas = Instantiate(CanvasPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		canvas.transform.SetAsLastSibling();
+
+		// Instanciation du menu pour nommer la sauvegarde
+		GameObject NewMapMenu = Instantiate(NewMapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		NewMapMenu.transform.SetParent(canvas.transform, false);
+		//saveLoadMenu.transform.localScale = new Vector3 (2.0f, 2.0f, 2.0f);
+
+		Debug.Log ("Linking save button...");
+		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			NewMapMenu.SetActive (true);
+		});
+
+		NewMapMenu.SetActive (false);
 	}
 
 	void OnLevelWasLoaded() {
+		
+		this.MapLoaded = null;
+		this.MapLoadedEditor = null;
+		this.MapAsStarted = null;
+
 		switch (LoadManagerState) {
 		case state.Inactive:
-			Debug.Log ("Normalement je devrais revenir au menu, je fais rien");
+			Debug.Log ("Normalement je devrais revenir au menu, je fais rien.");
 			break;
 		case state.StartNewMap:
 			Debug.Log ("Génération de la map ;)");
@@ -386,7 +443,6 @@ public class LoadManager : MonoBehaviour {
 
 		gameSettings.FleetSize = this.FleetSize;
 		gameSettings.GoldAmount = this.goldAmountPerFleet;
-
 
 		return gameSettings;
 	}
@@ -474,17 +530,22 @@ public class LoadManager : MonoBehaviour {
 		SurrogateSelector ss = new SurrogateSelector();
 
 		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ColorSerializationSurrogate css = new ColorSerializationSurrogate();
 		ss.AddSurrogate(typeof(Vector3),
 			new StreamingContext(StreamingContextStates.All),
 			v3ss);
+		ss.AddSurrogate(typeof(Color),
+			new StreamingContext(StreamingContextStates.All),
+			css);
 
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
 
 		Debug.Log ("Saving save...");
 
-		SaveFile saveObject = new SaveFile (MapLoaded.SaveMap ());
-
+		SaveFile saveObject = new SaveFile (MapLoaded.SaveMap (),
+			gameManager.saveGameManager (),
+			MapAsStarted);
 		bf.Serialize (saveFile, saveObject);
 		Debug.Log (GlobalVariables.pathSaves + name + ".map");
 		saveFile.Close ();
@@ -498,9 +559,13 @@ public class LoadManager : MonoBehaviour {
 		SurrogateSelector ss = new SurrogateSelector();
 
 		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ColorSerializationSurrogate css = new ColorSerializationSurrogate();
 		ss.AddSurrogate(typeof(Vector3),
 			new StreamingContext(StreamingContextStates.All),
 			v3ss);
+		ss.AddSurrogate(typeof(Color),
+			new StreamingContext(StreamingContextStates.All),
+			css);
 
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
@@ -509,5 +574,39 @@ public class LoadManager : MonoBehaviour {
 		SaveFile saveObject = (SaveFile)bf.Deserialize (saveFile);
 
 		loadSave (saveObject);
+	}
+
+	public void BackToMenu(){
+		this.LoadManagerState = LoadManager.state.Inactive;
+		Time.timeScale = 1;
+		SceneManager.LoadScene("main", LoadSceneMode.Single);
+	}
+
+	public void LoadSceneRoutine(string map) {
+		StopAllCoroutines ();
+		Debug.Log ("StartCoroutine");
+		cor = StartCoroutine (LoadManager.instance.LoadSceneCoroutine(map));
+		Debug.Log ("StartCoroutineFinished");
+	}
+
+	public IEnumerator LoadSceneCoroutine(string map) {
+		// We wait just 3 seconds to feel the loading
+		Debug.Log ("Start wait");
+		yield return new WaitForSeconds (1);
+		Debug.Log ("Wait is over");
+		Debug.Log ("LoadSceneAsync");
+
+		// Start an ansync operation to load the scene
+		async = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
+		Debug.Log ("LoadSceneAsync launched");
+		while (!async.isDone) {
+			Debug.Log (async.progress.ToString());
+			yield return null;
+		}
+		Debug.Log ("LoadSceneAsync done");
+		loadingAScene = false;
+		Debug.Log ("LoadingAScene false !");
+		yield break;
+		Debug.Log ("yield break !");
 	}
 }

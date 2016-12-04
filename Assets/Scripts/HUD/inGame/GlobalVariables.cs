@@ -21,6 +21,14 @@ public class GlobalVariables : MonoBehaviour {
 
 	public static int buildingTime = 2;
 
+	// CrewMember stats
+	public static int filibusterAttack = 150;
+	public static int powderMonkeyAttack = 100;
+	public static int conjurerAttack = 80;
+	public static int filibusterLife = 200;
+	public static int powderMonkeyLife = 100;
+	public static int conjurerLife = 50;
+
 	//Stockage d'information
 	public static string pathMaps = Application.persistentDataPath + "/PrefabricatedMaps/";
 	public static string pathSaves = Application.persistentDataPath + "/Saves/";

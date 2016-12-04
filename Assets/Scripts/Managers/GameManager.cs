@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
+using System.IO;
 
 public class GameManager : MonoBehaviour {
 
@@ -36,23 +37,37 @@ public class GameManager : MonoBehaviour {
 	int turnNumber;
 	System.Random rand;
     string lastSelected = "";
-    bool aiTurn;
+	bool aiTurn;
+	private Lang lang;
+	private int returnInteractionCode;
 
     //AI
     AiScript AI;
-    bool aiIsPlaying;
+    public bool aiIsPlaying;
 
 	// Public attibutes
 	public int FleetSize;
 	public int GoldAmount;
 
+	//GameFile
+	public bool loadingMode = false;
+	public GameFile game;
 
 	// Use this for initialization
 
 	void Start () {
-        aiTurn = false;
-        aiIsPlaying = false;
-        AI = new AiScript();
+		if (!loadingMode) {
+			initGameManager ();
+		} else {
+			loadGameManager (game);
+		}
+	}
+
+	public void initGameManager() {
+		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
+		aiTurn = false;
+		aiIsPlaying = false;
+		AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
 		players = new List<Player>();
@@ -73,11 +88,86 @@ public class GameManager : MonoBehaviour {
 				ship.Playable = true;
 			}
 		}
+		checkInit = false;
 		// We init the fow
-		//ResetFOW ();
-		//RevealAreaAroundCurrentPlayerShips ();
+		ResetFOW ();
+		RevealAreaAroundCurrentPlayerShips ();
+		WelcomeMessage ();
 	}
-	
+
+	public void loadGameManager(GameFile game) {
+		this.lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
+		this.aiTurn = false;
+		this.aiIsPlaying = false;
+		this.AI = new AiScript();
+		this.rand = new System.Random();
+		this.turnNumber = game.turnNumber;
+
+		this.players = new List<Player> ();
+		foreach(PlayerStruct playerSaved in game.players) {
+			List<Node> exploredHexBuffer = new List<Node>();
+			foreach (NodeStruct n in playerSaved.exploredHex) {
+				exploredHexBuffer.Add(map.graph [n.x, n.y]);
+			}
+
+			Player p = new Player (playerSaved, exploredHexBuffer);
+			this.players.Add(p);
+
+			foreach(HarborStruct h in playerSaved.harbors) {
+				GameObject go = GameObject.Find ("Hex_" + h.x + "_" + h.y);
+				Harbor hh = go.GetComponent<Harbor>();
+				hh.Load (h, p);
+			}
+		}
+
+		this.currentPlayerNumber = game.currentPlayerNumber;
+		this.currentPlayer = players [currentPlayerNumber];
+
+		endTurnButton.onClick.AddListener(() => NextPlayer());
+		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
+
+		//AddShips (FleetSize);
+		loadShip(game);
+
+		foreach(Player player in players){
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.UpdateShipHp ();
+			}
+		}
+		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.Playable = true;
+			}
+		}
+		//checkInit = false;
+		ResetFOW ();
+		RevealAreaAlreadyExplored ();
+		RevealAreaAroundCurrentPlayerShips ();
+	}
+
+	public GameFile saveGameManager() {
+		GameFile gameFile = new GameFile();
+
+		gameFile.turnNumber = this.turnNumber;
+		gameFile.currentPlayerNumber = this.currentPlayerNumber;
+
+
+		gameFile.players = new List<PlayerStruct> ();
+
+		foreach (Player p in this.players) {
+			PlayerStruct ps = new PlayerStruct (p);
+			foreach (Ship s in p.Fleet) {
+				ps.fleet.Add (s.SaveShip ());
+			}
+			foreach (Harbor h in p.Harbors) {
+				ps.harbors.Add (h.Save());
+			}
+			gameFile.players.Add (ps);
+		}
+
+		return gameFile;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		List<Player> playersCopy = players;
@@ -105,7 +195,28 @@ public class GameManager : MonoBehaviour {
         if(panelHandler.panelHarbor.GetComponent<HarborPanel>().selected)
         {
             panelHandler.panelHarbor.GetComponent<HarborPanel>().selected = false;
-            mouseManager.currentHarbor.doAction(mouseManager.selectedUnit, map, panelHandler.panelHarbor.GetComponent<HarborPanel>().buttonClicked);
+			returnInteractionCode = mouseManager.currentHarbor.doAction(mouseManager.selectedUnit, map, panelHandler.panelHarbor.GetComponent<HarborPanel>().buttonClicked);
+			switch (returnInteractionCode) {
+			case 1:
+				mouseManager.ip.DisplayInfo (lang.getString("notEnoughGold"), 6f);
+				break;
+			case 2:
+				mouseManager.ip.DisplayInfo (lang.getString("shipIsFull"), 6f);
+				break;
+			case 3:
+				mouseManager.ip.DisplayInfo (lang.getString("noPlaceToBuildAShip"), 6f);
+				break;
+			case 4:
+				mouseManager.ip.DisplayInfo (lang.getString("alreadyBuildingShip"), 6f);
+				break;
+			case 5:
+				mouseManager.ip.DisplayInfo (lang.getString("notEnoughFood"), 6f);
+				break;
+			case 6:
+				mouseManager.ip.DisplayInfo (lang.getString("noHealNeeded"), 6f);
+				break;
+			}
+
         }
         if (mouseManager.selectedUnit == null) {
 			panelHandler.hidePanelUnkown ();
@@ -150,8 +261,9 @@ public class GameManager : MonoBehaviour {
 		ship.Die ();
 	}
 
-	void GameOver(){
-
+	void GameOver(){		
+		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
+		ip.DisplayInfo(lang.getString ("gameover_winner"), 20f);
 	}
 
 	void NextTurn(){
@@ -160,6 +272,13 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void NextPlayer(){
+		if (currentPlayer.Type == "Humain") {
+			// We reset fow before change current player
+			ResetFOW ();
+			RevealAreaAlreadyExplored ();
+			RevealAreaAroundCurrentPlayerShips ();
+		}
+
         if (!aiIsPlaying)
         {
             AI.MovingShip = null;
@@ -170,7 +289,8 @@ public class GameManager : MonoBehaviour {
                 {
                     ship.Playable = false;
                 }
-            }
+			}
+
             currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
             if (currentPlayerNumber == 0)
             {
@@ -201,11 +321,14 @@ public class GameManager : MonoBehaviour {
                 //RevealAreaAlreadyExplored ();
                 RevealAreaAroundCurrentPlayerShips();
                 Debug.Log("Human turn");
+				if (turnNumber == 1) {
+					WelcomeMessage ();
+				}
                 foreach (Ship ship in currentPlayer.Fleet)
                 {
                     ship.Playable = true;
                     ship.RefuelEnergy();
-                }
+				}
             }
             else
             {
@@ -261,6 +384,26 @@ public class GameManager : MonoBehaviour {
 					count++;
 				}
 			}
+		}
+	}
+
+	public void loadShip(GameFile game) {
+		foreach (PlayerStruct p in game.players) {
+			Player pp = this.players.Find (x => x.Name.Equals(p.name));
+			foreach (ShipStruct s in p.fleet) {
+				GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [s.shipX, s.shipY].worldPos, Quaternion.identity);
+				ship_go.name = "Ship_" + p.name + "_" + pp.NbTotalShip;
+				Ship ss = (ship_go.GetComponent<Ship> ());
+				ss.LoadShip (s);
+				ship_go.GetComponentInChildren<MeshRenderer> ().material.color = p.color;
+				ss.Owner = pp;
+				pp.Fleet.Add (ss);
+				mouseManager.map.graph [s.shipX, s.shipY].isWalkable = false;
+				GameObject.Find("Hex_" + s.shipX + "_" + s.shipY).GetComponent<Sea>().ShipContained = ss;
+				pp.NbTotalShip++;
+
+			}
+
 		}
 	}
 
@@ -364,4 +507,17 @@ public class GameManager : MonoBehaviour {
         }
 	}
 
+	private void WelcomeMessage(){
+		Color32 color = currentPlayer.Color;
+		string hexaCodeColor = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
+		Debug.Log (hexaCodeColor);
+		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
+		ip.DisplayInfo(lang.getString ("infoMessage_welcome_joueur") + 
+			"<color=#"+ hexaCodeColor + "ff>" + 
+			lang.getString ("color_"+hexaCodeColor) + 
+			"</color>" + 
+			lang.getString ("infoMessage_welcome_objectif1")
+			, 6f);
+	}
+		
 }

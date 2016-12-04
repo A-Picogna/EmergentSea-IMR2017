@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System.IO;
 
 public class MouseManager : MonoBehaviour {
 
@@ -14,10 +15,13 @@ public class MouseManager : MonoBehaviour {
 	public Projector selectionCircle;
 	public Projector pathProjector;
 	public Pathfinder pathfinder;
+	public InfoPanel ip;
 	private GameObject ourHitObject;
     public bool harbor = false;
-    public Harbor currentHarbor;
+	public Harbor currentHarbor;
 	private GameManager gameManager;
+	private Lang lang;
+	private int returnInteractionCode;
 
 	// UI
 	public PanelHandler panelHandler;
@@ -33,8 +37,10 @@ public class MouseManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
 		gameManager = GameObject.Find ("GameManager").GetComponent<GameManager> ();
+		ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
 	}
 	
 	// Update is called once per frame
@@ -51,6 +57,9 @@ public class MouseManager : MonoBehaviour {
 			RayCast ();
 		} else {
 			Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+			panelHandler.hidePanelHelper();
+			panelHandler.hidePanelHelper2();
+			panelHandler.hidePanelHelper3();
 		}
 
 		if (selectedUnit != null) {
@@ -88,6 +97,11 @@ public class MouseManager : MonoBehaviour {
 			} else if (ourHitObject.GetComponent<Ship> () != null) {
 				// if we are over a unit
 				MouseOver_Unit (ourHitObject);
+			} else {
+				Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
+				panelHandler.hidePanelHelper();
+				panelHandler.hidePanelHelper2();
+				panelHandler.hidePanelHelper3();
 			}
 		} else {
 			// if we are over nothing important
@@ -97,18 +111,22 @@ public class MouseManager : MonoBehaviour {
 
 	void MouseOver_NothingImportant(){
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
-		pathProjector.transform.position = new Vector3 (0, -5f, 0);
 		panelHandler.hidePanelHelper();
+		panelHandler.hidePanelHelper2();
+		panelHandler.hidePanelHelper3();
+		pathProjector.transform.position = new Vector3 (0, -5f, 0);
 		if (Input.GetMouseButtonUp (0)) {
 			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 				selectedUnit = null;
 				panelHandler.hideAllBottom ();
+				panelHandler.hideAllModals ();
 			}
 		}
 	}
 
 	void MouseOver_HexUnit(GameObject ourHitObject){
 		Ship target = ourHitObject.GetComponent<Sea> ().ShipContained;
+		returnInteractionCode = 0;
 
 		if (selectedUnit != null) {
 
@@ -132,7 +150,19 @@ public class MouseManager : MonoBehaviour {
 			}
 
 			if (Input.GetMouseButtonUp (1)) {
-				selectedUnit.Interact (target);
+				panelHandler.hideAllModals ();
+				returnInteractionCode = selectedUnit.Interact (target);
+				switch (returnInteractionCode) {
+				case 1:
+					ip.DisplayInfo (lang.getString("notEnoughEnergy"), 6f);
+					break;
+				case 2:
+					ip.DisplayInfo (lang.getString("outOffRange_ally"), 6f);
+					break;
+				case 3:
+					ip.DisplayInfo (lang.getString("outOffRange_enemy"), 6f);
+					break;
+				}
 				panelHandler.hidePanelHarbor ();
 			}
 		} else {
@@ -147,10 +177,11 @@ public class MouseManager : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetMouseButtonUp (0)) {
+		if (Input.GetMouseButtonUp (0) && target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
 			selectedUnit = ourHitObject.GetComponent<Sea> ().ShipContained;
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
+			panelHandler.hideAllModals ();
 		}
 	}
 
@@ -163,7 +194,11 @@ public class MouseManager : MonoBehaviour {
 			if (Input.GetMouseButtonUp (1)) {
 				Sea target = ourHitObject.GetComponent<Sea> ();
 				selectedUnit.HoistTreasure (target);
+				if (Mathf.Abs (Vector3.Distance (selectedUnit.transform.position, target.transform.position)) > 1f) {
+					ip.DisplayInfo (lang.getString("tooFarFrom_treasure"), 6f);
+				}
 				panelHandler.hidePanelHarbor ();
+				panelHandler.hideAllModals ();
 			}
 		} else {
 			panelHandler.changeTextHelper (5);
@@ -179,7 +214,11 @@ public class MouseManager : MonoBehaviour {
 			panelHandler.refreshHelper ();
 			panelHandler.showPanelHelper ();
 			if (Input.GetMouseButtonUp (1)) {
+				panelHandler.hideAllModals ();
 				harbor = ourHitObject.GetComponent<Harbor> ().Interact (selectedUnit, map);
+				if (Mathf.Abs (Vector3.Distance (selectedUnit.transform.position, ourHitObject.GetComponent<Harbor> ().transform.position)) > 1f) {
+					ip.DisplayInfo (lang.getString("tooFarFrom_harbor"), 6f);
+				}
 				if (harbor) {
 					currentHarbor = ourHitObject.GetComponent<Harbor> ().getHarbor ();
 				}
@@ -193,6 +232,7 @@ public class MouseManager : MonoBehaviour {
 
 	void MouseOver_Unit(GameObject ourHitObject) {
 		Ship target = ourHitObject.GetComponent<Ship> ();
+		returnInteractionCode = 0;
 
 		if (selectedUnit != null) {
 			if (!target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
@@ -234,11 +274,24 @@ public class MouseManager : MonoBehaviour {
 				panelHandler.showPanelHelper ();
 			}
 			if (Input.GetMouseButtonUp (1)) {
-				selectedUnit.Interact (target);
+				panelHandler.hideAllModals ();
+				returnInteractionCode = selectedUnit.Interact (target);
+				switch (returnInteractionCode) {
+				case 1:
+					ip.DisplayInfo (lang.getString("notEnoughEnergy"), 6f);
+					break;
+				case 2:
+					ip.DisplayInfo (lang.getString("outOffRange_ally"), 6f);
+					break;
+				case 3:
+					ip.DisplayInfo (lang.getString("outOffRange_enemy"), 6f);
+					break;
+				}
 				panelHandler.hidePanelHarbor();
 			}
 		}
 		if (Input.GetMouseButtonUp(0) && target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
+			panelHandler.hideAllModals ();
 			selectedUnit = target;
 			selectionCircle.transform.position = selectedUnit.transform.position+new Vector3(0,5f,0);
 			panelHandler.updateShip ();
@@ -248,7 +301,9 @@ public class MouseManager : MonoBehaviour {
 	void MouseOver_VoidSea(GameObject ourHitObject) {
 
 		Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
-		panelHandler.hidePanelHelper ();
+		panelHandler.hidePanelHelper();
+		panelHandler.hidePanelHelper2();
+		panelHandler.hidePanelHelper3();
 
 		if (selectedUnit != null) {
 			pathProjector.transform.position = ourHitObject.transform.position+new Vector3(0,5f,0);
@@ -256,7 +311,13 @@ public class MouseManager : MonoBehaviour {
 
 		if (Input.GetMouseButtonUp (1)) {
 			if (selectedUnit != null && selectedUnit.Playable) {
-				pathfinder.PathRequest (selectedUnit, ourHitObject);
+				panelHandler.hideAllModals ();
+				returnInteractionCode = pathfinder.PathRequest (selectedUnit, ourHitObject);
+				switch (returnInteractionCode) {
+				case 1:
+					ip.DisplayInfo (lang.getString("notEnoughEnergy"), 6f);
+					break;
+				}
 				panelHandler.hidePanelHarbor();
 			}
 		}
@@ -264,9 +325,9 @@ public class MouseManager : MonoBehaviour {
 		if (Input.GetMouseButtonUp (0)) {
 			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
 				selectedUnit = null;
+				panelHandler.hideAllModals ();
 				panelHandler.hideAllBottom ();
 			}
 		}
 	}
-
 }

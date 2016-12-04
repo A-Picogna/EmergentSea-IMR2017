@@ -19,7 +19,13 @@ public class Pathfinder : MonoBehaviour {
 	}
 
 	// We receive a path request form the mouse manager
-	public void PathRequest(Ship selectedUnit, GameObject destinationObject){
+	public int PathRequest(Ship selectedUnit, GameObject destinationObject){
+		int errorCode = 0;
+		/*
+		 * return error code on call
+		 * 0 : OK
+		 * 1 : Not Enough Energy
+		 */
         if (selectedUnit.GetComponent<Ship>().EnergyQuantity > 0)
         {
             int x = selectedUnit.GetComponent<Ship>().ShipX;
@@ -68,7 +74,9 @@ public class Pathfinder : MonoBehaviour {
         else
         {
             selectedUnit.GetComponent<Ship>().CurrentPath = null;
+			errorCode = 1;
         }
+		return errorCode;
 	}
 
 	public bool AstarPathfindingTo(Ship selectedUnit, int x, int y){

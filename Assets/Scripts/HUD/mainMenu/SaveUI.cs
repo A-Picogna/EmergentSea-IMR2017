@@ -20,12 +20,14 @@ public class SaveUI : MonoBehaviour {
 	private List<GameObject> SaveFileLine = new List<GameObject>();
 	public string[] saveList;
 	private bool amIInGame;
+	Random rand;
 
 	public void OnClickNewSave() {
 		changeState (State.Saving);
 	}
 
 	void Start() {
+		rand = new Random ();
 		changeState (State.Nothing);
 		checkGame ();
 		populateSaveList ();
@@ -57,13 +59,17 @@ public class SaveUI : MonoBehaviour {
 			SaveFileLine [i].name = "Save_" + i;
 			///SaveFileLine [offset].transform.SetParent(SaveList.transform, false);
 			Debug.Log("lol");
-			SaveFileLine [i].transform.Translate (new Vector3 (0, i * -30, 0));
+			Debug.Log (saveObject.ToString ());
+
 			if(!amIInGame)
 			{
-				SaveFileLine [i].transform.Translate (new Vector3 (0, 2 * 15, 0));
+				SaveFileLine [i].transform.Translate (new Vector3 (0, 15, 0));
+				SaveFileLine [i].transform.Translate (new Vector3 (0, i * -15, 0));
+				//SaveFileLine [i].transform.Translate (new Vector3 (0, i * (30-17), 0));
 			}
 			else {
-				SaveFileLine [i].transform.Translate (new Vector3 (0, i* (30-17), 0));
+				//SaveFileLine [i].transform.Translate (new Vector3 (0, i * -30, 0));
+				SaveFileLine [i].transform.Translate (new Vector3 (0, i * (-17), 0));
 			}
 			setText (SaveFileLine [i].GetComponentInChildren <Text> (), Path.GetFileName (saveList [i]));
 			setButtonOnClickListener ((SaveFileLine [i].GetComponent<Button> ()), saveList [i]);
@@ -87,8 +93,10 @@ public class SaveUI : MonoBehaviour {
 
 	private void resetSaveList() {
 		foreach (GameObject saveFileObject in SaveFileLine) {
+			saveFileObject.name = saveFileObject.name + "_trash";
 			Destroy (saveFileObject);
 		}
+		SaveFileLine = new List<GameObject> ();
 	}
 
 	private void updateSaveList() {
@@ -122,32 +130,42 @@ public class SaveUI : MonoBehaviour {
 		this.SaveUIState = state;
 
 		switch (state) {
-			case State.Loading:
-				NewSaveUI.SetActive (false);
-				SaveButton.SetActive (false);
+		case State.Loading:
+			NewSaveUI.SetActive (false);
+			SaveButton.SetActive (false);
 
-				DeleteButton.SetActive (true);
+			DeleteButton.SetActive (true);
+
+			if (amIInGame) {
+				LaunchButton.SetActive (false);
+			} else { 
 				LaunchButton.SetActive (true);
-				LoadedSaveUI.SetActive (true);
-				break;
-			case State.Saving:
-				NewSaveUI.SetActive (true);
+			}
+			
+			LoadedSaveUI.SetActive (true);
+			break;
+		case State.Saving:
+			NewSaveUI.SetActive (true);
+			if(LoadManager.instance.gameManager.aiIsPlaying == false){
 				SaveButton.SetActive (true);
-
-				DeleteButton.SetActive (false);
-				LaunchButton.SetActive (false);
-				LoadedSaveUI.SetActive (false);
-				
-				break;
-			case State.Nothing:
-				NewSaveUI.SetActive (false);
+			} else {
 				SaveButton.SetActive (false);
-				
-				DeleteButton.SetActive (false);
-				LaunchButton.SetActive (false);
-				LoadedSaveUI.SetActive (false);	
-				
-				break;
+			}
+
+			DeleteButton.SetActive (false);
+			LaunchButton.SetActive (false);
+			LoadedSaveUI.SetActive (false);
+			
+			break;
+		case State.Nothing:
+			NewSaveUI.SetActive (false);
+			SaveButton.SetActive (false);
+			
+			DeleteButton.SetActive (false);
+			LaunchButton.SetActive (false);
+			LoadedSaveUI.SetActive (false);	
+			
+			break;
 		}
 		
 	}
