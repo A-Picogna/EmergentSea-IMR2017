@@ -65,6 +65,7 @@ public class LoadManager : MonoBehaviour {
 	private AsyncOperation async;
 	public bool loadingAScene;
 	private Coroutine cor;
+	private GameManager gameManager;
 
 
 	// Use this before initialization (and between loading Maps)
@@ -276,25 +277,43 @@ public class LoadManager : MonoBehaviour {
 		return mapSettings;
 	}
 
+	private GameManager loadGame(GameFile gameFile, Map worldMap) {
+		GameObject newObject = Instantiate(gameManagerPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
+
+		GameManager gameSettings = newObject.GetComponent<GameManager> ();
+
+		gameSettings.mouseManager = (GameObject.Find ("MouseManager")).GetComponent<MouseManager> ();
+		gameSettings.endTurnButton = (GameObject.Find ("btn_roundEnd")).GetComponent<UnityEngine.UI.Button> ();
+		gameSettings.textEndTurnNumber = (GameObject.Find ("txt_roundNumber")).GetComponent<UnityEngine.UI.Text> ();
+		gameSettings.panelHandler = (GameObject.Find ("HUDCanvas")).GetComponent<PanelHandler> ();
+
+		gameSettings.map = worldMap;
+		gameSettings.game = gameFile;
+		gameSettings.loadingMode = true;
+
+		return gameSettings;
+	}
+
 	private void initWorld() {
 		MapLoaded = initMap ();
-		GameManager gameManager = initGame (MapLoaded);
+		gameManager = initGame (MapLoaded);
 		linkObjects (MapLoaded, gameManager);
+		MapAsStarted = MapLoaded.SaveMap ();
 	}
 
 	private void loadWorld(MapFile saveMap) {
 		MapLoaded = loadMap (saveMap);
-		GameManager gameManager = initGame (MapLoaded);
+		gameManager = initGame (MapLoaded);
 		linkObjects (MapLoaded, gameManager);
 		MapAsStarted = MapLoaded.SaveMap ();
 	}
 
 	private void loadSave(SaveFile save) {
 		MapLoaded = loadMap (save.map);
-		// Pour l'instant on refait un GameManager
-		GameManager gameManager = initGame (MapLoaded);
+		gameManager = loadGame(save.game, MapLoaded);
 		linkObjects (MapLoaded, gameManager);
-		MapAsStarted = MapLoaded.SaveMap ();
+		MapAsStarted = save.startMap;
 	}
 
 	private void initEditor() {
@@ -425,7 +444,6 @@ public class LoadManager : MonoBehaviour {
 		gameSettings.FleetSize = this.FleetSize;
 		gameSettings.GoldAmount = this.goldAmountPerFleet;
 
-
 		return gameSettings;
 	}
 
@@ -512,17 +530,22 @@ public class LoadManager : MonoBehaviour {
 		SurrogateSelector ss = new SurrogateSelector();
 
 		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ColorSerializationSurrogate css = new ColorSerializationSurrogate();
 		ss.AddSurrogate(typeof(Vector3),
 			new StreamingContext(StreamingContextStates.All),
 			v3ss);
+		ss.AddSurrogate(typeof(Color),
+			new StreamingContext(StreamingContextStates.All),
+			css);
 
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
 
 		Debug.Log ("Saving save...");
 
-		SaveFile saveObject = new SaveFile (MapLoaded.SaveMap ());
-
+		SaveFile saveObject = new SaveFile (MapLoaded.SaveMap (),
+			gameManager.saveGameManager (),
+			MapAsStarted);
 		bf.Serialize (saveFile, saveObject);
 		Debug.Log (GlobalVariables.pathSaves + name + ".map");
 		saveFile.Close ();
@@ -536,9 +559,13 @@ public class LoadManager : MonoBehaviour {
 		SurrogateSelector ss = new SurrogateSelector();
 
 		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ColorSerializationSurrogate css = new ColorSerializationSurrogate();
 		ss.AddSurrogate(typeof(Vector3),
 			new StreamingContext(StreamingContextStates.All),
 			v3ss);
+		ss.AddSurrogate(typeof(Color),
+			new StreamingContext(StreamingContextStates.All),
+			css);
 
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;

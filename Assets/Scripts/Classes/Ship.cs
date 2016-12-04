@@ -50,6 +50,45 @@ public class Ship : MonoBehaviour {
         directionLifeTime = 0;
 	}
 
+	public void LoadShip(ShipStruct s) {
+		this.food = s.food;
+		this.gold = s.gold;
+		this.hp = s.hp;
+		this.energyQuantity = s.energyQuantity;
+		this.shipX = s.shipX;
+		this.shipY = s.shipY;
+		this.orientation = s.orientation;
+
+		this.playable = s.playable;
+		this.isMoving = s.isMoving;
+		this.shipName = s.shipName;
+
+		this.crew = s.crew;
+
+		// Reinit
+		destination = transform.position;
+	}
+
+	public ShipStruct SaveShip() {
+		ShipStruct s = new ShipStruct();
+
+		s.food = this.food;
+		s.gold = this.gold;
+		s.hp = this.hp;
+		s.energyQuantity = this.energyQuantity;
+		s.shipX = this.shipX;
+		s.shipY = this.shipY;
+		s.orientation = this.orientation;
+
+		s.playable = this.playable;
+		s.isMoving = this.isMoving;
+		s.shipName = this.shipName;
+
+		s.crew = this.crew;
+
+		return s;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (!dead) {

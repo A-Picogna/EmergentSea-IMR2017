@@ -48,14 +48,25 @@ public class GameManager : MonoBehaviour {
 	public int FleetSize;
 	public int GoldAmount;
 
+	//GameFile
+	public bool loadingMode = false;
+	public GameFile game;
 
 	// Use this for initialization
 
 	void Start () {
+		if (!loadingMode) {
+			initGameManager ();
+		} else {
+			loadGameManager (game);
+		}
+	}
+
+	public void initGameManager() {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
-        aiTurn = false;
-        aiIsPlaying = false;
-        AI = new AiScript();
+		aiTurn = false;
+		aiIsPlaying = false;
+		AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
 		players = new List<Player>();
@@ -81,7 +92,80 @@ public class GameManager : MonoBehaviour {
 		RevealAreaAroundCurrentPlayerShips ();
 		WelcomeMessage ();
 	}
-	
+
+	public void loadGameManager(GameFile game) {
+		this.lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
+		this.aiTurn = false;
+		this.aiIsPlaying = false;
+		this.AI = new AiScript();
+		this.rand = new System.Random();
+		this.turnNumber = game.turnNumber;
+
+		this.players = new List<Player> ();
+		foreach(PlayerStruct playerSaved in game.players) {
+			List<Node> exploredHexBuffer = new List<Node>();
+			foreach (NodeStruct n in playerSaved.exploredHex) {
+				exploredHexBuffer.Add(map.graph [n.x, n.y]);
+			}
+
+			Player p = new Player (playerSaved, exploredHexBuffer);
+			this.players.Add(p);
+
+			foreach(HarborStruct h in playerSaved.harbors) {
+				GameObject go = GameObject.Find ("Hex_" + h.x + "_" + h.y);
+				Harbor hh = go.GetComponent<Harbor>();
+				hh.Load (h, p);
+			}
+		}
+
+		this.currentPlayerNumber = game.currentPlayerNumber;
+		this.currentPlayer = players [currentPlayerNumber];
+
+		endTurnButton.onClick.AddListener(() => NextPlayer());
+		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
+
+		//AddShips (FleetSize);
+		loadShip(game);
+
+		foreach(Player player in players){
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.UpdateShipHp ();
+			}
+		}
+		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.Playable = true;
+			}
+		}
+
+		ResetFOW ();
+		RevealAreaAlreadyExplored ();
+		RevealAreaAroundCurrentPlayerShips ();
+	}
+
+	public GameFile saveGameManager() {
+		GameFile gameFile = new GameFile();
+
+		gameFile.turnNumber = this.turnNumber;
+		gameFile.currentPlayerNumber = this.currentPlayerNumber;
+
+
+		gameFile.players = new List<PlayerStruct> ();
+
+		foreach (Player p in this.players) {
+			PlayerStruct ps = new PlayerStruct (p);
+			foreach (Ship s in p.Fleet) {
+				ps.fleet.Add (s.SaveShip ());
+			}
+			foreach (Harbor h in p.Harbors) {
+				ps.harbors.Add (h.Save());
+			}
+			gameFile.players.Add (ps);
+		}
+
+		return gameFile;
+	}
+
 	// Update is called once per frame
 	void Update () {
 		List<Player> playersCopy = players;
@@ -258,6 +342,26 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	public void loadShip(GameFile game) {
+		foreach (PlayerStruct p in game.players) {
+			Player pp = this.players.Find (x => x.Name.Equals(p.name));
+			foreach (ShipStruct s in p.fleet) {
+				GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [s.shipX, s.shipY].worldPos, Quaternion.identity);
+				ship_go.name = "Ship_" + p.name + "_" + pp.NbTotalShip;
+				Ship ss = (ship_go.GetComponent<Ship> ());
+				ss.LoadShip (s);
+				ship_go.GetComponentInChildren<MeshRenderer> ().material.color = p.color;
+				ss.Owner = pp;
+				pp.Fleet.Add (ss);
+				mouseManager.map.graph [s.shipX, s.shipY].isWalkable = false;
+				GameObject.Find("Hex_" + s.shipX + "_" + s.shipY).GetComponent<Sea>().ShipContained = ss;
+				pp.NbTotalShip++;
+
+			}
+
+		}
+	}
+
 	public void ResetFOW(){
         if (!aiIsPlaying)
         {
@@ -359,5 +463,5 @@ public class GameManager : MonoBehaviour {
 			lang.getString ("infoMessage_welcome_objectif1")
 			, 6f);
 	}
-
+		
 }
