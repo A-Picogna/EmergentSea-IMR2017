@@ -351,8 +351,8 @@ public class LoadManager : MonoBehaviour {
 		});
 
 		Debug.Log ("Linking return button...");
-		GameObject btn_return = GameObject.Find ("btn_load");
-		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.RemoveAllListeners ();
+		GameObject btn_return = GameObject.Find ("btn_return");
+		//((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.RemoveAllListeners ();
 		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
 			LoadManager.instance.BackToMenu();
 		});
@@ -362,7 +362,7 @@ public class LoadManager : MonoBehaviour {
 		//loadingScreen.SetActive (true);
 
 		// Reconfiguration du loading Screen
-		GameObject LoadButton = GameObject.Find ("LoadButton");
+		//GameObject LoadButton = GameObject.Find ("LoadButton");
 		//((UnityEngine.UI.Button)LoadButton.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
 		//	Debug.Log("Lancement nouvelle map");
 		//	((SceneLoader)loadingScreen.GetComponent<SceneLoader> ()).NewMap();
