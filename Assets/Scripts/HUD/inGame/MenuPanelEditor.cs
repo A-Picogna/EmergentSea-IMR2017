@@ -15,7 +15,7 @@ public class MenuPanelEditor : MonoBehaviour {
 		menuHeader.text = lang.getString("menu");
 		resume.text = lang.getString("resume");
 		save.text = lang.getString("save");
-		quit.text = lang.getString("quit");
+		quit.text = lang.getString("quit_editor");
 	}
 }
 

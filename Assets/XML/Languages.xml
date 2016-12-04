@@ -18,6 +18,7 @@
         <string name="resume">Reprendre</string>
         <string name="save">Sauvegarder</string>
         <string name="quit">Quitter la partie</string>
+        <string name="quit_editor">Quitter l'éditeur</string>
         <string name="friendly_ship">Navire allié</string>
         <string name="ennemy_ship">Navire ennemi</string>
         <string name="ennemy_ship_description">Un navire ennemi. Sa force est inconnue.</string>

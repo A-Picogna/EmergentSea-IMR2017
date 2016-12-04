@@ -390,6 +390,13 @@ public class LoadManager : MonoBehaviour {
 			NewMapMenu.SetActive (true);
 		});
 
+		Debug.Log ("Linking return button...");
+		GameObject btn_return = GameObject.Find ("btn_return");
+		//((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.RemoveAllListeners ();
+		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
+			LoadManager.instance.BackToMenu();
+		});
+
 		NewMapMenu.SetActive (false);
 	}
 
