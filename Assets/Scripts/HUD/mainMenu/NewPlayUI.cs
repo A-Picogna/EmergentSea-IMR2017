@@ -120,7 +120,7 @@ public class NewPlayUI : MonoBehaviour {
 	public void MapTypeInputDropdownCallback(int MapType) {
 		//On change l'interface en fonction du paramêtre
 		bool MapGenerationIsActive = false;
-		if (mapList.Length >= 0) {
+		if (mapList.Length <= 0) {
 			(MapTypeInputDropdown.GetComponent<Dropdown> ()).value = 1;
 			MapType = 1;
 		}
