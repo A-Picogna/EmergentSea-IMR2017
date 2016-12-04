@@ -48,6 +48,7 @@ public class NewPlayUI : MonoBehaviour {
 	public GameObject LaunchGameButton;
 
 	private string[] mapList =  new string[] {};
+	private bool isInit = false;
 
 	void Start(){
 		// Initilialize Components
@@ -68,10 +69,13 @@ public class NewPlayUI : MonoBehaviour {
 		updateValuesGame ();
 
 		MapTypeInputDropdownCallback(0);
+		isInit = true;
 	}
 
 	void OnEnable() {
-		MapTypeInputDropdownCallback ((MapTypeInputDropdown.GetComponent<Dropdown>()).value);
+		if (isInit == true) {
+			MapTypeInputDropdownCallback ((MapTypeInputDropdown.GetComponent<Dropdown> ()).value);
+		}
 	}
 
 	public void OnMapXSlideValueChanged(float number) {
