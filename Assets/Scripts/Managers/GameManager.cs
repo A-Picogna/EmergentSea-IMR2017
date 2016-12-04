@@ -274,9 +274,9 @@ public class GameManager : MonoBehaviour {
 	void NextPlayer(){
 		if (currentPlayer.Type == "Humain") {
 			// We reset fow before change current player
-			//ResetFOW ();
-			//RevealAreaAlreadyExplored ();
-			//RevealAreaAroundCurrentPlayerShips ();
+			ResetFOW ();
+			RevealAreaAlreadyExplored ();
+			RevealAreaAroundCurrentPlayerShips ();
 		}
 
         if (!aiIsPlaying)
@@ -316,10 +316,6 @@ public class GameManager : MonoBehaviour {
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
             if(currentPlayer.Type == "Humain")
             {
-                // We reset fow for next player
-                ResetFOW ();
-                RevealAreaAlreadyExplored ();
-                RevealAreaAroundCurrentPlayerShips();
                 Debug.Log("Human turn");
 				if (turnNumber == 1) {
 					WelcomeMessage ();
