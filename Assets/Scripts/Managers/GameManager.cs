@@ -74,8 +74,8 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		// We init the fow
-		ResetFOW ();
-		RevealAreaAroundCurrentPlayerShips ();
+		//ResetFOW ();
+		//RevealAreaAroundCurrentPlayerShips ();
 	}
 	
 	// Update is called once per frame
@@ -162,6 +162,7 @@ public class GameManager : MonoBehaviour {
 	void NextPlayer(){
         if (!aiIsPlaying)
         {
+            AI.MovingShip = null;
             mouseManager.selectedUnit = null;
             if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0)
             {
@@ -195,6 +196,10 @@ public class GameManager : MonoBehaviour {
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
             if(currentPlayer.Type == "Humain")
             {
+                // We reset fow for next player
+                //ResetFOW ();
+                //RevealAreaAlreadyExplored ();
+                RevealAreaAroundCurrentPlayerShips();
                 Debug.Log("Human turn");
                 foreach (Ship ship in currentPlayer.Fleet)
                 {
@@ -204,24 +209,32 @@ public class GameManager : MonoBehaviour {
             }
             else
             {
-                Debug.Log("AI playing...");
+                //Debug.Log("AI playing...");
                 if (!aiIsPlaying)
                 {
                     foreach (Ship ship in currentPlayer.Fleet)
                     {
                         ship.Used = false;
+                        ship.TargetDistance = -1;
                         ship.RefuelEnergy();
                     }
+                    RevealAreaAroundCurrentPlayerShips();
                 }
-                aiIsPlaying = AI.turn(currentPlayer, map);
+                if(AI.MovingShip != null && AI.MovingShip.TargetDistance != -1)
+                {
+                    //Calculate new path
+                    Debug.Log("Change path");
+                    AI.goToTarget(AI.MovingShip, map);
+                    aiIsPlaying = true;
+                }
+                else
+                {
+                    aiIsPlaying = AI.turn(currentPlayer, map);
+                }
                 aiTurn = true;
             }
 		}
 		checkInit = false;
-		// We reset fow for next player
-		ResetFOW ();
-		RevealAreaAlreadyExplored ();
-		RevealAreaAroundCurrentPlayerShips ();
 	}
 
 	void AddShips(int n){
@@ -268,6 +281,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void RevealAreaAroundCurrentPlayerShips(){
+        Debug.Log("Revealing");
 		Player cp = currentPlayer;
 		foreach (Ship ship in cp.Fleet) {
 			GameObject currentHex = (GameObject) GameObject.Find ("Hex_" + ship.ShipX + "_" + ship.ShipY);
@@ -283,7 +297,8 @@ public class GameManager : MonoBehaviour {
                 currentHex.GetComponent<Hex>().setVisibility(2);
             }
 			newNode = new Node(ship.ShipX, ship.ShipY, new Vector3(0,0,0), false, "ship");
-			if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+
+            if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 				currentPlayer.ExploredHex.Add(newNode);
 			}
 
@@ -295,7 +310,10 @@ public class GameManager : MonoBehaviour {
                     n1.GetComponent<Hex>().setVisibility(2);
                 }
 				newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-				if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+
+                ship.getTarget(n1,0);
+
+                if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 					currentPlayer.ExploredHex.Add(newNode);
 				}
 				// Reveal 2nd Neighbours
@@ -306,7 +324,10 @@ public class GameManager : MonoBehaviour {
                         n2.GetComponent<Hex>().setVisibility(2);
                     }
 					newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-					if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+
+                    ship.getTarget(n2, 1);
+
+                    if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 						currentPlayer.ExploredHex.Add(newNode);
 					}
 					// Reveal 3rd Neighbours
@@ -317,7 +338,10 @@ public class GameManager : MonoBehaviour {
                             n3.GetComponent<Hex>().setVisibility(2);
                         }
 						newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-						if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+
+                        ship.getTarget(n3, 2);
+
+                        if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 							currentPlayer.ExploredHex.Add(newNode);
 						}
 					}

@@ -28,38 +28,41 @@ public class Pathfinder : MonoBehaviour {
             int destY = destinationObject.GetComponent<Hex>().y;
             List<Node> prevPath = selectedUnit.CurrentPath;
             bool pathExist = AstarPathfindingTo(selectedUnit, destX, destY);
-            while (selectedUnit.GetComponent<Ship>().CurrentPath.Count > selectedUnit.GetComponent<Ship>().EnergyQuantity)
+            if (pathExist)
             {
-                selectedUnit.GetComponent<Ship>().CurrentPath.Remove(selectedUnit.GetComponent<Ship>().CurrentPath[selectedUnit.GetComponent<Ship>().CurrentPath.Count - 1]);
-            }
-            destX = selectedUnit.GetComponent<Ship>().CurrentPath[selectedUnit.GetComponent<Ship>().CurrentPath.Count - 1].x;
-            destY = selectedUnit.GetComponent<Ship>().CurrentPath[selectedUnit.GetComponent<Ship>().CurrentPath.Count - 1].y;
-            if (selectedUnit.GetComponent<Ship>().CurrentPath.Count <= selectedUnit.GetComponent<Ship>().EnergyQuantity)
-            {
-                // If a path is found, we do something
-                if (pathExist)
+                while (selectedUnit.GetComponent<Ship>().CurrentPath.Count > selectedUnit.GetComponent<Ship>().EnergyQuantity)
                 {
-                    // if the unit was not moving, we free its spot and lock its destination spot
-                    if (prevPath == null || prevPath.Count == 0)
-                    {
-                        map.graph[x, y].isWalkable = true;
-                        GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().RemoveShip();
-                        map.graph[destX, destY].isWalkable = false;
-                        GameObject.Find("Hex_" + destX + "_" + destY).GetComponent<Sea>().ShipContained = selectedUnit;
-                        // if the unit was moving, we free the previous destination spot and we lock the new one
-                    }
-                    else
-                    {
-                        map.graph[prevPath.Last().x, prevPath.Last().y].isWalkable = true;
-                        GameObject.Find("Hex_" + prevPath.Last().x + "_" + prevPath.Last().y).GetComponent<Sea>().RemoveShip();
-                        map.graph[destX, destY].isWalkable = false;
-                        GameObject.Find("Hex_" + destX + "_" + destY).GetComponent<Sea>().ShipContained = selectedUnit;
-                    }
+                    selectedUnit.GetComponent<Ship>().CurrentPath.Remove(selectedUnit.GetComponent<Ship>().CurrentPath[selectedUnit.GetComponent<Ship>().CurrentPath.Count - 1]);
                 }
-            }
-            else
-            {
-                selectedUnit.GetComponent<Ship>().CurrentPath = null;
+                destX = selectedUnit.GetComponent<Ship>().CurrentPath[selectedUnit.GetComponent<Ship>().CurrentPath.Count - 1].x;
+                destY = selectedUnit.GetComponent<Ship>().CurrentPath[selectedUnit.GetComponent<Ship>().CurrentPath.Count - 1].y;
+                if (selectedUnit.GetComponent<Ship>().CurrentPath.Count <= selectedUnit.GetComponent<Ship>().EnergyQuantity)
+                {
+                    // If a path is found, we do something
+                    /*if (pathExist)
+                    {*/
+                        // if the unit was not moving, we free its spot and lock its destination spot
+                        if (prevPath == null || prevPath.Count == 0)
+                        {
+                            map.graph[x, y].isWalkable = true;
+                            GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().RemoveShip();
+                            map.graph[destX, destY].isWalkable = false;
+                            GameObject.Find("Hex_" + destX + "_" + destY).GetComponent<Sea>().ShipContained = selectedUnit;
+                            // if the unit was moving, we free the previous destination spot and we lock the new one
+                        }
+                        else
+                        {
+                            map.graph[prevPath.Last().x, prevPath.Last().y].isWalkable = true;
+                            GameObject.Find("Hex_" + prevPath.Last().x + "_" + prevPath.Last().y).GetComponent<Sea>().RemoveShip();
+                            map.graph[destX, destY].isWalkable = false;
+                            GameObject.Find("Hex_" + destX + "_" + destY).GetComponent<Sea>().ShipContained = selectedUnit;
+                        }
+                    //}
+                }
+                else
+                {
+                    selectedUnit.GetComponent<Ship>().CurrentPath = null;
+                }
             }
         }
         else
