@@ -282,9 +282,14 @@ public class GameManager : MonoBehaviour {
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
 	}
 
-	void NextPlayer(){
+	void NextPlayer()
+    {
         if (!aiIsPlaying)
         {
+            ResetFOW();
+            RevealAreaAlreadyExplored();
+            RevealAreaAroundCurrentPlayerShips();
+
             AI.MovingShip = null;
             mouseManager.selectedUnit = null;
             if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0)
@@ -301,6 +306,7 @@ public class GameManager : MonoBehaviour {
                 NextTurn();
             }
             currentPlayer = players[currentPlayerNumber];
+
             foreach (Harbor harbor in currentPlayer.Harbors)
             {
                 if (harbor.Building)
@@ -412,7 +418,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void ResetFOW(){
-        if (!aiIsPlaying)
+        if (currentPlayer.Type.Equals("Humain"))
         {
             map = mouseManager.map;
             GameObject currentHex;
@@ -439,7 +445,7 @@ public class GameManager : MonoBehaviour {
 			Node newNode;
 
             // Reveal Ship and ship Hex
-            if (!aiIsPlaying)
+            if (currentPlayer.Type.Equals("Humain"))
             {
                 currentHex.GetComponent<Hex>().setVisibility(2);
             }
@@ -452,7 +458,7 @@ public class GameManager : MonoBehaviour {
 			// Reveal 1st Neighbours
 			firstNeighboursToReveal = currentHex.GetComponent<Hex>().getNeighbours();
 			foreach (GameObject n1 in firstNeighboursToReveal) {
-                if (!aiIsPlaying)
+                if (currentPlayer.Type.Equals("Humain"))
                 {
                     n1.GetComponent<Hex>().setVisibility(2);
                 }
@@ -466,7 +472,7 @@ public class GameManager : MonoBehaviour {
 				// Reveal 2nd Neighbours
 				secondNeighboursToReveal = n1.GetComponent<Hex> ().getNeighbours ();
 				foreach (GameObject n2 in secondNeighboursToReveal) {
-                    if (!aiIsPlaying)
+                    if (currentPlayer.Type.Equals("Humain"))
                     {
                         n2.GetComponent<Hex>().setVisibility(2);
                     }
@@ -480,7 +486,7 @@ public class GameManager : MonoBehaviour {
 					// Reveal 3rd Neighbours
 					thirdNeighboursToReveal = n2.GetComponent<Hex> ().getNeighbours ();
 					foreach (GameObject n3 in thirdNeighboursToReveal) {
-                        if (!aiIsPlaying)
+                        if (currentPlayer.Type.Equals("Humain"))
                         {
                             n3.GetComponent<Hex>().setVisibility(2);
                         }
@@ -498,7 +504,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void RevealAreaAlreadyExplored(){
-        if (!aiIsPlaying)
+        if (currentPlayer.Type.Equals("Humain"))
         {
             Player cp = currentPlayer;
             GameObject currentHex;
