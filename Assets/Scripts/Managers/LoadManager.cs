@@ -71,6 +71,8 @@ public class LoadManager : MonoBehaviour {
 
 	// Use this before initialization (and between loading Maps)
 	void Awake() {
+		// Reset Cursor
+		Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); 
 		//Check if instance already exists
 		if (instance == null) {
 			//if not, set instance to this
