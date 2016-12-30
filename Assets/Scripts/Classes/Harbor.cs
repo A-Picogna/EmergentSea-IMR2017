@@ -324,6 +324,10 @@ public class Harbor : Land
             Debug.Log("Realy Healed : " + total);
             Debug.Log("Gold : " + selected.Gold);
             Debug.Log("Hp : " + selected.Hp);
+			// After healing, we update the canvas, and the value in the ship, and the displaying value upside the ship
+			GameObject.Find ("HUDCanvas").GetComponent<PanelHandler> ().updateShip();
+			selected.UpdateShipHp ();
+			selected.DisplayHp (true);
         }
 
         //DarkArtAcademy - Conjurer

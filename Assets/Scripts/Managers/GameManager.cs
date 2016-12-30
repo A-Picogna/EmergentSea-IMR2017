@@ -426,9 +426,15 @@ public class GameManager : MonoBehaviour {
 		Ship ship = ship_go.GetComponent<Ship> ();
 		ship.Owner = player;
 		ship.addCrewMember(new Filibuster());
-		if (player.Type.Equals ("IA")) {
+		ship.addCrewMember(new Filibuster());
+		//if (player.Type.Equals ("IA")) {
 			ship.addCrewMember(new PowderMonkey());
 			ship.addCrewMember(new Conjurer());
+			ship.addCrewMember(new PowderMonkey());
+			ship.addCrewMember(new Conjurer());
+		//}
+		foreach (CrewMember cm in ship.Crew) {
+			cm.Lp = rand.Next (1, cm.LpMax);
 		}
 		player.Fleet.Add (ship);
 		mouseManager.map.graph [x, y].isWalkable = false;
