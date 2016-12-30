@@ -7,13 +7,14 @@ public class Ship : MonoBehaviour {
 	private List<Node> currentPath = null;
 	private int food = 0;
 	private int gold = 200;
-	private int hp = 0;
 	private int energyQuantity = 0;
 	private int shipX = -1;
 	private int shipY = -1;
 	private int orientation = 0;
 	private Player owner;
-    private int atkCost = 5;
+	private int atkCost = 5;
+	private int hp = 0;
+	private string textHp = "";
 	/*
 	 * Orientation in degree
 	 * 0 : right
@@ -31,6 +32,7 @@ public class Ship : MonoBehaviour {
 	private PanelHandler panelHandler;
 	public Vector3 destination;
 	public AudioClip shipMovingSound;
+	System.Random rand;
 
     //AI
     private bool used = false;
@@ -109,6 +111,7 @@ public class Ship : MonoBehaviour {
 			}
 			transform.position = Vector3.Lerp(transform.position, destination, 5f * Time.deltaTime);
 			transform.rotation = Quaternion.Euler(new Vector3(0, -orientation, 0));
+			transform.FindChild ("health").transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 		}
 	}
 
@@ -147,6 +150,7 @@ public class Ship : MonoBehaviour {
 	public void Die(){
 		dead = true;
 		Destroy (this.GetComponentInChildren<MeshCollider> ());
+		this.GetComponentInChildren<TextMesh> ().text = "";
 		StartCoroutine (Sink ());
 		if (owner.Type.Equals ("IA")) {
 			panelHandler.updateShip ();
@@ -163,13 +167,22 @@ public class Ship : MonoBehaviour {
 	}
 
 	IEnumerator Sink (){
+		int goldWreck = this.gold / 2;
+		int x = shipX;
+		int y = shipY;
 		Vector3 deathDestination = transform.position + new Vector3 (0, -1f, 0);
-		while (Vector3.Distance (transform.position, deathDestination) >= 0.2f){
+		Map map = GameObject.Find ("Map").GetComponent<Map> ();
+		GameObject caseTreasure = GameObject.Find ("Hex_" + x + "_" + y);
+		while (Vector3.Distance (transform.position, deathDestination) >= 0.3f){
 			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(transform.rotation.x, transform.rotation.y, -30), Time.deltaTime);
-			transform.position = Vector3.Lerp(transform.position, deathDestination, 0.1f * Time.deltaTime);
+			transform.position = Vector3.Lerp(transform.position, deathDestination, 0.2f * Time.deltaTime);
 			yield return new WaitForEndOfFrame();
 		}
 		yield return null;
+		GameObject tres = (GameObject) Instantiate (map.treasurePrefab, map.graph [x, y].worldPos, Quaternion.identity);
+		tres.name = caseTreasure.name+"_Treasure";
+		tres.transform.SetParent (caseTreasure.transform);
+		caseTreasure.GetComponent<Sea> ().AddTreasure (goldWreck, tres);
 		Destroy (this.gameObject);
 	}
 
@@ -411,17 +424,21 @@ public class Ship : MonoBehaviour {
 			}
 		} while (takingDamages);
 		UpdateShipHp ();
+		DisplayHp (true);
 		if (owner.Type.Equals ("IA")) {
 			panelHandler.updateShip ();
 		}
 	}
 
 	public void UpdateShipHp(){
-		int res = 0;
-		foreach (CrewMember c in crew){
-			res += c.Lp;
+		int totalHp = 0;
+		int currentHp = 0;
+		foreach (CrewMember cm in crew){
+			totalHp += cm.LpMax;
+			currentHp += cm.Lp;
 		}
-		hp = res;
+		hp = currentHp;
+		textHp = currentHp.ToString() + "/" + totalHp.ToString();
 	}
 
 	public void displayFloatingInfo(Color color, string text, Vector3 pos){
@@ -444,12 +461,12 @@ public class Ship : MonoBehaviour {
 	public bool HoistTreasure(Sea target){
 		//if enough energy
 		float distance = Mathf.Abs (Vector3.Distance (transform.position, target.transform.position));
-		if (distance < 1f && energyQuantity >= 3){
+		if (distance < 1f && energyQuantity >= 1){
 			displayFloatingInfo (Color.yellow, "+" + target.Treasure, transform.position);
 			gold += target.Treasure;
 			Destroy (target.Treasure_go);
 			target.RemoveTreasure();
-			energyQuantity -= 3;
+			energyQuantity -= 1;
 			panelHandler.updateShip ();
 			return true;
 		}
@@ -532,6 +549,7 @@ public class Ship : MonoBehaviour {
 		List<GameObject> firstNeighboursToReveal;
 		List<GameObject> secondNeighboursToReveal;
 		List<GameObject> thirdNeighboursToReveal;
+		List<GameObject> shipsAtRange;
 		MeshRenderer[] meshRenderers;
 		Node newNode;
         // Reveal Ship and ship Hex
@@ -546,6 +564,7 @@ public class Ship : MonoBehaviour {
 		// Reveal 1st Neighbours
 		firstNeighboursToReveal = currentHex.GetComponent<Hex>().getNeighbours();
 		foreach (GameObject n1 in firstNeighboursToReveal) {
+			this.DisplayTargetHp (n1);
 			if (owner.Type.Equals ("IA")) {
 				if (n1.GetComponent<Sea> () != null && n1.GetComponent<Sea> ().ShipContained != null && !n1.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
 					visibleByHumain = true;
@@ -565,6 +584,7 @@ public class Ship : MonoBehaviour {
 			// Reveal 2nd Neighbours
 			secondNeighboursToReveal = n1.GetComponent<Hex> ().getNeighbours ();
 			foreach (GameObject n2 in secondNeighboursToReveal) {
+				this.DisplayTargetHp (n2);
 				if (owner.Type.Equals("IA")) {
 					if (n2.GetComponent<Sea> () != null && n2.GetComponent<Sea> ().ShipContained != null && !(n2.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) ) {
 						visibleByHumain = true;
@@ -585,7 +605,8 @@ public class Ship : MonoBehaviour {
 				// Reveal 3rd Neighbours
 				thirdNeighboursToReveal = n2.GetComponent<Hex> ().getNeighbours ();
 				foreach (GameObject n3 in thirdNeighboursToReveal)
-                {
+				{
+					this.DisplayTargetHp (n3);
 					if (owner.Type.Equals("IA")) {
 						if (n3.GetComponent<Sea> () != null && n3.GetComponent<Sea> ().ShipContained != null && !n3.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
 							visibleByHumain = true;
@@ -644,11 +665,34 @@ public class Ship : MonoBehaviour {
                 }
             }
         }
-    }
+	}
 
+	// ====================
+	// UTILITIES
+	// ====================
 
+	public void DisplayTargetHp(GameObject go){
+		if (go.GetComponent<Sea> () != null && go.GetComponent<Sea> ().ShipContained != null && !go.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
+			Ship ship = go.GetComponent<Sea> ().ShipContained;
+			if (this.AtConjurerRange (ship) || this.AtFilibusterRange (ship) || this.AtPowderMonkeyRange (ship)) {
+				ship.UpdateShipHp ();
+				ship.DisplayHp (true);
+			} else {
+				ship.DisplayHp (false);
+			}
+		}
+	}
 
+	public void DisplayHp(bool disp){
+		if (disp) {
+			this.GetComponentInChildren<TextMesh> ().text = this.GetComponent<Ship> ().textHp;
+		} else {
+			this.GetComponentInChildren<TextMesh> ().text = "";
+		}
+	}
 
+	public void hideHp(){
+	}
 
 	// ====================
 	// GETTER & SETTER 
@@ -795,13 +839,19 @@ public class Ship : MonoBehaviour {
     {
         get { return directionLifeTime; }
         set { directionLifeTime = value; }
-    }
+	}
 
-    public int AtkCost
-    {
-        get { return atkCost; }
-        set { atkCost = value; }
-    }
+	public int AtkCost
+	{
+		get { return atkCost; }
+		set { atkCost = value; }
+	}
+
+	public string TextHp
+	{
+		get { return textHp; }
+		set { textHp = value; }
+	}
 
     // ====================
     // ====================

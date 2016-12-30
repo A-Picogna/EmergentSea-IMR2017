@@ -91,6 +91,7 @@ public class Hex : MonoBehaviour {
 		case 0:
 			if (this.GetComponent<Sea> () != null && this.GetComponent<Sea> ().ShipContained != null) {
 				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshRenderer> ().enabled = false;
+				this.GetComponent<Sea> ().ShipContained.DisplayHp (false);
 			}
 			this.GetComponent<LineRenderer> ().enabled = false;
 			this.GetComponentInChildren<MeshRenderer> ().material = fowm.notVisibleMat;
@@ -112,6 +113,7 @@ public class Hex : MonoBehaviour {
 		case 1:
 			if (this.GetComponent<Sea> () != null && this.GetComponent<Sea> ().ShipContained != null) {
 				this.GetComponent<Sea> ().ShipContained.GetComponentInChildren<MeshRenderer> ().enabled = false;
+				this.GetComponent<Sea> ().ShipContained.DisplayHp (false);
 			}
 			this.GetComponent<LineRenderer> ().enabled = true;
 			meshRenderers = this.GetComponentsInChildren<MeshRenderer> ();

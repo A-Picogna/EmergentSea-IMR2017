@@ -268,7 +268,6 @@ public class GameManager : MonoBehaviour {
 
 	void DestroyShip(Ship ship){
 		GameObject.Find ("Hex_" + ship.ShipX + "_" + ship.ShipY).GetComponent<Sea> ().RemoveShip ();
-		mouseManager.map.graph [ship.ShipX, ship.ShipY].isWalkable = true;
 		ship.name = ship.name + rand.Next (1000000000);
 		ship.Die ();
 	}
@@ -379,34 +378,63 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void AddShips(int n){
+		int playerCount = 0;
 		foreach (Player player in players) {
-			int count = 1;
-			while (count <= n) {
+			int count = 0;
+			float minDistance = 10f;
+			float maxDistance = 5f;
+			while (count < n) {
 				int x = rand.Next (1, mouseManager.map.width);
 				int y = rand.Next (1, mouseManager.map.height);
 				if (mouseManager.map.graph [x, y].type == "sea" && mouseManager.map.graph [x, y].tag && mouseManager.map.graph [x, y].isWalkable) {
-					GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [x, y].worldPos, Quaternion.identity);
-					ship_go.name = "Ship_" + player.Name + "_" + player.NbTotalShip;
-					ship_go.GetComponent<Ship> ().ShipX = x;
-					ship_go.GetComponent<Ship> ().ShipY = y;
-					ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + player.NbTotalShip;
-					ship_go.GetComponent<Ship> ().Gold = GoldAmount;
-					ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
-					Ship ship = ship_go.GetComponent<Ship> ();
-					ship.Owner = player;
-					ship.addCrewMember(new Filibuster());
-					if (player.Type.Equals ("IA")) {
-						ship.addCrewMember(new PowderMonkey());
-						ship.addCrewMember(new Conjurer());
+					if (count == 0) {
+						if (playerCount == 0) {
+							createShip (player, x, y);
+							count++;
+						} else {
+							bool farEnough = true;
+							for (int i = 0; i < playerCount; i++) {								
+								if (Vector3.Distance (mouseManager.map.graph [x, y].worldPos, mouseManager.map.graph [players[i].Fleet [0].ShipX, players[i].Fleet [0].ShipY].worldPos) < minDistance) {
+									farEnough = false;
+								}
+							}
+							if (farEnough) {
+								createShip (player, x, y);
+								count++;
+							}
+						}
+					} else {
+						if (Vector3.Distance (mouseManager.map.graph [x, y].worldPos, mouseManager.map.graph [player.Fleet [0].ShipX, player.Fleet [0].ShipY].worldPos) < maxDistance) {
+							createShip (player, x, y);
+							count++;
+						}
 					}
-					player.Fleet.Add (ship);
-					mouseManager.map.graph [x, y].isWalkable = false;
-					GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
-                    player.NbTotalShip++;
-					count++;
 				}
 			}
+			playerCount++;
 		}
+	}
+
+	public Ship createShip(Player player, int x, int y){
+		GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [x, y].worldPos, Quaternion.identity);
+		ship_go.name = "Ship_" + player.Name + "_" + player.NbTotalShip;
+		ship_go.GetComponent<Ship> ().ShipX = x;
+		ship_go.GetComponent<Ship> ().ShipY = y;
+		ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + player.NbTotalShip;
+		ship_go.GetComponent<Ship> ().Gold = GoldAmount;
+		ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
+		Ship ship = ship_go.GetComponent<Ship> ();
+		ship.Owner = player;
+		ship.addCrewMember(new Filibuster());
+		if (player.Type.Equals ("IA")) {
+			ship.addCrewMember(new PowderMonkey());
+			ship.addCrewMember(new Conjurer());
+		}
+		player.Fleet.Add (ship);
+		mouseManager.map.graph [x, y].isWalkable = false;
+		GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
+		player.NbTotalShip++;
+		return ship;
 	}
 
 	public void loadShip(GameFile game) {
@@ -430,19 +458,19 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void ResetFOW(){
-        if (currentPlayer.Type.Equals("Humain"))
-        {
-            map = mouseManager.map;
-            GameObject currentHex;
-            for (int x = 0; x < map.width; x++)
-            {
-                for (int y = 0; y < map.height; y++)
-                {
-                    currentHex = (GameObject)GameObject.Find("Hex_" + x + "_" + y);
-                    currentHex.GetComponent<Hex>().setVisibility(0);
-                }
-            }
-        }
+		if (currentPlayer.Type.Equals("Humain"))
+		{
+			map = mouseManager.map;
+			GameObject currentHex;
+			for (int x = 0; x < map.width; x++)
+			{
+				for (int y = 0; y < map.height; y++)
+				{
+					currentHex = (GameObject)GameObject.Find("Hex_" + x + "_" + y);
+					currentHex.GetComponent<Hex>().setVisibility(0);
+				}
+			}
+		}
 	}
 
 	public void RevealAreaAroundCurrentPlayerShips(){
@@ -456,9 +484,12 @@ public class GameManager : MonoBehaviour {
 			MeshRenderer[] meshRenderers;
 			Node newNode;
 
+			// Display ship hit points
+
             // Reveal Ship and ship Hex
             if (currentPlayer.Type.Equals("Humain"))
-            {
+			{
+				ship.DisplayHp(true);
                 currentHex.GetComponent<Hex>().setVisibility(2);
             }
 			newNode = new Node(ship.ShipX, ship.ShipY, new Vector3(0,0,0), false, "ship");
@@ -477,6 +508,7 @@ public class GameManager : MonoBehaviour {
 				newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 
                 ship.getTarget(n1,0);
+				ship.DisplayTargetHp (n1);
 
                 if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 					currentPlayer.ExploredHex.Add(newNode);
@@ -490,7 +522,8 @@ public class GameManager : MonoBehaviour {
                     }
 					newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 
-                    ship.getTarget(n2, 1);
+					ship.getTarget(n2, 1);
+					ship.DisplayTargetHp (n2);
 
                     if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 						currentPlayer.ExploredHex.Add(newNode);
@@ -504,7 +537,8 @@ public class GameManager : MonoBehaviour {
                         }
 						newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 
-                        ship.getTarget(n3, 2);
+						ship.getTarget(n3, 2);
+						ship.DisplayTargetHp (n3);
 
                         if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 							currentPlayer.ExploredHex.Add(newNode);
