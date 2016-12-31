@@ -23,7 +23,7 @@ public class LoadManager : MonoBehaviour {
 	// The magic works here : You can use the singleton just by indicating nager.instance
 
 	// Object Enum
-	public enum state { Inactive, StartNewMap, StartLoadedMap, LoadSave, StartEditor }
+	public enum state { Inactive, StartNewMap, StartLoadedMap, LoadSave, StartEditor, LoadMapEditor }
 
 	// LoadManager Info
 	public state LoadManagerState;
@@ -251,10 +251,30 @@ public class LoadManager : MonoBehaviour {
 		mapSettings.harborPrefab = harborPrefab;
 		mapSettings.coastPrefab = coastPrefab;
 
-		Debug.Log (MapX.ToString()+ " " + MapY.ToString ());
 		mapSettings.height = MapY;
 		mapSettings.width = MapX;
 
+		mapSettings.InitializeMap();
+
+		return mapSettings;
+	}
+
+	private MapEditor loadEditorMap(MapFile map) {
+		//////////// POUR L'EDITEUR
+		GameObject newObject = Instantiate(mapEditorPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
+		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
+
+		MapEditor mapSettings = newObject.GetComponent<MapEditor>();
+
+		mapSettings.hexPrefab = hexPrefab;
+		mapSettings.landPrefab = landPrefab;
+		mapSettings.seaPrefab = seaPrefab;
+		mapSettings.harborPrefab = harborPrefab;
+		mapSettings.coastPrefab = coastPrefab;
+
+		mapSettings.height = MapY;
+		mapSettings.width = MapX;
+		mapSettings.LoadMapRoutine(map);
 
 		return mapSettings;
 	}
@@ -322,6 +342,12 @@ public class LoadManager : MonoBehaviour {
 	private void initEditor() {
 		//////////// POUR L'EDITEUR
 		MapLoadedEditor = initEditorMap ();
+		linkObjectsEditor ();
+	}
+
+	private void loadEditor(MapFile map) {
+		//////////// POUR L'EDITEUR
+		MapLoadedEditor = loadEditorMap (map);
 		linkObjectsEditor ();
 	}
 
@@ -439,6 +465,10 @@ public class LoadManager : MonoBehaviour {
 			Debug.Log ("Chargement de l'éditeur !");
 			initEditor ();
 			break;
+		case state.LoadMapEditor:
+			Debug.Log ("Chargement de l'éditeurs avec une carte !");
+			loadPrefabricatedMapEditor (MapPrefabToLoad);
+			break;
 		default:
 			Debug.LogError ("Ca ne devrait pas arriver.");
 			break;
@@ -534,6 +564,29 @@ public class LoadManager : MonoBehaviour {
 		MapFile saveMap = (MapFile)bf.Deserialize (saveFile);
 
 		loadWorld (saveMap);
+	}
+
+	public void loadPrefabricatedMapEditor(string path) {
+		// LOADING FILE
+		///////
+		FileStream saveFile = File.OpenRead (path);
+		BinaryFormatter bf = new BinaryFormatter();
+
+		// 2. Construct a SurrogateSelector object
+		SurrogateSelector ss = new SurrogateSelector();
+
+		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ss.AddSurrogate(typeof(Vector3),
+			new StreamingContext(StreamingContextStates.All),
+			v3ss);
+
+		// 5. Have the formatter use our surrogate selector
+		bf.SurrogateSelector = ss;
+
+		Debug.Log ("Loading...");
+		MapFile saveMap = (MapFile)bf.Deserialize (saveFile);
+
+		loadEditor (saveMap);
 	}
 
 	public void save(string name) {

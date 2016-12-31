@@ -17,7 +17,7 @@ public class MapEditor : MonoBehaviour {
 	public int height;
 
 	private int size;
-	private Node[,] graph;
+	public Node[,] graph;
 	private float xOffset = Mathf.Sqrt(3)/2;
 	private float zOffset = 0.75f;
 	private GameObject newHex;
@@ -38,10 +38,11 @@ public class MapEditor : MonoBehaviour {
 	public Texture2D harborHexCursor;
 	public Texture2D treasureHexCursor;
 
+	Vector3 worldCoordTreasure;
+
 	void Start () {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		size = width * height;
-		InitializeMap();
 		btn_selectSea = (Button) GameObject.Find("btn_selectSea").GetComponent<Button>();
 		btn_selectLand = (Button) GameObject.Find("btn_selectLand").GetComponent<Button>();
 		btn_selectCoast = (Button) GameObject.Find("btn_selectCoast").GetComponent<Button>();
@@ -159,7 +160,7 @@ public class MapEditor : MonoBehaviour {
 		}		
 	}
 
-	void InitializeMap(){
+	public void InitializeMap(){
 		graph = new Node[width, height];
 		List<Vector3> V3LinesPositions = new List<Vector3>();
 		for (int x = 0; x < width; x++) {
@@ -179,6 +180,117 @@ public class MapEditor : MonoBehaviour {
 				hex_go.GetComponent<Hex> ().y = y;
 				hex_go.transform.SetParent (this.transform);
 				hex_go.isStatic = true;
+			}
+		}
+	}
+
+	public void LoadMapRoutine(MapFile SavedMap) {
+		LoadMap (SavedMap);
+		InstantiateMap (SavedMap);
+		loadFoodAndTreasures (SavedMap);
+	}
+
+	public void LoadMap(MapFile SavedMap) {
+		this.height = SavedMap.height;
+		Debug.Log ("Height: "+this.height.ToString());
+		this.width = SavedMap.width;
+		Debug.Log ("Width: "+this.width.ToString());
+
+		this.graph = new Node[width, height];
+
+		int index = 0;
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.height; j++) {
+				index = (i * this.height) + j;
+				Debug.Log (SavedMap.graph [index].type);
+
+				// Use the loop for initialise de graph too, we save one loop with this
+				float xPos = SavedMap.graph[index].x * xOffset;
+
+				// if we're an odd line, we need to reduce the offset by half
+				if (SavedMap.graph[index].y % 2 == 1) {
+					xPos += xOffset / 2f;
+				}
+
+				Vector3 worldPosition = new Vector3 (xPos, 0, SavedMap.graph[index].y * zOffset);
+				Debug.Log (worldPosition.ToString ());
+				this.graph [i, j] = new Node(SavedMap.graph[index].x,
+					SavedMap.graph[index].y,
+					worldPosition,
+					SavedMap.graph[index].isWalkable,
+					SavedMap.graph[index].type);
+
+				this.graph [i, j].tag = SavedMap.graph [index].tag;
+
+				Debug.Log ("(i * this.height) + j=" + ((i * this.height) + j).ToString());
+			}
+		}
+	}
+
+	void InstantiateMap(MapFile mapSaved) {
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				string hexType = graph [x, y].type;
+				GameObject hex_go = null;
+				switch (hexType) {
+				case "sea":
+					hex_go = (GameObject)Instantiate (seaPrefab, graph [x, y].worldPos, Quaternion.identity);
+					break;
+				case "land":
+					int index = (x * this.height) + y;
+					if(mapSaved.graph[index].LandIsCoast)
+						hex_go = (GameObject)Instantiate (coastPrefab, graph [x, y].worldPos, Quaternion.identity);
+					else 
+						hex_go = (GameObject)Instantiate (landPrefab, graph [x, y].worldPos, Quaternion.identity);
+					break;
+				case "harbor":
+					hex_go = (GameObject)Instantiate (harborPrefab, graph [x, y].worldPos, Quaternion.identity);
+					break;
+				}
+				DrawEdgesLines(hex_go);
+				hex_go.name = "Hex_" + x + "_" + y;
+				hex_go.GetComponent<Hex> ().x = x;
+				hex_go.GetComponent<Hex> ().y = y;
+				hex_go.transform.SetParent (this.transform);
+				hex_go.isStatic = true;
+			}
+		}
+	}
+
+	void loadFoodAndTreasures(MapFile saveMap) {
+		Sea SeaBuffer;
+		Land LandBuffer;
+		GameObject caseTreasure;
+		GameObject tres;
+		int index;
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				if (graph [x, y].type == "sea") {
+					index = (x * this.height) + y;
+
+					SeaBuffer = (GameObject.Find ("Hex_" + x + "_" + y)).GetComponent<Sea> ();
+
+					// On remet le bon nombre de nourriture
+					SeaBuffer.FoodQuantity = saveMap.graph [index].SeaFood;
+
+					if (saveMap.graph [index].SeaTreasure > 0) {
+						// On ajoute un trésor ! :)
+						worldCoordTreasure = graph [x,y].worldPos;
+						graph [x,y].isWalkable = false;
+						caseTreasure = GameObject.Find ("Hex_" + x + "_" + y);
+						tres = (GameObject) Instantiate (treasurePrefab, worldCoordTreasure, Quaternion.identity);
+						tres.name = caseTreasure.name+"_Treasure"+rand.Next(0,1000000000);
+						tres.transform.SetParent (caseTreasure.transform);
+						SeaBuffer.AddTreasure (saveMap.graph[index].SeaTreasure, tres);
+					}
+				}
+				if (graph [x, y].type == "land") {
+					index = (x * this.height) + y;
+
+					LandBuffer = (GameObject.Find ("Hex_" + x + "_" + y)).GetComponent<Land> ();
+					LandBuffer.IsCoast = saveMap.graph[index].LandIsCoast;
+
+				}
 			}
 		}
 	}
