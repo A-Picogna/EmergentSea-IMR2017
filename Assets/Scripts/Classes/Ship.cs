@@ -544,91 +544,35 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void UpdateFOW (){
-		bool visibleByHumain = false;
+		bool visibleByOther = false;
 		GameObject currentHex = (GameObject) GameObject.Find ("Hex_" + this.ShipX + "_" + this.ShipY);
-		List<GameObject> firstNeighboursToReveal;
-		List<GameObject> secondNeighboursToReveal;
-		List<GameObject> thirdNeighboursToReveal;
+		List<GameObject> neighbours;
 		List<GameObject> shipsAtRange;
 		MeshRenderer[] meshRenderers;
 		Node newNode;
-        // Reveal Ship and ship Hex
-		if (!owner.Type.Equals("IA")) {
-            currentHex.GetComponent<Hex>().setVisibility(2);
-        }
-		newNode = new Node(this.ShipX, this.ShipY, new Vector3(0,0,0), false, "ship");
-		if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
-			owner.ExploredHex.Add(newNode);
-		}
-
-		// Reveal 1st Neighbours
-		firstNeighboursToReveal = currentHex.GetComponent<Hex>().getNeighbours();
-		foreach (GameObject n1 in firstNeighboursToReveal) {
-			this.DisplayTargetHp (n1);
+		// We get all the neighbours in a range of 3 tiles
+		neighbours = currentHex.GetComponent<Hex> ().getNLevelOfNeighbours (0, 3);
+		foreach (GameObject n in neighbours) {
+			this.DisplayTargetHp (n);
 			if (owner.Type.Equals ("IA")) {
-				if (n1.GetComponent<Sea> () != null && n1.GetComponent<Sea> ().ShipContained != null && !n1.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
-					visibleByHumain = true;
+				if (n.GetComponent<Sea> () != null && n.GetComponent<Sea> ().ShipContained != null && !n.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
+					visibleByOther = true;
 				}
 			} else {
-				n1.GetComponent<Hex> ().setVisibility (2);
+				n.GetComponent<Hex> ().setVisibility (2);
 			}
-			newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-            if (!used)
-            {
-                getTarget(n1, 0);
-            }
-            
-            if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+			newNode = new Node(n.GetComponent<Hex>().x, n.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
+			if (!used)
+			{
+				getTarget(n, 0);
+			}
+
+			if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 				owner.ExploredHex.Add(newNode);
-			}
-			// Reveal 2nd Neighbours
-			secondNeighboursToReveal = n1.GetComponent<Hex> ().getNeighbours ();
-			foreach (GameObject n2 in secondNeighboursToReveal) {
-				this.DisplayTargetHp (n2);
-				if (owner.Type.Equals("IA")) {
-					if (n2.GetComponent<Sea> () != null && n2.GetComponent<Sea> ().ShipContained != null && !(n2.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) ) {
-						visibleByHumain = true;
-					}
-				} else {
-					n2.GetComponent<Hex> ().setVisibility (2);
-				}
-				newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-
-                if (!used)
-                {
-                    getTarget(n2, 1);
-                }
-
-                if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
-					owner.ExploredHex.Add(newNode);
-				}
-				// Reveal 3rd Neighbours
-				thirdNeighboursToReveal = n2.GetComponent<Hex> ().getNeighbours ();
-				foreach (GameObject n3 in thirdNeighboursToReveal)
-				{
-					this.DisplayTargetHp (n3);
-					if (owner.Type.Equals("IA")) {
-						if (n3.GetComponent<Sea> () != null && n3.GetComponent<Sea> ().ShipContained != null && !n3.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
-							visibleByHumain = true;
-						}
-					} else {
-						n3.GetComponent<Hex> ().setVisibility (2);
-					}
-					newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-
-                    if (!used)
-                    {
-                        getTarget(n3, 2);
-                    }
-
-                    if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
-						owner.ExploredHex.Add(newNode);
-					}
-				}
 			}
 		}
 		if (owner.Type.Equals ("IA")) {
-			if (visibleByHumain) {
+			if (visibleByOther) {
 				this.GetComponentInChildren<MeshRenderer> ().enabled = true;
 			} else {
 				this.GetComponentInChildren<MeshRenderer> ().enabled = false;

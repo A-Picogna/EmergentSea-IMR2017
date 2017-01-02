@@ -484,73 +484,30 @@ public class GameManager : MonoBehaviour {
 		Player cp = currentPlayer;
 		foreach (Ship ship in cp.Fleet) {
 			GameObject currentHex = (GameObject) GameObject.Find ("Hex_" + ship.ShipX + "_" + ship.ShipY);
-			List<GameObject> firstNeighboursToReveal;
-			List<GameObject> secondNeighboursToReveal;
-			List<GameObject> thirdNeighboursToReveal;
+			List<GameObject> neighbours;
 			MeshRenderer[] meshRenderers;
 			Node newNode;
-
-			// Display ship hit points
-
-            // Reveal Ship and ship Hex
-            if (currentPlayer.Type.Equals("Humain"))
-			{
+			// Reveal Ship and ship Hex
+			if (currentPlayer.Type.Equals("Humain")){
 				ship.DisplayHp(true);
-                currentHex.GetComponent<Hex>().setVisibility(2);
-            }
+			}
+			neighbours = currentHex.GetComponent<Hex> ().getNLevelOfNeighbours (0, 3);
+			foreach (GameObject n in neighbours) {
+				if (currentPlayer.Type.Equals("Humain")){
+					n.GetComponent<Hex>().setVisibility(2);
+				}
+				newNode = new Node(n.GetComponent<Hex>().x, n.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
+				ship.getTarget(n,0);
+				ship.DisplayTargetHp (n);
+
+				if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
+					currentPlayer.ExploredHex.Add(newNode);
+				}
+			}
 			newNode = new Node(ship.ShipX, ship.ShipY, new Vector3(0,0,0), false, "ship");
 
             if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 				currentPlayer.ExploredHex.Add(newNode);
-			}
-
-			// Reveal 1st Neighbours
-			firstNeighboursToReveal = currentHex.GetComponent<Hex>().getNeighbours();
-			foreach (GameObject n1 in firstNeighboursToReveal) {
-                if (currentPlayer.Type.Equals("Humain"))
-                {
-                    n1.GetComponent<Hex>().setVisibility(2);
-                }
-				newNode = new Node(n1.GetComponent<Hex>().x, n1.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-
-                ship.getTarget(n1,0);
-				ship.DisplayTargetHp (n1);
-
-                if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
-					currentPlayer.ExploredHex.Add(newNode);
-				}
-				// Reveal 2nd Neighbours
-				secondNeighboursToReveal = n1.GetComponent<Hex> ().getNeighbours ();
-				foreach (GameObject n2 in secondNeighboursToReveal) {
-                    if (currentPlayer.Type.Equals("Humain"))
-                    {
-                        n2.GetComponent<Hex>().setVisibility(2);
-                    }
-					newNode = new Node(n2.GetComponent<Hex>().x, n2.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-
-					ship.getTarget(n2, 1);
-					ship.DisplayTargetHp (n2);
-
-                    if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
-						currentPlayer.ExploredHex.Add(newNode);
-					}
-					// Reveal 3rd Neighbours
-					thirdNeighboursToReveal = n2.GetComponent<Hex> ().getNeighbours ();
-					foreach (GameObject n3 in thirdNeighboursToReveal) {
-                        if (currentPlayer.Type.Equals("Humain"))
-                        {
-                            n3.GetComponent<Hex>().setVisibility(2);
-                        }
-						newNode = new Node(n3.GetComponent<Hex>().x, n3.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-
-						ship.getTarget(n3, 2);
-						ship.DisplayTargetHp (n3);
-
-                        if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
-							currentPlayer.ExploredHex.Add(newNode);
-						}
-					}
-				}
 			}
 		}
 	}

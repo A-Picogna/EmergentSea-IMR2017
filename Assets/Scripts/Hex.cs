@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Hex : MonoBehaviour {
 
@@ -77,6 +78,27 @@ public class Hex : MonoBehaviour {
 
         return Neighbours;
     }
+
+
+	/**
+	 * Always set attribute depth to 0
+	 * maxDepth is the number of level of neighbours you want
+	 */
+	public List<GameObject> getNLevelOfNeighbours(int depth, int maxDepth){
+		List<GameObject> neighbours = new List<GameObject> ();
+		List<GameObject> tmpNeighbours = new List<GameObject> ();
+		if (depth >= maxDepth) {
+			return neighbours;
+		} else {			
+			neighbours = this.getNeighbours();
+			foreach (GameObject go in neighbours) {
+				tmpNeighbours.AddRange(go.GetComponent<Hex> ().getNLevelOfNeighbours (depth + 1, maxDepth));
+			}
+			neighbours.AddRange(tmpNeighbours);
+			neighbours = neighbours.Distinct ().ToList ();
+			return neighbours;
+		}
+	}
 
 	public void setVisibility(int visibilityLevel){
 		MeshRenderer[] meshRenderers;
