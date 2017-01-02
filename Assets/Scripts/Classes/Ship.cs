@@ -553,7 +553,7 @@ public class Ship : MonoBehaviour {
 		MeshRenderer[] meshRenderers;
 		Node newNode;
         // Reveal Ship and ship Hex
-        if (owner.Type != "IA") {
+		if (!owner.Type.Equals("IA")) {
             currentHex.GetComponent<Hex>().setVisibility(2);
         }
 		newNode = new Node(this.ShipX, this.ShipY, new Vector3(0,0,0), false, "ship");

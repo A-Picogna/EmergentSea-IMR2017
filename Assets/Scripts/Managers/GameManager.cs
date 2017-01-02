@@ -563,7 +563,7 @@ public class GameManager : MonoBehaviour {
             MeshRenderer[] meshRenderers;
             foreach (Node n in currentPlayer.ExploredHex)
             {
-                currentHex = (GameObject)GameObject.Find("Hex_" + n.x + "_" + n.y);
+                currentHex = GameObject.Find("Hex_" + n.x + "_" + n.y);
                 currentHex.GetComponent<Hex>().setVisibility(1);
             }
         }
