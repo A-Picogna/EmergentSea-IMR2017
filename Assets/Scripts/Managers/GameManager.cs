@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour {
 	// Public attibutes
 	public int FleetSize;
 	public int GoldAmount;
+	public float retributionStrength;
 
 	//GameFile
 	public bool loadingMode = false;
@@ -94,6 +95,7 @@ public class GameManager : MonoBehaviour {
 		// We init the fow
 		ResetFOW ();
 		RevealAreaAroundCurrentPlayerShips ();
+		CenterCameraOnFirstShip ();
 		WelcomeMessage ();
 	}
 
@@ -145,6 +147,7 @@ public class GameManager : MonoBehaviour {
 		ResetFOW ();
 		RevealAreaAlreadyExplored ();
 		RevealAreaAroundCurrentPlayerShips ();
+		CenterCameraOnFirstShip ();
 	}
 
 	public GameFile saveGameManager() {
@@ -337,6 +340,7 @@ public class GameManager : MonoBehaviour {
                 ResetFOW ();
                 RevealAreaAlreadyExplored ();
                 RevealAreaAroundCurrentPlayerShips();
+				CenterCameraOnFirstShip ();
                 Debug.Log("Human turn");
 				if (turnNumber == 1) {
 					WelcomeMessage ();
@@ -381,8 +385,8 @@ public class GameManager : MonoBehaviour {
 		int playerCount = 0;
 		foreach (Player player in players) {
 			int count = 0;
-			float minDistance = 10f;
-			float maxDistance = 5f;
+			float minDistance = Mathf.Max(map.width/2, map.height/2);
+			float maxDistance = Mathf.Max(map.width/5, map.height/5);
 			while (count < n) {
 				int x = rand.Next (1, mouseManager.map.width);
 				int y = rand.Next (1, mouseManager.map.height);
@@ -436,6 +440,7 @@ public class GameManager : MonoBehaviour {
 		foreach (CrewMember cm in ship.Crew) {
 			cm.Lp = rand.Next (1, cm.LpMax);
 		}
+		ship.RetributionStrength = retributionStrength/100;
 		player.Fleet.Add (ship);
 		mouseManager.map.graph [x, y].isWalkable = false;
 		GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
@@ -537,6 +542,18 @@ public class GameManager : MonoBehaviour {
 			"</color>" + 
 			lang.getString ("infoMessage_welcome_objectif1")
 			, 6f);
+	}
+
+	private void CenterCameraOnFirstShip(){
+		if (currentPlayer.Fleet.Count > 0) {
+			Ship ship = currentPlayer.Fleet [0];
+			GameObject cam = GameObject.Find ("Main Camera");
+			cam.transform.position = new Vector3 (
+				mouseManager.map.graph [ship.ShipX, ship.ShipY].worldPos.x, 
+				cam.transform.position.y,
+				mouseManager.map.graph [ship.ShipX, ship.ShipY].worldPos.z - 10
+			);		
+		}
 	}
 		
 }

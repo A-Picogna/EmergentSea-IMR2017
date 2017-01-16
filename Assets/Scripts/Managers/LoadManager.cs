@@ -39,6 +39,7 @@ public class LoadManager : MonoBehaviour {
 	public int MapY = 0;
 	public int FleetSize = 2;
 	public int goldAmountPerFleet = 200;
+	public int retributionStrength = 80;
 
 	//public int Parameter =;
 	//public int Parameter =;
@@ -212,6 +213,10 @@ public class LoadManager : MonoBehaviour {
 
 	public void GoldQuantitySliderCallBack(float number) {
 		this.goldAmountPerFleet = Mathf.FloorToInt (number);
+	}
+
+	public void RetributionStrengthSliderCallBack(float number) {
+		this.retributionStrength = Mathf.RoundToInt (number);
 	}
 
 	private Map initMap() {
@@ -490,6 +495,7 @@ public class LoadManager : MonoBehaviour {
 
 		gameSettings.FleetSize = this.FleetSize;
 		gameSettings.GoldAmount = this.goldAmountPerFleet;
+		gameSettings.retributionStrength = this.retributionStrength;
 
 		return gameSettings;
 	}

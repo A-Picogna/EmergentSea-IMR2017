@@ -39,11 +39,15 @@ public class NewPlayUI : MonoBehaviour {
 	public GameObject ShipNumberSlider;
 	public GameObject GoldQuantityFeedbackText;
 	public GameObject GoldQuantitySlider;
+	public GameObject RetributionStrengthFeedbackText;
+	public GameObject RetributionStrengthSlider;
 
 	private Text ShipNumberTextComponent;
 	private Slider ShipNumberSliderComponent;
 	private Text GoldQuantityTextComponent;
 	private Slider GoldQuantitySliderComponent;
+	private Text RetributionStrengthTextComponent;
+	private Slider RetributionStrengthSliderComponent;
 
 	public GameObject LaunchGameButton;
 
@@ -60,9 +64,11 @@ public class NewPlayUI : MonoBehaviour {
 
 		ShipNumberTextComponent = ShipNumberFeedbackText.gameObject.GetComponent<Text> ();
 		GoldQuantityTextComponent = GoldQuantityFeedbackText.gameObject.GetComponent<Text> ();
+		RetributionStrengthTextComponent = RetributionStrengthFeedbackText.gameObject.GetComponent<Text> ();
 
 		ShipNumberSliderComponent = ShipNumberSlider.gameObject.GetComponent<Slider> ();
 		GoldQuantitySliderComponent = GoldQuantitySlider.gameObject.GetComponent<Slider> ();
+		RetributionStrengthSliderComponent = RetributionStrengthSlider.gameObject.GetComponent<Slider> ();
 
 		populateMapList ();
 		updateValuesMap ();
@@ -99,6 +105,12 @@ public class NewPlayUI : MonoBehaviour {
 	public void OnGoldQuantitySlideValueChanged(float number) {
 		if (GoldQuantityTextComponent != null) {
 			GoldQuantityTextComponent.text = number.ToString ();
+		}
+	}
+
+	public void OnRetributionStrengthSlideValueChanged(float number) {
+		if (RetributionStrengthTextComponent != null) {
+			RetributionStrengthTextComponent.text = number.ToString ();
 		}
 	}
 
@@ -192,8 +204,10 @@ public class NewPlayUI : MonoBehaviour {
 	private void updateValuesGame() {
 		ShipNumberTextComponent.text = LoadManager.instance.FleetSize.ToString();
 		GoldQuantityTextComponent.text = LoadManager.instance.goldAmountPerFleet.ToString();
+		RetributionStrengthTextComponent.text = LoadManager.instance.retributionStrength.ToString ();
 
 		ShipNumberSliderComponent.value = LoadManager.instance.FleetSize;
 		GoldQuantitySliderComponent.value = LoadManager.instance.goldAmountPerFleet;
+		RetributionStrengthSliderComponent.value = LoadManager.instance.retributionStrength;
 	}
 }

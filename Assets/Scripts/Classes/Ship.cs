@@ -14,6 +14,7 @@ public class Ship : MonoBehaviour {
 	private Player owner;
 	private int atkCost = 5;
 	private int hp = 0;
+	private float retributionStrength = 0.8f;
 	private string textHp = "";
 	/*
 	 * Orientation in degree
@@ -229,20 +230,30 @@ public class Ship : MonoBehaviour {
 		} else if (!target.owner.Name.Equals (owner.Name)) {
 			if (energyQuantity >= atkCost) {
 				int attackValue = 0;
+				int retributionValue = 0;
 				if (AtFilibusterRange (target)) {
 					// 1 is the type code of Filibusters
-					attackValue += Attack (1, target);
+					attackValue += Attack (1, target, 1f);
+					// Retribution
+					retributionValue += target.Attack (1, this, retributionStrength);
 				}
 				if (AtPowderMonkeyRange (target)) {
 					// 2 is the type code of PowerMonkeys
-					attackValue += Attack (2, target);
+					attackValue += Attack (2, target, 1f);
+					// Retribution
+					retributionValue += target.Attack (2, this, retributionStrength);
 				}
 				if (AtConjurerRange (target)) {
 					// 3 is the type code of Conjurers
-					attackValue += Attack (3, target);
+					attackValue += Attack (3, target, 1f);
+					// Retribution
+					retributionValue += target.Attack (3, this, retributionStrength);
 				}
 				if (attackValue > 0) {
-					displayFloatingInfo (Color.red, "-" + attackValue + " HP", target.transform.position);
+					target.displayFloatingInfo (Color.red, "-" + attackValue + " PV", target.transform.position);
+					if (retributionValue > 0) {
+						this.displayFloatingInfo (Color.red, "-" + retributionValue + " PV", this.transform.position);
+					}
 					energyQuantity -= atkCost;
 				} else {
 					errorCode = 3;
@@ -356,14 +367,14 @@ public class Ship : MonoBehaviour {
 		panelHandler.showPanelTrade ();
 	}
 
-	public int Attack(int crewUsed, Ship target){
-		int attackValue = 0;
+	public int Attack(int crewUsed, Ship target, float atkStrength){
+		float attackValue = 0f;
 		switch (crewUsed) {
 		case 1:
 			// Case Filibuster
 			foreach (CrewMember c in crew) {
 				if (c.Type == crewUsed) {
-					attackValue += c.Atk;
+					attackValue += c.Atk * atkStrength;
 				}
 			}
 			GiveXP (crewUsed);
@@ -372,7 +383,7 @@ public class Ship : MonoBehaviour {
 			// Case PowderMonkey
 			foreach (CrewMember c in crew) {
 				if (c.Type == crewUsed) {
-					attackValue += c.Atk;
+					attackValue += c.Atk * atkStrength;
 				}
 			}
 			GiveXP (crewUsed);
@@ -381,14 +392,14 @@ public class Ship : MonoBehaviour {
 			// Case Conjurer
 			foreach (CrewMember c in crew) {
 				if (c.Type == crewUsed) {
-					attackValue += c.Atk;
+					attackValue += c.Atk * atkStrength;
 				}
 			}
 			GiveXP (crewUsed);
 			break;
 		}
-		target.TakeDamages (attackValue);
-		return attackValue;
+		target.TakeDamages (Mathf.RoundToInt (attackValue));
+		return Mathf.RoundToInt (attackValue);
 	}
 
 	public void GiveXP(int crewType){
@@ -442,11 +453,7 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void displayFloatingInfo(Color color, string text, Vector3 pos){
-		GameObject dmgBubble = GameObject.Find ("ShipFloatingInfo");
-		dmgBubble.GetComponent<FloatingText> ().Reinit ();
-		dmgBubble.transform.position = pos + new Vector3 (0, 0.7f, 0);
-		dmgBubble.GetComponent<TextMesh> ().color = color;
-		dmgBubble.GetComponent<TextMesh> ().text = text;
+		transform.FindChild("floatingInfo").GetComponent<FloatingText>().SetText (color, text, pos);
 	}
 
 	public int calculateEQmax(){
@@ -797,12 +804,15 @@ public class Ship : MonoBehaviour {
 		set { textHp = value; }
 	}
 
-    // ====================
-    // ====================
-
-    public PanelHandler PanelHandler
+	public PanelHandler PanelHandler
 	{
 		get { return panelHandler; }
 		set { panelHandler = value; }
+	}
+
+	public float RetributionStrength
+	{
+		get { return retributionStrength; }
+		set { retributionStrength = value; }
 	}
 }
