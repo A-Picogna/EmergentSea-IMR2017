@@ -202,7 +202,6 @@ public class Harbor : Land
                 if (admiral.RecruitmentCost > selected.Gold)
                 {
                     Debug.Log("Not enough money to build a new ship");
-                    //selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
 					errorCode = 1;
                     admiral = null;
                 }
@@ -234,14 +233,12 @@ public class Harbor : Land
                     }
                     if (!placeable)
                     {
-                        //selected.displayFloatingInfo(Color.magenta, "No place to build a ship !", selected.transform.position);
 						errorCode = 3;
                     }
                 }
             }
             else
             {
-                //selected.displayFloatingInfo(Color.magenta, "Already building a ship !", selected.transform.position);
 				errorCode = 4;
             }
         }
@@ -261,7 +258,6 @@ public class Harbor : Land
             else
             {
                 Debug.Log("No food to sell !");
-                //selected.displayFloatingInfo(Color.magenta, "No food to sell !", selected.transform.position);
 				errorCode = 5;
             }
         }
@@ -343,7 +339,6 @@ public class Harbor : Land
                 if (conjurer.RecruitmentCost > selected.Gold)
                 {
 					Debug.Log("Not enough money to recruit a conjurer");
-					//selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
 					errorCode = 1;
                     conjurer = null;
                 }
@@ -358,7 +353,6 @@ public class Harbor : Land
             else
             {
                 Debug.Log("Too many members in the crew");
-				//selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
 				errorCode = 2;
             }
             Debug.Log("Nb member : " + selected.Crew.Count);
@@ -379,7 +373,6 @@ public class Harbor : Land
                 if (PM.RecruitmentCost > selected.Gold)
                 {
 					Debug.Log("Not enough money to recruit a PowderMonkey");
-					//selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
 					errorCode = 1;
                     PM = null;
                 }
@@ -394,7 +387,6 @@ public class Harbor : Land
             else
             {
 				Debug.Log("Too many members in the crew");
-				//selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
 				errorCode = 2;
             }
             Debug.Log("Nb member : " + selected.Crew.Count);
@@ -415,7 +407,6 @@ public class Harbor : Land
                 if (filibuster.RecruitmentCost > selected.Gold)
                 {
 					Debug.Log("Not enough money to recruit a filibuster");
-					//selected.displayFloatingInfo(Color.magenta, "Not enough money !", selected.transform.position);
 					errorCode = 1;
                     filibuster = null;
                 }
@@ -430,7 +421,6 @@ public class Harbor : Land
             else
             {
 				Debug.Log("Too many members in the crew");
-				//selected.displayFloatingInfo(Color.magenta, "Too many members in the ship !", selected.transform.position);
 				errorCode = 2;
             }
             Debug.Log("Nb member : " + selected.Crew.Count);
