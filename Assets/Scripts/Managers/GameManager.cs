@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 using System.IO;
+using System.Threading;
 
 public class GameManager : MonoBehaviour {
 
@@ -296,6 +297,9 @@ public class GameManager : MonoBehaviour {
 	{
         if (!aiIsPlaying)
         {
+            /*Debug.Log("wait");
+            Thread.Sleep(5000);
+            Debug.Log("ok");*/
             ResetFOW();
             RevealAreaAlreadyExplored();
             RevealAreaAroundCurrentPlayerShips();
@@ -502,7 +506,9 @@ public class GameManager : MonoBehaviour {
 					n.GetComponent<Hex>().setVisibility(2);
 				}
 				newNode = new Node(n.GetComponent<Hex>().x, n.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
-				ship.getTarget(n,0);
+                //Solution à verifier
+                float distance = Mathf.Abs(Vector3.Distance(currentHex.transform.position, n.transform.position));
+                ship.getTarget(n,(int)Mathf.Floor(distance));
 				ship.DisplayTargetHp (n);
 
 				if (!currentPlayer.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {

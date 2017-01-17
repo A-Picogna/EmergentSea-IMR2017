@@ -570,8 +570,11 @@ public class Ship : MonoBehaviour {
 			}
 			newNode = new Node(n.GetComponent<Hex>().x, n.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
 			if (!used)
-			{
-				getTarget(n, 0);
+            {
+
+                //Solution à verifier
+                float distance = Mathf.Abs(Vector3.Distance(currentHex.transform.position, n.transform.position));
+                getTarget(n, (int)Mathf.Floor(distance));
 			}
 
 			if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {

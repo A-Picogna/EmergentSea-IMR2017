@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 public class AiScript {
     public string difficulty;
@@ -66,7 +67,10 @@ public class AiScript {
 
     public bool turn(Player player, Map map)
     {
-        if(movingShip != null && movingShip.CurrentPath != null && movingShip.CurrentPath.Count > 0)
+        Debug.Log("wait");
+            Thread.Sleep(1000);
+            Debug.Log("ok");
+        if (movingShip != null && movingShip.CurrentPath != null && movingShip.CurrentPath.Count > 0)
         {
             return true;
         }
