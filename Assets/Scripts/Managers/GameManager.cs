@@ -39,11 +39,13 @@ public class GameManager : MonoBehaviour {
 	int turnNumber;
 	System.Random rand;
     string lastSelected = "";
+	bool aiTurn;
 	private Lang lang;
 	private int returnInteractionCode;
 
     //AI
     AiScript AI;
+    public bool aiIsPlaying;
 
 	// Public attibutes
 	public int FleetSize;
@@ -67,6 +69,8 @@ public class GameManager : MonoBehaviour {
 
 	public void initGameManager() {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
+		aiTurn = false;
+		aiIsPlaying = false;
 		AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
@@ -98,6 +102,8 @@ public class GameManager : MonoBehaviour {
 
 	public void loadGameManager(GameFile game) {
 		this.lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
+		this.aiTurn = false;
+		this.aiIsPlaying = false;
 		this.AI = new AiScript();
 		this.rand = new System.Random();
 		this.turnNumber = game.turnNumber;
@@ -185,11 +191,16 @@ public class GameManager : MonoBehaviour {
 		}
 		if (!checkInit) {
 			panelHandler.removeAllShip ();
-			foreach (Ship ship in currentPlayerFleet) {
-				panelHandler.addShip (ship);
+			if (!aiTurn) {
+				foreach (Ship ship in currentPlayerFleet) {
+					panelHandler.addShip (ship);
+				}
+				panelHandler.refreshListShipDisplay ();
+				checkInit = true;
+			} else {
+				panelHandler.refreshListShipDisplay ();
+				checkInit = true;
 			}
-			panelHandler.refreshListShipDisplay ();
-			checkInit = true;
 		}
         if(mouseManager.harbor == true)
         {
@@ -238,6 +249,12 @@ public class GameManager : MonoBehaviour {
 			panelHandler.initPanelEnnemyShip ();
             panelHandler.hidePanelHarbor();
 		}
+
+        if (aiTurn)
+        {
+            aiTurn = false;
+            NextPlayer();
+        }
     }
 
 	void CheckShipsToDestroy(Player player){
@@ -278,38 +295,45 @@ public class GameManager : MonoBehaviour {
 
 	void NextPlayer()
 	{
-        ResetFOW();
-        RevealAreaAlreadyExplored();
-        RevealAreaAroundCurrentPlayerShips();
-            
-        mouseManager.selectedUnit = null;
-        if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0)
+        if (!aiIsPlaying)
         {
-            foreach (Ship ship in currentPlayer.Fleet)
-            {
-                ship.Playable = false;
-            }
-		}
+            /*Debug.Log("wait");
+            Thread.Sleep(5000);
+            Debug.Log("ok");*/
+            ResetFOW();
+            RevealAreaAlreadyExplored();
+            RevealAreaAroundCurrentPlayerShips();
 
-        currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
-        if (currentPlayerNumber == 0)
-        {
-            NextTurn();
-        }
-        currentPlayer = players[currentPlayerNumber];
-
-        foreach (Harbor harbor in currentPlayer.Harbors)
-        {
-            if (harbor.Building)
+            AI.MovingShip = null;
+            mouseManager.selectedUnit = null;
+            if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0)
             {
-                if (harbor.RemainingBuildingTime > 1)
+                foreach (Ship ship in currentPlayer.Fleet)
                 {
-                    harbor.RemainingBuildingTime--;
-                    Debug.Log(harbor.RemainingBuildingTime);
+                    ship.Playable = false;
                 }
-                else
+			}
+
+            currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
+            if (currentPlayerNumber == 0)
+            {
+                NextTurn();
+            }
+            currentPlayer = players[currentPlayerNumber];
+
+            foreach (Harbor harbor in currentPlayer.Harbors)
+            {
+                if (harbor.Building)
                 {
-                    harbor.Build(map);
+                    if (harbor.RemainingBuildingTime > 1)
+                    {
+                        harbor.RemainingBuildingTime--;
+                        Debug.Log(harbor.RemainingBuildingTime);
+                    }
+                    else
+                    {
+                        harbor.Build(map);
+                    }
                 }
             }
         }
@@ -333,7 +357,29 @@ public class GameManager : MonoBehaviour {
             }
             else
             {
-                NextPlayer();
+                //Debug.Log("AI playing...");
+                if (!aiIsPlaying)
+                {
+                    foreach (Ship ship in currentPlayer.Fleet)
+                    {
+                        ship.Used = false;
+                        ship.TargetDistance = -1;
+                        ship.RefuelEnergy();
+                    }
+                    RevealAreaAroundCurrentPlayerShips();
+                }
+                if(AI.MovingShip != null && AI.MovingShip.TargetDistance != -1)
+                {
+                    //Calculate new path
+                    Debug.Log("Change path");
+                    AI.goToTarget(AI.MovingShip, map);
+                    aiIsPlaying = true;
+                }
+                else
+                {
+                    aiIsPlaying = AI.turn(currentPlayer, map);
+                }
+                aiTurn = true;
             }
 		}
 		checkInit = false;
