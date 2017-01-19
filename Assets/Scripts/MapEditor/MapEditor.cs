@@ -24,6 +24,7 @@ public class MapEditor : MonoBehaviour {
 	private GameObject newHex;
 	private Vector3 mousePos;
 	private int selectedType = 0;
+	private List<Ship> ships;
 	System.Random rand;
 
 	public Button btn_selectSea;
@@ -40,6 +41,7 @@ public class MapEditor : MonoBehaviour {
 	public Texture2D harborHexCursor;
 	public Texture2D treasureHexCursor;
 	public Texture2D shipCursor;
+
 
 	Vector3 worldCoordTreasure;
 
@@ -209,13 +211,8 @@ public class MapEditor : MonoBehaviour {
 		Ship ship = ship_go.GetComponent<Ship> ();
 		ship.Owner = player;
 		ship.addCrewMember(new Filibuster());
-		ship.addCrewMember(new Filibuster());
-		//if (player.Type.Equals ("IA")) {
 		ship.addCrewMember(new PowderMonkey());
 		ship.addCrewMember(new Conjurer());
-		ship.addCrewMember(new PowderMonkey());
-		ship.addCrewMember(new Conjurer());
-		//}
 		foreach (CrewMember cm in ship.Crew) {
 			cm.Lp = rand.Next (1, cm.LpMax);
 		}
@@ -223,6 +220,7 @@ public class MapEditor : MonoBehaviour {
 		this.graph [x, y].isWalkable = false;
 		GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
 		player.NbTotalShip++;
+		this.ships.Add (ship_go.GetComponent<Ship>());
 		return ship;
 	}
 
