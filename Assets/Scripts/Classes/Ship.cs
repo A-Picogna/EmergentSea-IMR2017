@@ -14,7 +14,6 @@ public class Ship : MonoBehaviour {
 	private Player owner;
 	private int atkCost = 5;
 	private int hp = 0;
-	private float retributionStrength = 0.8f;
 	private string textHp = "";
 	/*
 	 * Orientation in degree
@@ -235,19 +234,19 @@ public class Ship : MonoBehaviour {
 					// 1 is the type code of Filibusters
 					attackValue += Attack (1, target, 1f);
 					// Retribution
-					retributionValue += target.Attack (1, this, retributionStrength);
+					retributionValue += target.Attack (1, this, RetributionStrength);
 				}
 				if (AtPowderMonkeyRange (target)) {
 					// 2 is the type code of PowerMonkeys
 					attackValue += Attack (2, target, 1f);
 					// Retribution
-					retributionValue += target.Attack (2, this, retributionStrength);
+					retributionValue += target.Attack (2, this, RetributionStrength);
 				}
 				if (AtConjurerRange (target)) {
 					// 3 is the type code of Conjurers
 					attackValue += Attack (3, target, 1f);
 					// Retribution
-					retributionValue += target.Attack (3, this, retributionStrength);
+					retributionValue += target.Attack (3, this, RetributionStrength);
 				}
 				if (attackValue > 0) {
 					target.displayFloatingInfo (Color.red, "-" + attackValue + " PV", target.transform.position);
@@ -815,7 +814,6 @@ public class Ship : MonoBehaviour {
 
 	public float RetributionStrength
 	{
-		get { return retributionStrength; }
-		set { retributionStrength = value; }
+		get { return (GameObject.Find("GameManager").GetComponent<GameManager>().retributionStrength / 100); }
 	}
 }

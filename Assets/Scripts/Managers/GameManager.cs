@@ -398,7 +398,6 @@ public class GameManager : MonoBehaviour {
 		foreach (CrewMember cm in ship.Crew) {
 			cm.Lp = rand.Next (1, cm.LpMax);
 		}
-		ship.RetributionStrength = retributionStrength/100;
 		player.Fleet.Add (ship);
 		mouseManager.map.graph [x, y].isWalkable = false;
 		GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;

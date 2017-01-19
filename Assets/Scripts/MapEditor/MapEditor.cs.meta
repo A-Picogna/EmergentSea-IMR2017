@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: be46179641a499a43bd1f2c62a8b5839
-timeCreated: 1477825803
+timeCreated: 1484754381
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
@@ -11,8 +11,23 @@ MonoImporter:
       type: 2}
   - seaPrefab: {fileID: 1000011908614764, guid: 0dde0cea85f9cc845a983d172e8f7cce,
       type: 2}
+  - coastPrefab: {instanceID: 0}
+  - harborPrefab: {instanceID: 0}
+  - treasurePrefab: {instanceID: 0}
   - shipPrefab: {fileID: 1000013210916046, guid: c3f720dc7a5e5754da5d9b2e16c6b447,
       type: 2}
+  - btn_selectSea: {instanceID: 0}
+  - btn_selectLand: {instanceID: 0}
+  - btn_selectCoast: {instanceID: 0}
+  - btn_selectHarbor: {instanceID: 0}
+  - btn_selectTreasure: {instanceID: 0}
+  - btn_selectShip: {instanceID: 0}
+  - seaHexCursor: {fileID: 2800000, guid: 494543ac49aa57e4dada5a326b9c280c, type: 3}
+  - landHexCursor: {fileID: 2800000, guid: 1cbe203c2d8efff42adf30bf464f2645, type: 3}
+  - coastHexCursor: {fileID: 2800000, guid: 00de13f3976ac224baa4ddd4af4f4f7b, type: 3}
+  - harborHexCursor: {fileID: 2800000, guid: 1cbe203c2d8efff42adf30bf464f2645, type: 3}
+  - treasureHexCursor: {fileID: 2800000, guid: eb7e59882e824ff4fb5353d6addc540c, type: 3}
+  - shipCursor: {fileID: 2800000, guid: a4d72a4b6715b074082b80c2eda874e7, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
