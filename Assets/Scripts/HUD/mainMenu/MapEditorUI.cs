@@ -31,7 +31,7 @@ public class MapEditorUI : MonoBehaviour
 
 	void Start() {
 		// Initilialize Components
-		Debug.Log("Test");
+		//Debug.Log("Test");
 		MapXFeedbackTextComponent = MapXFeedbackText.gameObject.GetComponent<Text> (); //
 		MapYFeedbackTextComponent = MapYFeedbackText.gameObject.GetComponent<Text> ();
 

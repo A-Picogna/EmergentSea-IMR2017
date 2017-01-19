@@ -5,7 +5,8 @@ using System.Collections.Generic;
 [System.Serializable]
 public class PlayerStruct
 {
-	public string type, name;
+	public bool type;
+	public string name;
 	public Color color;
 	public List<ShipStruct> fleet;
 	public List<HarborStruct> harbors;
@@ -13,7 +14,7 @@ public class PlayerStruct
 	public List<NodeStruct> exploredHex;
 
 	public PlayerStruct(Player p) {
-		this.type = p.Type;
+		this.type = p.IsHuman;
 		this.name= p.Name;
 		this.color= p.Color;
 

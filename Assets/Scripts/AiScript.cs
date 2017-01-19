@@ -67,9 +67,9 @@ public class AiScript {
 
     public bool turn(Player player, Map map)
     {
-        Debug.Log("wait");
+        //Debug.Log("wait");
             Thread.Sleep(1000);
-            Debug.Log("ok");
+            //Debug.Log("ok");
         if (movingShip != null && movingShip.CurrentPath != null && movingShip.CurrentPath.Count > 0)
         {
             return true;
@@ -230,10 +230,10 @@ public class AiScript {
         {
             if(!ship.Used)
             {
-                Debug.Log(ship.TargetDistance);
+                //Debug.Log(ship.TargetDistance);
                 if (ship.TargetDistance != -1)
                 {
-                    Debug.Log("Ship near");
+                    //Debug.Log("Ship near");
                     goToTarget(ship, map);
                     movingShip = ship;
                     return true;
@@ -256,7 +256,7 @@ public class AiScript {
 
     public void explore(Ship ship, Map map)
     {
-        Debug.Log("exploring");
+        //Debug.Log("exploring");
         bool ok2 = false;
         while (!ok2)
         {
@@ -305,8 +305,8 @@ public class AiScript {
 
     public void goToTarget(Ship ship, Map map)
     {
-        Debug.Log("Check if atk is possible");
-        Debug.Log("Distance "+ship.TargetDistance);
+        //Debug.Log("Check if atk is possible");
+        //Debug.Log("Distance "+ship.TargetDistance);
 
         bool canAtk = false;
         Ship target = GameObject.Find("Hex_" + ship.TargetX + "_" + ship.TargetY).GetComponent<Sea>().ShipContained;
@@ -342,7 +342,7 @@ public class AiScript {
             }
             if (canAtk && ship.EnergyQuantity >= ship.AtkCost)
             {
-                Debug.Log("Attacking target");
+                //Debug.Log("Attacking target");
                 ship.Interact(target);
             }
             else if(ship.EnergyQuantity > 0 && ship.TargetDistance > 0)
@@ -361,26 +361,26 @@ public class AiScript {
                 }
                 if(bestPath != null)
                 {
-                    Debug.Log("Going near the target");
+                    //Debug.Log("Going near the target");
                     ship.CurrentPath = bestPath;
                     ship.TargetDistance = -1;
                     ship.Used = false;
                 }
                 else
                 {
-                    Debug.Log("Can't move or atk anymore");
+                    //Debug.Log("Can't move or atk anymore");
                     ship.TargetDistance = -1;
                 }
             }
             else
             {
-                Debug.Log("Can't move or atk anymore, nearest or no energy");
+                //Debug.Log("Can't move or atk anymore, nearest or no energy");
                 ship.TargetDistance = -1;
             }
         }
         else
         {
-            Debug.Log("Nothing to attack");
+            //Debug.Log("Nothing to attack");
             ship.TargetDistance = -1;
         }
     }

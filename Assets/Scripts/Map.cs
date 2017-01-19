@@ -312,9 +312,9 @@ public class Map : MonoBehaviour {
         for (int test=0;test<idGroupLand;test++)
         {
             moy += GroupListPossibleHarbor[test].Count;
-            Debug.Log("Groupe de terre "+test+" possede "+GroupListPossibleHarbor[test].Count+" plages (nb ports possibles)");
+            //Debug.Log("Groupe de terre "+test+" possede "+GroupListPossibleHarbor[test].Count+" plages (nb ports possibles)");
         }
-        Debug.Log("Moyenne du nombre de ports possible par groupe de terre : " + moy / (idGroupLand - 1));
+        //Debug.Log("Moyenne du nombre de ports possible par groupe de terre : " + moy / (idGroupLand - 1));
          */
 
         //Create an harbor for a group of land
@@ -597,12 +597,12 @@ public class Map : MonoBehaviour {
 		int index = 0;
 		MapFile mapSaved = new MapFile();
 		mapSaved.height = this.height;
-		Debug.Log ("Height: "+this.height.ToString());
+		//Debug.Log ("Height: "+this.height.ToString());
 		mapSaved.width = this.width;
-		Debug.Log ("Width: "+this.width.ToString());
+		//Debug.Log ("Width: "+this.width.ToString());
 		mapSaved.graph = new NodeStruct[(this.height * this.width)];
 
-		Debug.Log ("MapSaved_size=" + (this.height * this.width));
+		//Debug.Log ("MapSaved_size=" + (this.height * this.width));
 
 		int k = 0;
 		Sea SeaBuffer;
@@ -636,9 +636,9 @@ public class Map : MonoBehaviour {
 
 	public void LoadMap(MapFile SavedMap) {
 		this.height = SavedMap.height;
-		Debug.Log ("Height: "+this.height.ToString());
+		//Debug.Log ("Height: "+this.height.ToString());
 		this.width = SavedMap.width;
-		Debug.Log ("Width: "+this.width.ToString());
+		//Debug.Log ("Width: "+this.width.ToString());
 
 		this.graph = new Node[width, height];
 
@@ -646,7 +646,7 @@ public class Map : MonoBehaviour {
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.height; j++) {
 				index = (i * this.height) + j;
-				Debug.Log (SavedMap.graph [index].type);
+				//Debug.Log (SavedMap.graph [index].type);
 
 				// Use the loop for initialise de graph too, we save one loop with this
 				float xPos = SavedMap.graph[index].x * xOffset;
@@ -657,7 +657,7 @@ public class Map : MonoBehaviour {
 				}
 
 				Vector3 worldPosition = new Vector3 (xPos, 0, SavedMap.graph[index].y * zOffset);
-				Debug.Log (worldPosition.ToString ());
+				//Debug.Log (worldPosition.ToString ());
 				this.graph [i, j] = new Node(SavedMap.graph[index].x,
 					SavedMap.graph[index].y,
 					worldPosition,
@@ -666,7 +666,7 @@ public class Map : MonoBehaviour {
 
 				this.graph [i, j].tag = SavedMap.graph [index].tag;
 
-				Debug.Log ("(i * this.height) + j=" + ((i * this.height) + j).ToString());
+				//Debug.Log ("(i * this.height) + j=" + ((i * this.height) + j).ToString());
 			}
 		}
 

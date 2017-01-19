@@ -21,7 +21,6 @@ public class MainCamera : MonoBehaviour {
 	void Start () {
 		int MapWidth;
 		int MapHeight;
-		Debug.Log (SceneManager.GetActiveScene ().name.ToString ());
 		if(SceneManager.GetActiveScene().name.Equals("map_editor")) {
 			MapEditor tmpMap = GameObject.Find ("MapEditor").GetComponent<MapEditor> ();
 			MapWidth = tmpMap.width;

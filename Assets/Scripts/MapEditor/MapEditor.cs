@@ -61,12 +61,12 @@ public class MapEditor : MonoBehaviour {
 		shipHUD.transform.Find ("input_owner").GetComponentInChildren<Text> ().text = lang.getString("editor_addShipHUD_shipOwner");
 		shipHUD.transform.Find ("btn_ok").GetComponentInChildren<Text> ().text = lang.getString("editor_addShipHUD_validate");*/
 
-		btn_selectSea.onClick.AddListener (() => setListener (0, seaHexCursor));
-		btn_selectLand.onClick.AddListener(() => setListener (1, landHexCursor));
-		btn_selectCoast.onClick.AddListener(() => setListener (2, coastHexCursor));
-		btn_selectHarbor.onClick.AddListener(() => setListener (3, harborHexCursor));
-		btn_selectTreasure.onClick.AddListener(() => setListener (4, treasureHexCursor));
-		btn_selectShip.onClick.AddListener(() => setListener (5, shipCursor));
+		btn_selectSea.onClick.AddListener (() => setCursor (0, seaHexCursor));
+		btn_selectLand.onClick.AddListener(() => setCursor (1, landHexCursor));
+		btn_selectCoast.onClick.AddListener(() => setCursor (2, coastHexCursor));
+		btn_selectHarbor.onClick.AddListener(() => setCursor (3, harborHexCursor));
+		btn_selectTreasure.onClick.AddListener(() => setCursor (4, treasureHexCursor));
+		btn_selectShip.onClick.AddListener(() => setCursor (5, shipCursor));
 
 		//Button btn_save = GameObject.Find ("btn_save").GetComponent<Button>();
 		//btn_save.onClick.AddListener (() => {
@@ -90,7 +90,7 @@ public class MapEditor : MonoBehaviour {
 		}
 	}
 
-	public void setListener(int i, Texture2D cursor){
+	public void setCursor(int i, Texture2D cursor){
 		selectedType = i;
 		Cursor.SetCursor (cursor, new Vector2 (cursor.width / 2, cursor.height / 2), CursorMode.Auto);
 	}
@@ -187,22 +187,20 @@ public class MapEditor : MonoBehaviour {
 						DestroyImmediate (ourHitObject.GetComponent<Sea> ().ShipContained);
 						ourHitObject.GetComponent<Sea> ().RemoveShip();
 					}
-					ShowShipHUD();
-					//createShip (player, ourHitObject.GetComponent<Sea> ().x, ourHitObject.GetComponent<Sea> ().y);
+					GameObject.Find ("HUDAddShip").GetComponent<AddShipPanel> ().addShip (ourHitObject.GetComponent<Sea> ().x, ourHitObject.GetComponent<Sea> ().y);
 				}
 				break;
 			}
 		}		
 	}
 
-	public void ShowShipHUD(){
-		shipHUD.SetActive(true);
-
-	}
-
-	public Ship createShip(Player player, int x, int y){
+	public Ship createShip(Player player, int x, int y, string name){
 		GameObject ship_go = (GameObject)Instantiate (shipPrefab, this.graph [x, y].worldPos, Quaternion.identity);
-		ship_go.name = "Ship_" + player.Name + "_" + player.NbTotalShip;
+		if (name.Equals ("")) {
+			ship_go.name = "Ship_" + player.Name + "_" + player.NbTotalShip;
+		} else {
+			ship_go.name = name;
+		}
 		ship_go.GetComponent<Ship> ().ShipX = x;
 		ship_go.GetComponent<Ship> ().ShipY = y;
 		ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + player.NbTotalShip;
@@ -260,9 +258,9 @@ public class MapEditor : MonoBehaviour {
 
 	public void LoadMap(MapFile SavedMap) {
 		this.height = SavedMap.height;
-		Debug.Log ("Height: "+this.height.ToString());
+		//Debug.Log ("Height: "+this.height.ToString());
 		this.width = SavedMap.width;
-		Debug.Log ("Width: "+this.width.ToString());
+		//Debug.Log ("Width: "+this.width.ToString());
 
 		this.graph = new Node[width, height];
 
@@ -270,7 +268,7 @@ public class MapEditor : MonoBehaviour {
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.height; j++) {
 				index = (i * this.height) + j;
-				Debug.Log (SavedMap.graph [index].type);
+				//Debug.Log (SavedMap.graph [index].type);
 
 				// Use the loop for initialise de graph too, we save one loop with this
 				float xPos = SavedMap.graph[index].x * xOffset;
@@ -281,7 +279,7 @@ public class MapEditor : MonoBehaviour {
 				}
 
 				Vector3 worldPosition = new Vector3 (xPos, 0, SavedMap.graph[index].y * zOffset);
-				Debug.Log (worldPosition.ToString ());
+				//Debug.Log (worldPosition.ToString ());
 				this.graph [i, j] = new Node(SavedMap.graph[index].x,
 					SavedMap.graph[index].y,
 					worldPosition,
@@ -345,7 +343,7 @@ public class MapEditor : MonoBehaviour {
 						graph [x,y].isWalkable = false;
 						caseTreasure = GameObject.Find ("Hex_" + x + "_" + y);
 						tres = (GameObject) Instantiate (treasurePrefab, worldCoordTreasure, Quaternion.identity);
-						tres.name = caseTreasure.name+"_Treasure"+rand.Next(0,1000000000);
+						tres.name = caseTreasure.name + "_Treasure";
 						tres.transform.SetParent (caseTreasure.transform);
 						SeaBuffer.AddTreasure (saveMap.graph[index].SeaTreasure, tres);
 					}
@@ -389,12 +387,12 @@ public class MapEditor : MonoBehaviour {
 		int index = 0;
 		MapFile mapSaved = new MapFile();
 		mapSaved.height = this.height;
-		Debug.Log ("Height: "+this.height.ToString());
+		//Debug.Log ("Height: "+this.height.ToString());
 		mapSaved.width = this.width;
-		Debug.Log ("Width: "+this.width.ToString());
+		//Debug.Log ("Width: "+this.width.ToString());
 		mapSaved.graph = new NodeStruct[(this.height * this.width)];
 
-		Debug.Log ("MapSaved_size=" + (this.height * this.width));
+		//Debug.Log ("MapSaved_size=" + (this.height * this.width));
 
 		int k = 0;
 		Sea SeaBuffer;

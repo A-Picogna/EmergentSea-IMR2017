@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: be46179641a499a43bd1f2c62a8b5839
-timeCreated: 1484754381
+timeCreated: 1484844088
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
@@ -11,11 +11,15 @@ MonoImporter:
       type: 2}
   - seaPrefab: {fileID: 1000011908614764, guid: 0dde0cea85f9cc845a983d172e8f7cce,
       type: 2}
-  - coastPrefab: {instanceID: 0}
-  - harborPrefab: {instanceID: 0}
-  - treasurePrefab: {instanceID: 0}
+  - coastPrefab: {fileID: 1000014118047014, guid: 3bfb42b51d3191f43b739061af1e6a59,
+      type: 2}
+  - harborPrefab: {fileID: 1000011333752090, guid: 42a33eac4f0167b4184123c7bf431756,
+      type: 2}
+  - treasurePrefab: {fileID: 1000013007713540, guid: e4c7647d0a6cdf247bafcc2f4371b36e,
+      type: 2}
   - shipPrefab: {fileID: 1000013210916046, guid: c3f720dc7a5e5754da5d9b2e16c6b447,
       type: 2}
+  - shipHUD: {instanceID: 0}
   - btn_selectSea: {instanceID: 0}
   - btn_selectLand: {instanceID: 0}
   - btn_selectCoast: {instanceID: 0}

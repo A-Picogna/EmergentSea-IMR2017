@@ -59,7 +59,7 @@ public class SceneLoader : MonoBehaviour {
 //		// We wait just 3 seconds to feel the loading
 //		yield return new WaitForSeconds (1);
 //
-//		Debug.Log ("LoadSceneAsync");
+//		//Debug.Log ("LoadSceneAsync");
 //
 //		// Start an ansync operation to load the scene
 //		async = SceneManager.LoadSceneAsync("map", LoadSceneMode.Single);

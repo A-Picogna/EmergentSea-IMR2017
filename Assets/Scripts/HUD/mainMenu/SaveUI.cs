@@ -55,12 +55,12 @@ public class SaveUI : MonoBehaviour {
 
 		for(int i=0; i<saveList.Length; i++){
 			GameObject saveObject = (GameObject)Instantiate (SaveUIPrefab, SaveList.transform, false);
-			Debug.Log (saveObject.ToString ());
+			//Debug.Log (saveObject.ToString ());
 			SaveFileLine.Add(saveObject);
 			SaveFileLine [i].name = "Save_" + i;
 			///SaveFileLine [offset].transform.SetParent(SaveList.transform, false);
-			Debug.Log("lol");
-			Debug.Log (saveObject.ToString ());
+			//Debug.Log("lol");
+			//Debug.Log (saveObject.ToString ());
 
 			if(!amIInGame)
 			{
@@ -76,7 +76,7 @@ public class SaveUI : MonoBehaviour {
 			setButtonOnClickListener ((SaveFileLine [i].GetComponent<Button> ()), saveList [i]);
 			//(SaveFileLine [i].GetComponentInChildren <Text> ()).text = Path.GetFileName(saveList[i]);
 			//(SaveFileLine [i].GetComponent<Button>()).onClick.AddListener (() => {
-			//	Debug.Log(saveList[i].ToString());
+			//	//Debug.Log(saveList[i].ToString());
 			//	SelectSave(saveList[i]);
 			//});
 		}
@@ -147,7 +147,7 @@ public class SaveUI : MonoBehaviour {
 			break;
 		case State.Saving:
 			NewSaveUI.SetActive (true);
-			if(LoadManager.instance.gameManager.aiIsPlaying == false){
+			if(LoadManager.instance.gameManager.currentPlayer.IsHuman){
 				SaveButton.SetActive (true);
 			} else {
 				SaveButton.SetActive (false);
