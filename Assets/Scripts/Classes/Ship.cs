@@ -6,7 +6,7 @@ public class Ship : MonoBehaviour {
 
 	private List<Node> currentPath = null;
 	private int food = 0;
-	private int gold = 200;
+	private int gold = 0;
 	private int energyQuantity = 0;
 	private int shipX = -1;
 	private int shipY = -1;

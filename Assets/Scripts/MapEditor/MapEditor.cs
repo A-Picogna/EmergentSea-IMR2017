@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.IO;
+using UnityEngine.EventSystems;
 
 public class MapEditor : MonoBehaviour {
 
@@ -16,16 +17,18 @@ public class MapEditor : MonoBehaviour {
 	public GameObject shipHUD;
 	public int width;
 	public int height;
+	public Node[,] graph;
 
 	private int size;
-	public Node[,] graph;
 	private float xOffset = Mathf.Sqrt(3)/2;
 	private float zOffset = 0.75f;
 	private GameObject newHex;
 	private Vector3 mousePos;
 	private int selectedType = 0;
 	private List<Ship> ships;
-	System.Random rand;
+	private System.Random rand;
+	private Lang lang;
+	private List<Player> players;
 
 	public Button btn_selectSea;
 	public Button btn_selectLand;
@@ -33,7 +36,6 @@ public class MapEditor : MonoBehaviour {
 	public Button btn_selectHarbor;
 	public Button btn_selectTreasure;
 	public Button btn_selectShip;
-	private Lang lang;
 
 	public Texture2D seaHexCursor;
 	public Texture2D landHexCursor;
@@ -46,6 +48,7 @@ public class MapEditor : MonoBehaviour {
 	Vector3 worldCoordTreasure;
 
 	void Start () {
+		players = new List<Player>();
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		size = width * height;
 		btn_selectSea = (Button) GameObject.Find("btn_selectSea").GetComponent<Button>();
@@ -56,12 +59,12 @@ public class MapEditor : MonoBehaviour {
 		btn_selectShip = (Button) GameObject.Find("btn_selectShip").GetComponent<Button>();
 
 		shipHUD = (GameObject) GameObject.Find ("HUDAddShip");
-		/*shipHUD.transform.Find ("txt_menuLabel").GetComponent<Text> ().text = lang.getString("editor_addShipHUD_menuLabel");
-		shipHUD.transform.Find ("Placeholder").GetComponent<Text> ().text = lang.getString("player")+" 1";
-		shipHUD.transform.Find ("input_owner").GetComponent<Dropdown> ().options[0].text = lang.getString("player")+" 2";
-		shipHUD.transform.Find ("input_owner").GetComponent<Dropdown> ().options[1].text = lang.getString("editor_addShipHUD_shipName");
-		shipHUD.transform.Find ("input_owner").GetComponentInChildren<Text> ().text = lang.getString("editor_addShipHUD_shipOwner");
-		shipHUD.transform.Find ("btn_ok").GetComponentInChildren<Text> ().text = lang.getString("editor_addShipHUD_validate");*/
+		GameObject.Find ("txt_addShip_menuLabel").GetComponent<Text> ().text = lang.getString("editor_addShipHUD_menuLabel");
+		GameObject.Find ("shipName_placeholder").GetComponent<Text> ().text = lang.getString("editor_addShipHUD_shipName");
+		GameObject.Find ("input_owner").GetComponent<Dropdown> ().options[0].text = lang.getString("player")+"1";
+		GameObject.Find ("input_owner").GetComponent<Dropdown> ().options[1].text = lang.getString("player")+"2";
+		GameObject.Find ("input_owner").GetComponentInChildren<Text> ().text = lang.getString("editor_addShipHUD_shipOwner");
+		GameObject.Find ("btn_ok").GetComponentInChildren<Text> ().text = lang.getString("editor_addShipHUD_validate");
 
 		btn_selectSea.onClick.AddListener (() => setCursor (0, seaHexCursor));
 		btn_selectLand.onClick.AddListener(() => setCursor (1, landHexCursor));
@@ -69,6 +72,9 @@ public class MapEditor : MonoBehaviour {
 		btn_selectHarbor.onClick.AddListener(() => setCursor (3, harborHexCursor));
 		btn_selectTreasure.onClick.AddListener(() => setCursor (4, treasureHexCursor));
 		btn_selectShip.onClick.AddListener(() => setCursor (5, shipCursor));
+
+		this.AddPlayer ("Player1", Color.red, true);
+		this.AddPlayer ("Player2", Color.blue, false);
 
 		//Button btn_save = GameObject.Find ("btn_save").GetComponent<Button>();
 		//btn_save.onClick.AddListener (() => {
@@ -79,22 +85,37 @@ public class MapEditor : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetMouseButtonDown (0)) {
-			mousePos = Input.mousePosition;
-		}
-		if (Input.GetMouseButtonUp (0)) {
-			if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
+		if (!EventSystem.current.IsPointerOverGameObject ()) {
+			if (Input.GetMouseButtonDown (0)) {
+				mousePos = Input.mousePosition;
+			}
+			if (Input.GetMouseButtonUp (0)) {
+				if (Vector2.Distance (mousePos, Input.mousePosition) < 10f) {
+					ReplaceElement (selectedType);
+				}
+			}
+			if (Input.GetMouseButton (1)) {
 				ReplaceElement (selectedType);
 			}
-		}
-		if (Input.GetMouseButton (1)) {
-			ReplaceElement (selectedType);
 		}
 	}
 
 	public void setCursor(int i, Texture2D cursor){
 		selectedType = i;
 		Cursor.SetCursor (cursor, new Vector2 (cursor.width / 2, cursor.height / 2), CursorMode.Auto);
+	}
+
+	public void DestroyHex(GameObject target){
+		if (target.GetComponent<Sea> () != null) {
+			if (target.GetComponent<Sea> ().Treasure_go != null) {
+				DestroyImmediate (target.GetComponent<Sea> ().Treasure_go);
+				target.GetComponent<Sea> ().RemoveTreasure();
+			} else if (target.GetComponent<Sea> ().ShipContained != null) {
+				DestroyImmediate (target.GetComponent<Sea> ().ShipContained);
+				target.GetComponent<Sea> ().RemoveShip();
+			}
+		}
+		DestroyImmediate (target);
 	}
 
 	void ReplaceElement(int newElementType){
@@ -114,7 +135,7 @@ public class MapEditor : MonoBehaviour {
 			int y = ourHitObject.GetComponent<Hex> ().y;
 			switch (newElementType) {
 			case 0:
-				Destroy (ourHitObject);	
+				DestroyHex (ourHitObject);
 				GameObject sea_go = (GameObject)Instantiate (seaPrefab, worldPos, Quaternion.identity);
 				graph [x,y] = new Node (x, y, worldPos, true, "sea");
 				sea_go.name = "Hex_" + x + "_" + y;
@@ -126,7 +147,7 @@ public class MapEditor : MonoBehaviour {
 				DrawEdgesLines(sea_go);
 				break;
 			case 1:
-				Destroy (ourHitObject);	
+				DestroyHex (ourHitObject);
 				GameObject land_go = (GameObject)Instantiate (landPrefab, worldPos, Quaternion.identity);
 				graph [x,y] = new Node (x, y, worldPos, false, "land");
 				land_go.name = "Hex_" + x + "_" + y;
@@ -138,7 +159,7 @@ public class MapEditor : MonoBehaviour {
 				DrawEdgesLines(land_go);
 				break;
 			case 2:
-				Destroy (ourHitObject);	
+				DestroyHex (ourHitObject);
 				GameObject coast_go = (GameObject)Instantiate (coastPrefab, worldPos, Quaternion.identity);
 				graph [x,y] = new Node (x, y, worldPos, false, "land");
 				coast_go.name = "Hex_" + x + "_" + y;
@@ -151,7 +172,7 @@ public class MapEditor : MonoBehaviour {
 				DrawEdgesLines(coast_go);
 				break;
 			case 3:
-				Destroy (ourHitObject);	
+				DestroyHex (ourHitObject);
 				GameObject harbor_go = (GameObject)Instantiate (harborPrefab, worldPos, Quaternion.identity);
 				graph [x,y] = new Node (x, y, worldPos, false, "harbor");
 				harbor_go.name = "Hex_" + x + "_" + y;
@@ -164,32 +185,28 @@ public class MapEditor : MonoBehaviour {
 				break;
 			case 4:
 				if (ourHitObject.GetComponent<Sea> () != null) {
-					if (ourHitObject.GetComponent<Sea> ().Treasure_go != null) {
-						DestroyImmediate (ourHitObject.GetComponent<Sea> ().Treasure_go);
-						ourHitObject.GetComponent<Sea> ().RemoveTreasure();
-					}
 					if (ourHitObject.GetComponent<Sea> ().ShipContained != null) {
 						DestroyImmediate (ourHitObject.GetComponent<Sea> ().ShipContained);
 						ourHitObject.GetComponent<Sea> ().RemoveShip();
 					}
-					GameObject treasure_go = (GameObject)Instantiate (treasurePrefab, worldPos, Quaternion.identity);
-					treasure_go.name = ourHitObject.GetComponent<Sea> ().name + "_Treasure";
-					treasure_go.transform.SetParent (ourHitObject.GetComponent<Sea> ().transform);
-					ourHitObject.GetComponent<Sea> ().GetComponent<Sea> ().AddTreasure (1000, treasure_go);
-					graph [ourHitObject.GetComponent<Sea> ().x, ourHitObject.GetComponent<Sea> ().y].isWalkable = false;
+					if (ourHitObject.GetComponent<Sea> ().Treasure_go == null) {
+						GameObject treasure_go = (GameObject)Instantiate (treasurePrefab, worldPos, Quaternion.identity);
+						treasure_go.name = ourHitObject.GetComponent<Sea> ().name + "_Treasure";
+						treasure_go.transform.SetParent (ourHitObject.GetComponent<Sea> ().transform);
+						ourHitObject.GetComponent<Sea> ().GetComponent<Sea> ().AddTreasure (1000, treasure_go);
+						graph [ourHitObject.GetComponent<Sea> ().x, ourHitObject.GetComponent<Sea> ().y].isWalkable = false;
+					}
 				}
 				break;
 			case 5:
 				if (ourHitObject.GetComponent<Sea> () != null) {
 					if (ourHitObject.GetComponent<Sea> ().Treasure_go != null) {
-						DestroyImmediate (ourHitObject.GetComponent<Sea> ().Treasure_go);
+						Destroy (ourHitObject.GetComponent<Sea> ().Treasure_go);
 						ourHitObject.GetComponent<Sea> ().RemoveTreasure();
 					}
-					if (ourHitObject.GetComponent<Sea> ().ShipContained != null) {
-						DestroyImmediate (ourHitObject.GetComponent<Sea> ().ShipContained);
-						ourHitObject.GetComponent<Sea> ().RemoveShip();
+					if (ourHitObject.GetComponent<Sea> ().ShipContained == null) {
+						GameObject.Find ("HUDAddShip").GetComponent<AddShipPanel> ().addShip (ourHitObject.GetComponent<Sea> ().x, ourHitObject.GetComponent<Sea> ().y);
 					}
-					GameObject.Find ("HUDAddShip").GetComponent<AddShipPanel> ().addShip (ourHitObject.GetComponent<Sea> ().x, ourHitObject.GetComponent<Sea> ().y);
 				}
 				break;
 			}
@@ -206,21 +223,16 @@ public class MapEditor : MonoBehaviour {
 		ship_go.GetComponent<Ship> ().ShipX = x;
 		ship_go.GetComponent<Ship> ().ShipY = y;
 		ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + player.NbTotalShip;
-		ship_go.GetComponent<Ship> ().Gold = 0;
 		ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 		Ship ship = ship_go.GetComponent<Ship> ();
 		ship.Owner = player;
 		ship.addCrewMember(new Filibuster());
 		ship.addCrewMember(new PowderMonkey());
 		ship.addCrewMember(new Conjurer());
-		foreach (CrewMember cm in ship.Crew) {
-			cm.Lp = rand.Next (1, cm.LpMax);
-		}
 		player.Fleet.Add (ship);
 		this.graph [x, y].isWalkable = false;
 		GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
 		player.NbTotalShip++;
-		this.ships.Add (ship_go.GetComponent<Ship>());
 		return ship;
 	}
 
@@ -420,5 +432,33 @@ public class MapEditor : MonoBehaviour {
 		}
 
 		return mapSaved;
+	}
+
+	public Player AddPlayer(string name, Color color, bool type){
+		Player newPlayer = new Player (type, color, name);
+		this.players.Add (newPlayer);
+		return newPlayer;
+	}
+
+	public Player GetPlayerByName (string n){
+		Player result = null;
+		foreach (Player p in players){
+			if (p.Name.Equals (n)) {
+				result = p;
+			}
+		}
+		return result;
+	}
+
+	public int GetPlayerIndexByName (string n){
+		int result = -1;
+		int i = 0;
+		foreach (Player p in players){
+			if (p.name.Equals (n)) {
+				result = i;
+			}
+			i++;
+		}
+		return result;
 	}
 }

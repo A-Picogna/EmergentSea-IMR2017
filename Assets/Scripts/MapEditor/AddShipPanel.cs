@@ -28,8 +28,8 @@ public class AddShipPanel : MonoBehaviour {
 
 	public void validateShip(){
 		string shipName = GameObject.Find ("inputTxt_shipName").GetComponent<Text> ().text;
-		string shipOwner = GameObject.Find ("input_owner").GetComponent<Dropdown> ().options[GameObject.Find ("input_owner").GetComponent<Dropdown> ().value].text;
-		Player player = GameObject.Find("EditorManager").GetComponent<EditorManager>().GetPlayerByName (shipOwner);
+		string shipOwner = "Player"+(GameObject.Find ("input_owner").GetComponent<Dropdown> ().value+1);
+		Player player = GameObject.Find("MapEditor").GetComponent<MapEditor>().GetPlayerByName (shipOwner);
 		GameObject.Find ("MapEditor").GetComponent<MapEditor> ().createShip (player, x, y, shipName);
 		this.GetComponent<Canvas> ().enabled = false;
 	}

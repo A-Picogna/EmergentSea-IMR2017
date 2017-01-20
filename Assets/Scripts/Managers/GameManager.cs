@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour {
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
 		AddShips (FleetSize);
 		foreach(Player player in players){
-			foreach (Ship ship in currentPlayer.Fleet) {
+			foreach (Ship ship in player.Fleet) {
 				ship.UpdateShipHp ();
 			}
 		}
