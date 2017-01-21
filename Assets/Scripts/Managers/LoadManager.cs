@@ -23,7 +23,7 @@ public class LoadManager : MonoBehaviour {
 	// The magic works here : You can use the singleton just by indicating nager.instance
 
 	// Object Enum
-	public enum state { Inactive, StartNewMap, StartLoadedMap, LoadSave, StartEditor, LoadMapEditor }
+	public enum state { Inactive, StartNewMap, StartLoadedMap, LoadSave, StartEditor, LoadMapEditor, ConnectServer }
 
 	// LoadManager Info
 	public state LoadManagerState;
@@ -40,6 +40,10 @@ public class LoadManager : MonoBehaviour {
 	public int FleetSize = 2;
 	public int goldAmountPerFleet = 200;
 	public int retributionStrength = 80;
+
+	// Multiplayer information
+	public bool multiplayerMode = false;
+	public String serverAdress = "";
 
 	//public int Parameter =;
 	//public int Parameter =;
@@ -454,14 +458,24 @@ public class LoadManager : MonoBehaviour {
 			//Debug.Log ("Normalement je devrais revenir au menu, je fais rien.");
 			break;
 		case state.StartNewMap:
-			//Debug.Log ("Génération de la map ;)");
+			Debug.Log ("Génération de la map ;)");
 			//Debug.Log ("Type : " + LoadManager.instance.MapWidthParameter.ToString() + ", Length : " + LoadManager.instance.MapX.ToString() + ", Width : " + LoadManager.instance.MapY.ToString());
-			initWorld ();
+			if (multiplayerMode) {
+				Debug.Log ("Multiplayer mode");
+			} else {
+				Debug.Log ("Single player mode");
+				initWorld ();
+			}
 			break;
 		case state.StartLoadedMap:
-			//Debug.Log ("Chargement d'une map préfabriqué");
+			Debug.Log ("Chargement d'une map préfabriqué");
 			//Debug.Log ("Map à charger :" + MapPrefabToLoad.ToString());
-			loadPrefabricatedMap (MapPrefabToLoad);
+			if (multiplayerMode) {
+				Debug.Log ("Multiplayer mode");
+			} else {
+				Debug.Log ("Single player mode");
+				loadPrefabricatedMap (MapPrefabToLoad);
+			}
 			break;
 		case state.LoadSave:
 			//Debug.Log ("Chargement d'une sauvegarde ! :o");
@@ -476,8 +490,12 @@ public class LoadManager : MonoBehaviour {
 			//Debug.Log ("Chargement de l'éditeurs avec une carte !");
 			loadPrefabricatedMapEditor (MapPrefabToLoad);
 			break;
+		case state.ConnectServer:
+			Debug.Log ("Connection to a server :" + serverAdress.ToString ());
+			Debug.Log ("Dummy dummy dummy dumb");
+			break;
 		default:
-			//Debug.LogError ("Ca ne devrait pas arriver.");
+			Debug.LogError ("Ca ne devrait pas arriver.");
 			break;
 		}
 	}
