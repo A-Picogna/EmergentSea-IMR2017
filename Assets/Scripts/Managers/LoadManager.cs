@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 
 public class LoadManager : MonoBehaviour {
@@ -44,6 +45,9 @@ public class LoadManager : MonoBehaviour {
 	// Multiplayer information
 	public bool multiplayerMode = false;
 	public String serverAdress = "";
+	public bool isTheServer = false;
+	public GameObject NetworkManagerPrefab;
+	public NetworkManager nminstance;
 
 	//public int Parameter =;
 	//public int Parameter =;
@@ -462,6 +466,8 @@ public class LoadManager : MonoBehaviour {
 			//Debug.Log ("Type : " + LoadManager.instance.MapWidthParameter.ToString() + ", Length : " + LoadManager.instance.MapX.ToString() + ", Width : " + LoadManager.instance.MapY.ToString());
 			if (multiplayerMode) {
 				Debug.Log ("Multiplayer mode");
+				StartServer ();
+				initWorld ();
 			} else {
 				Debug.Log ("Single player mode");
 				initWorld ();
@@ -493,6 +499,7 @@ public class LoadManager : MonoBehaviour {
 		case state.ConnectServer:
 			Debug.Log ("Connection to a server :" + serverAdress.ToString ());
 			Debug.Log ("Dummy dummy dummy dumb");
+			Connect ();
 			break;
 		default:
 			Debug.LogError ("Ca ne devrait pas arriver.");
@@ -704,5 +711,33 @@ public class LoadManager : MonoBehaviour {
 		//Debug.Log ("LoadingAScene false !");
 		yield break;
 		//Debug.Log ("yield break !");
+	}
+
+	private void StartServer() {
+		GameObject nm = (GameObject) Instantiate (NetworkManagerPrefab, new Vector3 (0, 0, 0), Quaternion.identity);
+		nminstance = nm.GetComponent<NetworkManager> ();
+
+		nminstance.networkPort = 7777;
+		nminstance.StartHost ();
+		Debug.Log ("Server Started");
+	}
+
+	private void Connect() {
+		GameObject nm = (GameObject) Instantiate (NetworkManagerPrefab, new Vector3 (0, 0, 0), Quaternion.identity);
+		nminstance = nm.GetComponent<NetworkManager> ();
+
+		nminstance.networkPort = 7777;
+		nminstance.networkAddress = this.serverAdress;
+		nminstance.StartClient();
+		Debug.Log ("Connection started");
+
+	}
+
+	void OnConnectedToServer() {
+		Debug.Log ("Connecté !");
+	}
+
+	void OnServerInitialized() {
+		Debug.Log ("Serveur lancé !");
 	}
 }
