@@ -8,7 +8,7 @@ public class Conjurer : CrewMember
 {
 
 	public Conjurer() : base(){
-		BaseAtk = 80;
+		BaseAtk = 30;
 		BaseLpMax = 50;
 		LpMax = BaseLpMax;
 		Lp = LpMax;

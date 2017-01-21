@@ -10,7 +10,7 @@ public class Filibuster : CrewMember
     // Use this for initialization
 	public Filibuster() : base(){
 		//Initialise the variables
-		BaseAtk = 150;
+		BaseAtk = 70;
 		BaseLpMax = 200;
 		LpMax = BaseLpMax;
 		Lp = LpMax;
