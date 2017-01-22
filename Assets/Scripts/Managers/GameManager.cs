@@ -486,13 +486,13 @@ public class GameManager : MonoBehaviour {
 		Color32 color = currentPlayer.Color;
 		string hexaCodeColor = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
 		//Debug.Log (hexaCodeColor);
-		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
-		ip.DisplayInfo(lang.getString ("infoMessage_welcome_joueur") + 
+		InfoBox ib = GameObject.Find ("InfoBoxCanvas").GetComponent<InfoBox> ();
+		ib.DisplayText(lang.getString ("infoMessage_welcome_joueur") + 
 			"<color=#"+ hexaCodeColor + "ff>" + 
 			lang.getString ("color_"+hexaCodeColor) + 
 			"</color>" + 
 			lang.getString ("infoMessage_welcome_objectif1")
-			, 6f);
+			);
 	}
 
 	private void CenterCameraOnFirstShip(){

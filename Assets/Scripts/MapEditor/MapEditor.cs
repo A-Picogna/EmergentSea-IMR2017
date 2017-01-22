@@ -15,6 +15,7 @@ public class MapEditor : MonoBehaviour {
 	public GameObject treasurePrefab;
 	public GameObject shipPrefab;
 	public GameObject shipHUD;
+	public GameObject infoBox;
 	public int width;
 	public int height;
 	public Node[,] graph;
@@ -58,13 +59,14 @@ public class MapEditor : MonoBehaviour {
 		btn_selectTreasure = (Button) GameObject.Find("btn_selectTreasure").GetComponent<Button>();
 		btn_selectShip = (Button) GameObject.Find("btn_selectShip").GetComponent<Button>();
 
-		shipHUD = (GameObject) GameObject.Find ("HUDAddShip");
+		shipHUD = GameObject.Find ("AddShipCanvas");
+		infoBox = GameObject.Find ("InfoBoxCanvas");
 		GameObject.Find ("txt_addShip_menuLabel").GetComponent<Text> ().text = lang.getString("editor_addShipHUD_menuLabel");
 		GameObject.Find ("shipName_placeholder").GetComponent<Text> ().text = lang.getString("editor_addShipHUD_shipName");
 		GameObject.Find ("input_owner").GetComponent<Dropdown> ().options[0].text = lang.getString("player")+"1";
 		GameObject.Find ("input_owner").GetComponent<Dropdown> ().options[1].text = lang.getString("player")+"2";
 		GameObject.Find ("input_owner").GetComponentInChildren<Text> ().text = lang.getString("editor_addShipHUD_shipOwner");
-		GameObject.Find ("btn_ok").GetComponentInChildren<Text> ().text = lang.getString("editor_addShipHUD_validate");
+		GameObject.Find ("btn_createShip").GetComponentInChildren<Text> ().text = lang.getString("editor_addShipHUD_createShip");
 
 		btn_selectSea.onClick.AddListener (() => setCursor (0, seaHexCursor));
 		btn_selectLand.onClick.AddListener(() => setCursor (1, landHexCursor));
@@ -81,7 +83,7 @@ public class MapEditor : MonoBehaviour {
 		//	LoadManager.instance.savePrefabricatedMapEditor ("test");
 		//});
 		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
-		ip.DisplayInfo(lang.getString ("mapEditor_firstExplaination"), 20f); 
+		infoBox.GetComponent<InfoBox> ().DisplayText(lang.getString("mapEditor_firstExplaination"));
 	}
 
 	void Update () {
@@ -108,24 +110,50 @@ public class MapEditor : MonoBehaviour {
 	public void DestroyHex(GameObject target){
 		if (target.GetComponent<Sea> () != null) {
 			if (target.GetComponent<Sea> ().Treasure_go != null) {
-				DestroyImmediate (target.GetComponent<Sea> ().Treasure_go);
+				Destroy (target.GetComponent<Sea> ().Treasure_go.gameObject);
 				target.GetComponent<Sea> ().RemoveTreasure();
 			} else if (target.GetComponent<Sea> ().ShipContained != null) {
-				DestroyImmediate (target.GetComponent<Sea> ().ShipContained);
+				Destroy (target.GetComponent<Sea> ().ShipContained.gameObject);
 				target.GetComponent<Sea> ().RemoveShip();
 			}
 		}
 		DestroyImmediate (target);
 	}
 
+	/**
+	 * Return code 0 if no ship at all
+	 * Return code 1 if not every player have at least 1 ship
+	 * Return code 2 if there is at least 1 ship per player
+	 */
+	public int CheckShipMapValidity(){
+		int validityCode = 0;
+		int fleetCount = 0;
+		foreach (Player player in players) {
+			if (player.Fleet.Count > 0) {
+				fleetCount++;
+			}
+		}
+		if (fleetCount == 0) {
+			validityCode = 0;
+		} else if (fleetCount == players.Count) {
+			validityCode = 2;
+		} else {
+			validityCode = 1;
+		}
+		return validityCode;
+	}
+
+	/**
+	 * Parameter :
+	 * 0 : Sea
+	 * 1 : Land
+	 * 2 : Coast
+	 * 3 : Harbor
+	 * 4 : Treasure
+	 * 5 : Ship
+	 */
 	void ReplaceElement(int newElementType){
-		/*
-		 * 0 : Sea
-		 * 1 : Land
-		 * 2 : Coast
-		 * 3 : Harbor
-		 * 4 : Treasure
-		 */
+		shipHUD.GetComponent<Canvas> ().enabled = false;
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hitInfo;
 		if (Physics.Raycast (ray, out hitInfo)) {			
@@ -186,7 +214,7 @@ public class MapEditor : MonoBehaviour {
 			case 4:
 				if (ourHitObject.GetComponent<Sea> () != null) {
 					if (ourHitObject.GetComponent<Sea> ().ShipContained != null) {
-						DestroyImmediate (ourHitObject.GetComponent<Sea> ().ShipContained);
+						DestroyImmediate (ourHitObject.GetComponent<Sea> ().ShipContained.gameObject);
 						ourHitObject.GetComponent<Sea> ().RemoveShip();
 					}
 					if (ourHitObject.GetComponent<Sea> ().Treasure_go == null) {
@@ -201,11 +229,12 @@ public class MapEditor : MonoBehaviour {
 			case 5:
 				if (ourHitObject.GetComponent<Sea> () != null) {
 					if (ourHitObject.GetComponent<Sea> ().Treasure_go != null) {
-						Destroy (ourHitObject.GetComponent<Sea> ().Treasure_go);
+						Destroy (ourHitObject.GetComponent<Sea> ().Treasure_go.gameObject);
 						ourHitObject.GetComponent<Sea> ().RemoveTreasure();
 					}
 					if (ourHitObject.GetComponent<Sea> ().ShipContained == null) {
-						GameObject.Find ("HUDAddShip").GetComponent<AddShipPanel> ().addShip (ourHitObject.GetComponent<Sea> ().x, ourHitObject.GetComponent<Sea> ().y);
+						shipHUD.GetComponent<AddShipPanel> ().addShip (ourHitObject.GetComponent<Sea> ().x, ourHitObject.GetComponent<Sea> ().y);
+						selectedType = -1;
 					}
 				}
 				break;

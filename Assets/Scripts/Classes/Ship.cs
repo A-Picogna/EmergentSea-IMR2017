@@ -603,8 +603,8 @@ public class Ship : MonoBehaviour {
                     //doAction
                 }
                 else
-                {
-                    if(hex.GetComponent<Sea>().ShipContained.shipName != shipName)
+				{
+					if(hex.GetComponent<Sea>().ShipContained != null && hex.GetComponent<Sea>().ShipContained.shipName != shipName)
                     { //if the targeted ship isn't this one
                         //Debug.Log("Ship near");
                         if (hex.GetComponent<Sea>().ShipContained.Owner.Name != owner.Name)
