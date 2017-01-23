@@ -13,7 +13,7 @@ public class Conjurer : CrewMember
 		LpMax = BaseLpMax;
 		Lp = LpMax;
 		Atk = BaseAtk;
-		RecruitmentCost = 100;
+		RecruitmentCost = 70;
 		Type = 3;
     }
 }
