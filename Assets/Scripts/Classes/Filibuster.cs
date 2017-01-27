@@ -15,7 +15,7 @@ public class Filibuster : CrewMember
 		LpMax = BaseLpMax;
 		Lp = LpMax;
 		Atk = BaseAtk;
-		RecruitmentCost = 200;
+		RecruitmentCost = 210;
 		Type = 1;
     }
 }

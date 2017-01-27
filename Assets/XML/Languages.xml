@@ -14,6 +14,7 @@
         <string name="pv">PV</string>
         <string name="xp">XP</string>
         <string name="fleet">Flotte</string>
+        <string name="player">Joueur</string>
         <string name="menu">Menu</string>
         <string name="resume">Reprendre</string>
         <string name="save">Sauvegarder</string>
@@ -81,7 +82,7 @@
         <string name="infoMessage_welcome_objectif1">. Votre objectif est de détuire tout les autres navires</string>
         <string name="tooFarFrom_treasure">Vous êtes trop loin de ce trésor, vous devez être y être adjacent pour pouvoir le ramasser</string>
         <string name="tooFarFrom_harbor">Vous êtes trop loin de ce port, vous devez être y être adjacent pour pouvoir interagir avec</string>
-        <string name="mapEditor_firstExplaination">Bienvenu dans l'éditeur de carte d'Emergent-Sea, vous disposez d'une carte entièrement recouverte d'eau. Pour ajouter des éléments cliquez avec le bouton gauche de la souris pour selectionnez une case. Vous pouvez alors la placer sur la carte avec un clic gauche. Si vous souhaites "peindre" la carte avec votre selection, utilisez le clic droit de la souris</string>
+        <string name="mapEditor_firstExplaination">Bienvenu dans l'éditeur de carte d'Emergent-Sea, vous pouvez ajouter des éléments pour créer votre propre carte de jeu et ensuite la sauvegarder pour l'utiliser en partie normale</string>
     	<string name="mapEditor_explaination">Pour séléctionner un élément, utilisez le bouton gauche de la souris. Pour placer un élément, cliquez sur la carte avec le bouton gauche. Pour "Peindre" avec un élément, Cliquez avec le bouton droit.</string>
     	<string name="gameover_winnerLabel">Victoire !</string>
     	<string name="gameover_looserLabel">Défaite...</string>
@@ -96,5 +97,9 @@
     	<string name="noHealNeeded">L'équipage est déjà complètement soigné</string>
     	<string name="outOffRange_ally">Votre navire est trop loin du navire allié désigné</string>
     	<string name="outOffRange_enemy">Votre navire n'a aucun membre d'équipage à portée de tir</string>
+    	<string name="editor_addShipHUD_menuLabel">Détails du navire</string>
+    	<string name="editor_addShipHUD_shipName">Entrez le nom du navire</string>
+    	<string name="editor_addShipHUD_shipOwner">Propriétaire du navire</string>
+    	<string name="editor_addShipHUD_createShip">Ajout Navire</string>
     </French>
 </languages>

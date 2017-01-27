@@ -15,7 +15,7 @@ public class PowderMonkey : CrewMember
 		LpMax = BaseLpMax;
 		Lp = LpMax;
 		Atk = BaseAtk;
-		RecruitmentCost = 70;
+		RecruitmentCost = 140;
 		Type = 2;
     }
 }

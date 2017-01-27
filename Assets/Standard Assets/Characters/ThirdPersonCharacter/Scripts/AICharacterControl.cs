@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace UnityStandardAssets.Characters.ThirdPerson
 {
+	/*
     [RequireComponent(typeof (NavMeshAgent))]
     [RequireComponent(typeof (ThirdPersonCharacter))]
     public class AICharacterControl : MonoBehaviour
@@ -40,4 +41,5 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             this.target = target;
         }
     }
+    */
 }

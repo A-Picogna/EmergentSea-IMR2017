@@ -56,7 +56,7 @@ public class EmptyObjectPool : MonoBehaviour
 		// otherwise, just destroy it
 		else
 		{
-			Debug.LogWarning(toReturn.name + " was returned to a pool it wasn't spawned from! Destroying.");
+			//Debug.LogWarning(toReturn.name + " was returned to a pool it wasn't spawned from! Destroying.");
 			Destroy(toReturn);
 		}
 	}

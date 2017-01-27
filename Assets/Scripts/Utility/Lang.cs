@@ -30,13 +30,13 @@ public class Lang
 				Strings.Add(xmlItem.GetAttribute("name"), xmlItem.InnerText);
 			}
 		} else {
-			Debug.LogError("The specified language does not exist: " + language);
+			//Debug.LogError("The specified language does not exist: " + language);
 		}
 	}
 		
 	public string getString (string name) {
 		if (!Strings.ContainsKey(name)) {
-			Debug.LogError("The specified string does not exist: " + name);
+			//Debug.LogError("The specified string does not exist: " + name);
 
 			return "";
 		}

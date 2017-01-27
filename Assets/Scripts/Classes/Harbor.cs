@@ -107,14 +107,14 @@ public class Harbor : Land
                     }
                     else
                     {
-                        Debug.Log("This harbor doesn't belong to you");
+                        //Debug.Log("This harbor doesn't belong to you");
                         return false;
                     }
                 }
                 //Taking harbor
                 else
                 {
-                    Debug.Log("No owner, taking it...");
+                    //Debug.Log("No owner, taking it...");
                     owner = selected.Owner;
                     ownerName = selected.Owner.Name;
                     owner.Harbors.Add(this);
@@ -125,7 +125,7 @@ public class Harbor : Land
             }
             else
             {
-                Debug.Log("Harbor to far away from you!");
+                //Debug.Log("Harbor to far away from you!");
                 return false;
             }
         }
@@ -133,11 +133,11 @@ public class Harbor : Land
         {
             if (ownerName != null)
             {
-                Debug.Log("Owner : " + owner.Name);
+                //Debug.Log("Owner : " + owner.Name);
             }
             else
             {
-                Debug.Log("No owner");
+                //Debug.Log("No owner");
             }
             return false;
         }
@@ -201,7 +201,7 @@ public class Harbor : Land
                 Admiral admiral = new Admiral();
                 if (admiral.RecruitmentCost > selected.Gold)
                 {
-                    Debug.Log("Not enough money to build a new ship");
+                    //Debug.Log("Not enough money to build a new ship");
 					errorCode = 1;
                     admiral = null;
                 }
@@ -250,14 +250,14 @@ public class Harbor : Land
             selected.Gold += price;
             if (price / changeFoodGold > 0)
             {
-                Debug.Log("Sold " + price / changeFoodGold + " of food for " + price + " gold");
+                //Debug.Log("Sold " + price / changeFoodGold + " of food for " + price + " gold");
                 selected.Food = (int)(selected.Food - (price / changeFoodGold));
                 selected.displayFloatingInfo(Color.black, "-" + price / changeFoodGold, selected.transform.position);
                 selected.displayFloatingInfo(Color.yellow, "+" + price, selected.transform.position);
             }
             else
             {
-                Debug.Log("No food to sell !");
+                //Debug.Log("No food to sell !");
 				errorCode = 5;
             }
         }
@@ -266,7 +266,7 @@ public class Harbor : Land
         if (select == "tavern")
         {
             int lpMissing = 0;
-            Debug.Log("gold amount : " + selected.Gold);
+            //Debug.Log("gold amount : " + selected.Gold);
             int nbMemberNeeding = 0;
             foreach (CrewMember c in selected.Crew)
             {
@@ -276,7 +276,7 @@ public class Harbor : Land
                 }
                 lpMissing += c.LpMax - c.Lp;
             }
-            Debug.Log("lp missing : " + lpMissing);
+            //Debug.Log("lp missing : " + lpMissing);
             int total = 0;
             if (lpMissing != 0)
             {
@@ -285,12 +285,12 @@ public class Harbor : Land
                 //if not enough money we heal the most, else we heal full
                 if (selected.Gold < price)
                 {
-                    Debug.Log("Not enough money to get a full heal");
+                    //Debug.Log("Not enough money to get a full heal");
                     lpMissing = (int)Mathf.Floor(selected.Gold / lpCost);
                 }
 
-                Debug.Log("Healed : " + lpMissing);
-                Debug.Log("Cost : " + lpMissing * lpCost);
+                //Debug.Log("Healed : " + lpMissing);
+                //Debug.Log("Cost : " + lpMissing * lpCost);
                 selected.displayFloatingInfo(Color.yellow, "-" + lpMissing * lpCost, selected.transform.position);
                 selected.displayFloatingInfo(Color.green, "+" + lpMissing, selected.transform.position);
                 selected.Gold -= (int)Mathf.Ceil(lpMissing * lpCost);
@@ -308,18 +308,18 @@ public class Harbor : Land
                         c.Lp += heal;
                         total += heal;
                         lpMissing -= heal;
-                        Debug.Log("Member HP end : " + c.Lp);
+                        //Debug.Log("Member HP end : " + c.Lp);
                     }
                 }
             }
             else
 			{
 				errorCode = 6;
-                Debug.Log("No lp needed");
+                //Debug.Log("No lp needed");
             }
-            Debug.Log("Realy Healed : " + total);
-            Debug.Log("Gold : " + selected.Gold);
-            Debug.Log("Hp : " + selected.Hp);
+            //Debug.Log("Realy Healed : " + total);
+            //Debug.Log("Gold : " + selected.Gold);
+            //Debug.Log("Hp : " + selected.Hp);
 			// After healing, we update the canvas, and the value in the ship, and the displaying value upside the ship
 			GameObject.Find ("HUDCanvas").GetComponent<PanelHandler> ().updateShip();
 			selected.UpdateShipHp ();
@@ -329,16 +329,16 @@ public class Harbor : Land
         //DarkArtAcademy - Conjurer
         if (select == "daa")
         {
-            Debug.Log("Nb member : " + selected.Crew.Count);
-            Debug.Log("Hp : " + selected.Hp);
-            Debug.Log("Gold : " + selected.Gold);
+            //Debug.Log("Nb member : " + selected.Crew.Count);
+            //Debug.Log("Hp : " + selected.Hp);
+            //Debug.Log("Gold : " + selected.Gold);
             //8 members max by ship
             if (selected.Crew.Count < 8)
             {
                 Conjurer conjurer = new Conjurer();
                 if (conjurer.RecruitmentCost > selected.Gold)
                 {
-					Debug.Log("Not enough money to recruit a conjurer");
+					//Debug.Log("Not enough money to recruit a conjurer");
 					errorCode = 1;
                     conjurer = null;
                 }
@@ -347,32 +347,32 @@ public class Harbor : Land
                     selected.addCrewMember(conjurer);
                     selected.Gold -= conjurer.RecruitmentCost;
                     selected.displayFloatingInfo(Color.yellow, "-" + conjurer.RecruitmentCost, selected.transform.position);
-                    Debug.Log("Conjurer recuited");
+                    //Debug.Log("Conjurer recuited");
                 }
             }
             else
             {
-                Debug.Log("Too many members in the crew");
+                //Debug.Log("Too many members in the crew");
 				errorCode = 2;
             }
-            Debug.Log("Nb member : " + selected.Crew.Count);
-            Debug.Log("Hp : " + selected.Hp);
-            Debug.Log("Gold : " + selected.Gold);
+            //Debug.Log("Nb member : " + selected.Crew.Count);
+            //Debug.Log("Hp : " + selected.Hp);
+            //Debug.Log("Gold : " + selected.Gold);
         }
 
         //Warehouse - PowderMonkey
         if (select == "warehouse")
         {
-            Debug.Log("Nb member : " + selected.Crew.Count);
-            Debug.Log("Hp : " + selected.Hp);
-            Debug.Log("Gold : " + selected.Gold);
+            //Debug.Log("Nb member : " + selected.Crew.Count);
+            //Debug.Log("Hp : " + selected.Hp);
+            //Debug.Log("Gold : " + selected.Gold);
             //8 members max by ship
             if (selected.Crew.Count < 8)
             {
                 PowderMonkey PM = new PowderMonkey();
                 if (PM.RecruitmentCost > selected.Gold)
                 {
-					Debug.Log("Not enough money to recruit a PowderMonkey");
+					//Debug.Log("Not enough money to recruit a PowderMonkey");
 					errorCode = 1;
                     PM = null;
                 }
@@ -380,33 +380,33 @@ public class Harbor : Land
                 {
                     selected.addCrewMember(PM);
                     selected.Gold -= PM.RecruitmentCost;
-                    Debug.Log("PowderMonkey recuited");
+                    //Debug.Log("PowderMonkey recuited");
                     selected.displayFloatingInfo(Color.yellow, "-" + PM.RecruitmentCost, selected.transform.position);
                 }
             }
             else
             {
-				Debug.Log("Too many members in the crew");
+				//Debug.Log("Too many members in the crew");
 				errorCode = 2;
             }
-            Debug.Log("Nb member : " + selected.Crew.Count);
-            Debug.Log("Hp : " + selected.Hp);
-            Debug.Log("Gold : " + selected.Gold);
+            //Debug.Log("Nb member : " + selected.Crew.Count);
+            //Debug.Log("Hp : " + selected.Hp);
+            //Debug.Log("Gold : " + selected.Gold);
         }
 
         //Shallows - Filibuster
         if (select == "shallows")
         {
-            Debug.Log("Nb member : " + selected.Crew.Count);
-            Debug.Log("Hp : " + selected.Hp);
-            Debug.Log("Gold : " + selected.Gold);
+            //Debug.Log("Nb member : " + selected.Crew.Count);
+            //Debug.Log("Hp : " + selected.Hp);
+            //Debug.Log("Gold : " + selected.Gold);
             //8 members max by ship
             if (selected.Crew.Count < 8)
             {
                 Filibuster filibuster = new Filibuster();
                 if (filibuster.RecruitmentCost > selected.Gold)
                 {
-					Debug.Log("Not enough money to recruit a filibuster");
+					//Debug.Log("Not enough money to recruit a filibuster");
 					errorCode = 1;
                     filibuster = null;
                 }
@@ -414,18 +414,18 @@ public class Harbor : Land
                 {
                     selected.addCrewMember(filibuster);
                     selected.Gold -= filibuster.RecruitmentCost;
-                    Debug.Log("filibuster recuited");
+                    //Debug.Log("filibuster recuited");
                     selected.displayFloatingInfo(Color.yellow, "-" + filibuster.RecruitmentCost, selected.transform.position);
                 }
             }
             else
             {
-				Debug.Log("Too many members in the crew");
+				//Debug.Log("Too many members in the crew");
 				errorCode = 2;
             }
-            Debug.Log("Nb member : " + selected.Crew.Count);
-            Debug.Log("Hp : " + selected.Hp);
-            Debug.Log("Gold : " + selected.Gold);
+            //Debug.Log("Nb member : " + selected.Crew.Count);
+            //Debug.Log("Hp : " + selected.Hp);
+            //Debug.Log("Gold : " + selected.Gold);
 		}
 		return errorCode;
     }

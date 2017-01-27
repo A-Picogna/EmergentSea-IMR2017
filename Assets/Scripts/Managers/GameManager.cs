@@ -77,15 +77,15 @@ public class GameManager : MonoBehaviour {
 		rand = new System.Random();
 		turnNumber = 1;
 		players = new List<Player>();
-		players.Add (new Player ("Humain", Color.red, "Player1"));
-		players.Add (new Player ("IA", Color.blue, "Player2"));
+		this.AddPlayer ("Player1", Color.red, true);
+		this.AddPlayer ("Player2", Color.blue, true);
 		currentPlayerNumber = 0;
 		currentPlayer = players [currentPlayerNumber];
 		endTurnButton.onClick.AddListener(() => NextPlayer());
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
 		AddShips (FleetSize);
 		foreach(Player player in players){
-			foreach (Ship ship in currentPlayer.Fleet) {
+			foreach (Ship ship in player.Fleet) {
 				ship.UpdateShipHp ();
 			}
 		}
@@ -294,7 +294,7 @@ public class GameManager : MonoBehaviour {
 
 	void GameOver(Player player){
 		gameover = true;
-		if (player.Type.Equals ("IA")) {
+		if (!player.IsHuman) {
 			GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_winnerLabel");
 			GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner");
 		} else {
@@ -338,27 +338,20 @@ public class GameManager : MonoBehaviour {
             {
                 if (harbor.Building)
                 {
-                    if (harbor.RemainingBuildingTime > 1)
-                    {
-                        harbor.RemainingBuildingTime--;
-                        Debug.Log(harbor.RemainingBuildingTime);
-                    }
-                    else
-                    {
-                        harbor.Build(map);
-                    }
+                    harbor.RemainingBuildingTime--;
+                    //Debug.Log(harbor.RemainingBuildingTime);
                 }
             }
         }
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
-            if(currentPlayer.Type == "Humain")
+			if(currentPlayer.IsHuman)
             {
                 // We reset fow for next player
                 ResetFOW ();
                 RevealAreaAlreadyExplored ();
                 RevealAreaAroundCurrentPlayerShips();
 				CenterCameraOnFirstShip ();
-                Debug.Log("Human turn");
+                //Debug.Log("Human turn");
 				if (turnNumber == 1) {
 					WelcomeMessage ();
 				}
@@ -447,17 +440,8 @@ public class GameManager : MonoBehaviour {
 		Ship ship = ship_go.GetComponent<Ship> ();
 		ship.Owner = player;
 		ship.addCrewMember(new Filibuster());
-		ship.addCrewMember(new Filibuster());
-		//if (player.Type.Equals ("IA")) {
-			ship.addCrewMember(new PowderMonkey());
-			ship.addCrewMember(new Conjurer());
-			ship.addCrewMember(new PowderMonkey());
-			ship.addCrewMember(new Conjurer());
-		//}
-		foreach (CrewMember cm in ship.Crew) {
-			cm.Lp = rand.Next (1, cm.LpMax);
-		}
-		ship.RetributionStrength = retributionStrength/100;
+		ship.addCrewMember(new PowderMonkey());
+		ship.addCrewMember(new Conjurer());
 		player.Fleet.Add (ship);
 		mouseManager.map.graph [x, y].isWalkable = false;
 		GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
@@ -486,7 +470,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void ResetFOW(){
-		if (currentPlayer.Type.Equals("Humain"))
+		if (currentPlayer.IsHuman)
 		{
 			map = mouseManager.map;
 			GameObject currentHex;
@@ -502,7 +486,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void RevealAreaAroundCurrentPlayerShips(){
-        Debug.Log("Revealing");
+        //Debug.Log("Revealing");
 		Player cp = currentPlayer;
 		foreach (Ship ship in cp.Fleet) {
 			GameObject currentHex = (GameObject) GameObject.Find ("Hex_" + ship.ShipX + "_" + ship.ShipY);
@@ -510,12 +494,12 @@ public class GameManager : MonoBehaviour {
 			MeshRenderer[] meshRenderers;
 			Node newNode;
 			// Reveal Ship and ship Hex
-			if (currentPlayer.Type.Equals("Humain")){
+			if (currentPlayer.IsHuman){
 				ship.DisplayHp(true);
 			}
 			neighbours = currentHex.GetComponent<Hex> ().getNLevelOfNeighbours (0, 3);
 			foreach (GameObject n in neighbours) {
-				if (currentPlayer.Type.Equals("Humain")){
+				if (currentPlayer.IsHuman){
 					n.GetComponent<Hex>().setVisibility(2);
 				}
 				newNode = new Node(n.GetComponent<Hex>().x, n.GetComponent<Hex>().y, new Vector3(0,0,0), false, "map");
@@ -537,7 +521,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void RevealAreaAlreadyExplored(){
-        if (currentPlayer.Type.Equals("Humain"))
+		if (currentPlayer.IsHuman)
         {
             Player cp = currentPlayer;
             GameObject currentHex;
@@ -553,14 +537,14 @@ public class GameManager : MonoBehaviour {
 	private void WelcomeMessage(){
 		Color32 color = currentPlayer.Color;
 		string hexaCodeColor = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
-		Debug.Log (hexaCodeColor);
-		InfoPanel ip = GameObject.Find ("txt_genInfo").GetComponent<InfoPanel> ();
-		ip.DisplayInfo(lang.getString ("infoMessage_welcome_joueur") + 
+		//Debug.Log (hexaCodeColor);
+		InfoBox ib = GameObject.Find ("InfoBoxCanvas").GetComponent<InfoBox> ();
+		ib.DisplayText(lang.getString ("infoMessage_welcome_joueur") + 
 			"<color=#"+ hexaCodeColor + "ff>" + 
 			lang.getString ("color_"+hexaCodeColor) + 
 			"</color>" + 
 			lang.getString ("infoMessage_welcome_objectif1")
-			, 6f);
+			);
 	}
 
 	private void CenterCameraOnFirstShip(){
@@ -574,5 +558,31 @@ public class GameManager : MonoBehaviour {
 			);		
 		}
 	}
-		
+
+	public Player AddPlayer(string name, Color color, bool type){
+		Player newPlayer = new Player (type, color, name);
+		players.Add (newPlayer);
+		return newPlayer;
+	}
+
+	public Player GetPlayerByName (string name){
+		Player result = null;
+		for (int i = 0; i < players.Count; i++) {
+			if (players [i].name.Equals (name)) {
+				result = players [i];
+			}
+		}
+		//Debug.Log (result);
+		return result;
+	}
+
+	public int GetPlayerIndexByName (string name){
+		int result = -1;
+		for (int i = 0; i < players.Count; i++) {
+			if (players [i].name.Equals (name)) {
+				result = i;
+			}
+		}
+		return result;
+	}
 }

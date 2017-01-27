@@ -21,13 +21,12 @@ public class MainCamera : MonoBehaviour {
 	void Start () {
 		int MapWidth;
 		int MapHeight;
-		Debug.Log (SceneManager.GetActiveScene ().name.ToString ());
-		if(SceneManager.GetActiveScene().name.Equals("map")) {
-			Map tmpMap = GameObject.Find ("Map").GetComponent<Map> ();
+		if(SceneManager.GetActiveScene().name.Equals("map_editor")) {
+			MapEditor tmpMap = GameObject.Find ("MapEditor").GetComponent<MapEditor> ();
 			MapWidth = tmpMap.width;
 			MapHeight = tmpMap.height;
 		} else {
-			MapEditor tmpMapEditor = GameObject.Find ("MapEditor").GetComponent<MapEditor> ();
+			Map tmpMapEditor = GameObject.Find ("Map").GetComponent<Map> ();
 			MapWidth = tmpMapEditor.width;
 			MapHeight = tmpMapEditor.height;
 		}

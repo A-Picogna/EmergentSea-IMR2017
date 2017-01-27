@@ -5,16 +5,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
-	
-    private string type, name;
+
+	private bool humanPlayer;
+	private string name;
 	private Color color;
 	private List<Ship> fleet;
 	private List<Harbor> harbors;
     private int nbTotalShip;
 	private List<Node> exploredHex;
     
-	public Player(string _type, Color _color, string _name){
-		type = _type;
+	public Player(bool _type, Color _color, string _name){
+		humanPlayer = _type;
 		color = _color;
 		name = _name;
 		fleet = new List<Ship> ();
@@ -24,7 +25,7 @@ public class Player : MonoBehaviour {
 	}
 
 	public Player(PlayerStruct p, List<Node> exploredHex) {
-		this.type = p.type;
+		this.humanPlayer = p.type;
 		this.color = p.color;
 		this.name = p.name;
 		this.fleet = new List<Ship> ();
@@ -56,10 +57,19 @@ public class Player : MonoBehaviour {
 		set { color = value; }
 	}
 
-	public string Type
+	public bool IsHuman
 	{
-		get { return type; }
-		set { type = value; }
+		get { return humanPlayer; }
+	}
+
+	public void SetPlayerHuman()
+	{
+		humanPlayer = true;
+	}
+
+	public void SetPlayerAI()
+	{
+		humanPlayer = false;
 	}
 
 	public string Name

@@ -53,10 +53,16 @@ public class Sea : Hex {
 
 	// Remove the ship from the current hex
 	public void RemoveTreasure(){
+		GameObject map = GameObject.Find ("Map");
+		if (map != null) {
+			map.GetComponent<Map> ().graph [x, y].isWalkable = true;
+		} else {
+			map = GameObject.Find ("MapEditor");
+			map.GetComponent<MapEditor> ().graph [x, y].isWalkable = true;
+		}
 		treasure_go = null;
 		treasure = 0;
 		isWalkable = true;
-		GameObject.Find ("Map").GetComponent<Map> ().graph [x, y].isWalkable = true;
 	}
 
 	public void AddTreasure(int val, GameObject tres){

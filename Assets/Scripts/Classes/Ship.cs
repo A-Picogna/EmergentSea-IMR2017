@@ -6,7 +6,7 @@ public class Ship : MonoBehaviour {
 
 	private List<Node> currentPath = null;
 	private int food = 0;
-	private int gold = 200;
+	private int gold = 0;
 	private int energyQuantity = 0;
 	private int shipX = -1;
 	private int shipY = -1;
@@ -14,7 +14,6 @@ public class Ship : MonoBehaviour {
 	private Player owner;
 	private int atkCost = 5;
 	private int hp = 0;
-	private float retributionStrength = 0.8f;
 	private string textHp = "";
 	/*
 	 * Orientation in degree
@@ -143,7 +142,7 @@ public class Ship : MonoBehaviour {
 		} else {
 			currentPath = null;
 		}
-		if (owner.Type.Equals ("Humain")) {
+		if (owner.IsHuman) {
 			panelHandler.updateShip ();
 		}
 	}
@@ -153,7 +152,7 @@ public class Ship : MonoBehaviour {
 		Destroy (this.GetComponentInChildren<MeshCollider> ());
 		this.GetComponentInChildren<TextMesh> ().text = "";
 		StartCoroutine (Sink ());
-		if (owner.Type.Equals ("IA")) {
+		if (!owner.IsHuman) {
 			panelHandler.updateShip ();
 		}
 	}
@@ -212,7 +211,7 @@ public class Ship : MonoBehaviour {
 		 * 3 : Not in range - enemy
 		 * 4 : this ship is not playable
 		 */
-		if (!this.playable && this.owner.Type == "Humain" ) {
+		if (!this.playable && this.owner.IsHuman ) {
 			errorCode = 4;
 			return errorCode;
 		}
@@ -235,19 +234,19 @@ public class Ship : MonoBehaviour {
 					// 1 is the type code of Filibusters
 					attackValue += Attack (1, target, 1f);
 					// Retribution
-					retributionValue += target.Attack (1, this, retributionStrength);
+					retributionValue += target.Attack (1, this, RetributionStrength);
 				}
 				if (AtPowderMonkeyRange (target)) {
 					// 2 is the type code of PowerMonkeys
 					attackValue += Attack (2, target, 1f);
 					// Retribution
-					retributionValue += target.Attack (2, this, retributionStrength);
+					retributionValue += target.Attack (2, this, RetributionStrength);
 				}
 				if (AtConjurerRange (target)) {
 					// 3 is the type code of Conjurers
 					attackValue += Attack (3, target, 1f);
 					// Retribution
-					retributionValue += target.Attack (3, this, retributionStrength);
+					retributionValue += target.Attack (3, this, RetributionStrength);
 				}
 				if (attackValue > 0) {
 					target.displayFloatingInfo (Color.red, "-" + attackValue + " PV", target.transform.position);
@@ -262,7 +261,7 @@ public class Ship : MonoBehaviour {
 				errorCode = 1;
 			}
 		}
-		if (owner.Type.Equals ("Humain")) {
+		if (owner.IsHuman) {
 			panelHandler.updateShip ();
 		}
 		return errorCode;
@@ -436,7 +435,7 @@ public class Ship : MonoBehaviour {
 		} while (takingDamages);
 		UpdateShipHp ();
 		DisplayHp (true);
-		if (owner.Type.Equals ("IA")) {
+		if (!owner.IsHuman) {
 			panelHandler.updateShip ();
 		}
 	}
@@ -561,7 +560,7 @@ public class Ship : MonoBehaviour {
 		neighbours = currentHex.GetComponent<Hex> ().getNLevelOfNeighbours (0, 3);
 		foreach (GameObject n in neighbours) {
 			this.DisplayTargetHp (n);
-			if (owner.Type.Equals ("IA")) {
+			if (!owner.IsHuman) {
 				if (n.GetComponent<Sea> () != null && n.GetComponent<Sea> ().ShipContained != null && !n.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
 					visibleByOther = true;
 				}
@@ -581,7 +580,7 @@ public class Ship : MonoBehaviour {
 				owner.ExploredHex.Add(newNode);
 			}
 		}
-		if (owner.Type.Equals ("IA")) {
+		if (!owner.IsHuman) {
 			if (visibleByOther) {
 				this.GetComponentInChildren<MeshRenderer> ().enabled = true;
 			} else {
@@ -604,13 +603,13 @@ public class Ship : MonoBehaviour {
                     //doAction
                 }
                 else
-                {
-                    if(hex.GetComponent<Sea>().ShipContained.shipName != shipName)
+				{
+					if(hex.GetComponent<Sea>().ShipContained != null && hex.GetComponent<Sea>().ShipContained.shipName != shipName)
                     { //if the targeted ship isn't this one
-                        Debug.Log("Ship near");
+                        //Debug.Log("Ship near");
                         if (hex.GetComponent<Sea>().ShipContained.Owner.Name != owner.Name)
                         { //if the targeted ship is an ennemy
-                            Debug.Log("Setting dist");
+                            //Debug.Log("Setting dist");
                             targetDistance = dist;
                             targetX = targetNode.x;
                             targetY = targetNode.y;
@@ -815,7 +814,6 @@ public class Ship : MonoBehaviour {
 
 	public float RetributionStrength
 	{
-		get { return retributionStrength; }
-		set { retributionStrength = value; }
+		get { return (GameObject.Find("GameManager").GetComponent<GameManager>().retributionStrength / 100); }
 	}
 }

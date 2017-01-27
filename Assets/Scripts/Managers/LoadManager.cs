@@ -92,7 +92,7 @@ public class LoadManager : MonoBehaviour {
 		//Sets this to not be destroyed when reloading scene
 		DontDestroyOnLoad(gameObject);
 
-		Debug.Log ("LoadManager loaded");
+		//Debug.Log ("LoadManager loaded");
 	}
 		
 	////
@@ -165,7 +165,7 @@ public class LoadManager : MonoBehaviour {
 			this.nbCasesTerre = Mathf.RoundToInt(this.nbCasesTerre * 1.5f);
 				break;
 		}
-		Debug.Log ("nbCasesTerre calculé = " + this.nbCasesTerre.ToString ());
+		//Debug.Log ("nbCasesTerre calculé = " + this.nbCasesTerre.ToString ());
 	}
 
 	public void PortFrequencyDropdownCallback(int PortFrequencyType) {
@@ -196,7 +196,7 @@ public class LoadManager : MonoBehaviour {
 			this.nbCasesTresors = Mathf.RoundToInt(this.nbCasesTresors * 1.5f);
 			break;
 		}
-		Debug.Log ("nbCasesTresors calculé = " + this.nbCasesTresors.ToString ());
+		//Debug.Log ("nbCasesTresors calculé = " + this.nbCasesTresors.ToString ());
 	}
 
 	public void MapXSliderCallBack(float MapX) {
@@ -379,12 +379,12 @@ public class LoadManager : MonoBehaviour {
 		saveLoadMenu.transform.SetParent(canvas.transform, false);
 		//saveLoadMenu.transform.localScale = new Vector3 (2.0f, 2.0f, 2.0f);
 
-		Debug.Log ("Linking save button...");
+		//Debug.Log ("Linking save button...");
 		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
 			saveLoadMenu.SetActive (true);
 		});
 
-		Debug.Log ("Linking return button...");
+		//Debug.Log ("Linking return button...");
 		GameObject btn_return = GameObject.Find ("btn_return");
 		//((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.RemoveAllListeners ();
 		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
@@ -401,7 +401,7 @@ public class LoadManager : MonoBehaviour {
 		// Reconfiguration du loading Screen
 		//GameObject LoadButton = GameObject.Find ("LoadButton");
 		//((UnityEngine.UI.Button)LoadButton.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
-		//	Debug.Log("Lancement nouvelle map");
+		//	//Debug.Log("Lancement nouvelle map");
 		//	((SceneLoader)loadingScreen.GetComponent<SceneLoader> ()).NewMap();
 		//});
 
@@ -422,21 +422,23 @@ public class LoadManager : MonoBehaviour {
 		NewMapMenu.transform.SetParent(canvas.transform, false);
 		//saveLoadMenu.transform.localScale = new Vector3 (2.0f, 2.0f, 2.0f);
 
-		Debug.Log ("Linking save button...");
+		//Debug.Log ("Linking save button...");
 		((UnityEngine.UI.Button)btn_save.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
 			NewMapMenu.SetActive (true);
 		});
 
-		Debug.Log ("Linking return button...");
+		//Debug.Log ("Linking return button...");
 		GameObject btn_return = GameObject.Find ("btn_return");
 		//((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.RemoveAllListeners ();
 		((UnityEngine.UI.Button)btn_return.GetComponent<UnityEngine.UI.Button> ()).onClick.AddListener (() => {
 			LoadManager.instance.BackToMenu();
 		});
 
-		GameObject.Find ("btn_gameover_return").GetComponent<Button>().onClick.AddListener (() => {
-			LoadManager.instance.BackToMenu();
-		});
+		if (GameObject.Find ("btn_gameover_return") != null) {
+			GameObject.Find ("btn_gameover_return").GetComponent<Button>().onClick.AddListener (() => {
+				LoadManager.instance.BackToMenu();
+			});
+		}
 
 		NewMapMenu.SetActive (false);
 	}
@@ -449,33 +451,33 @@ public class LoadManager : MonoBehaviour {
 
 		switch (LoadManagerState) {
 		case state.Inactive:
-			Debug.Log ("Normalement je devrais revenir au menu, je fais rien.");
+			//Debug.Log ("Normalement je devrais revenir au menu, je fais rien.");
 			break;
 		case state.StartNewMap:
-			Debug.Log ("Génération de la map ;)");
-			Debug.Log ("Type : " + LoadManager.instance.MapWidthParameter.ToString() + ", Length : " + LoadManager.instance.MapX.ToString() + ", Width : " + LoadManager.instance.MapY.ToString());
+			//Debug.Log ("Génération de la map ;)");
+			//Debug.Log ("Type : " + LoadManager.instance.MapWidthParameter.ToString() + ", Length : " + LoadManager.instance.MapX.ToString() + ", Width : " + LoadManager.instance.MapY.ToString());
 			initWorld ();
 			break;
 		case state.StartLoadedMap:
-			Debug.Log ("Chargement d'une map préfabriqué");
-			Debug.Log ("Map à charger :" + MapPrefabToLoad.ToString());
+			//Debug.Log ("Chargement d'une map préfabriqué");
+			//Debug.Log ("Map à charger :" + MapPrefabToLoad.ToString());
 			loadPrefabricatedMap (MapPrefabToLoad);
 			break;
 		case state.LoadSave:
-			Debug.Log ("Chargement d'une sauvegarde ! :o");
-			Debug.Log ("Sauvegarde à charger: " + SaveToLoad.ToString ());
+			//Debug.Log ("Chargement d'une sauvegarde ! :o");
+			//Debug.Log ("Sauvegarde à charger: " + SaveToLoad.ToString ());
 			loadSave (SaveToLoad);
 			break;
 		case state.StartEditor:
-			Debug.Log ("Chargement de l'éditeur !");
+			//Debug.Log ("Chargement de l'éditeur !");
 			initEditor ();
 			break;
 		case state.LoadMapEditor:
-			Debug.Log ("Chargement de l'éditeurs avec une carte !");
+			//Debug.Log ("Chargement de l'éditeurs avec une carte !");
 			loadPrefabricatedMapEditor (MapPrefabToLoad);
 			break;
 		default:
-			Debug.LogError ("Ca ne devrait pas arriver.");
+			//Debug.LogError ("Ca ne devrait pas arriver.");
 			break;
 		}
 	}
@@ -518,9 +520,9 @@ public class LoadManager : MonoBehaviour {
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
 
-		Debug.Log ("Saving...");
+		//Debug.Log ("Saving...");
 		bf.Serialize (saveFile, MapLoaded.SaveMap ());
-		Debug.Log (GlobalVariables.pathMaps + name + ".map");
+		//Debug.Log (GlobalVariables.pathMaps + name + ".map");
 		saveFile.Close ();
 	}
 
@@ -543,9 +545,9 @@ public class LoadManager : MonoBehaviour {
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
 
-		Debug.Log ("Saving...");
+		//Debug.Log ("Saving...");
 		bf.Serialize (saveFile, MapLoadedEditor.SaveMap ());
-		Debug.Log (GlobalVariables.pathMaps + name + ".map");
+		//Debug.Log (GlobalVariables.pathMaps + name + ".map");
 		saveFile.Close ();
 	}
 
@@ -566,7 +568,7 @@ public class LoadManager : MonoBehaviour {
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
 
-		Debug.Log ("Loading...");
+		//Debug.Log ("Loading...");
 		MapFile saveMap = (MapFile)bf.Deserialize (saveFile);
 
 		loadWorld (saveMap);
@@ -589,7 +591,7 @@ public class LoadManager : MonoBehaviour {
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
 
-		Debug.Log ("Loading...");
+		//Debug.Log ("Loading...");
 		MapFile saveMap = (MapFile)bf.Deserialize (saveFile);
 
 		loadEditor (saveMap);
@@ -617,13 +619,13 @@ public class LoadManager : MonoBehaviour {
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
 
-		Debug.Log ("Saving save...");
+		//Debug.Log ("Saving save...");
 
 		SaveFile saveObject = new SaveFile (MapLoaded.SaveMap (),
 			gameManager.saveGameManager (),
 			MapAsStarted);
 		bf.Serialize (saveFile, saveObject);
-		Debug.Log (GlobalVariables.pathSaves + name + ".map");
+		//Debug.Log (GlobalVariables.pathSaves + name + ".map");
 		saveFile.Close ();
 	}
 
@@ -646,7 +648,7 @@ public class LoadManager : MonoBehaviour {
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
 
-		Debug.Log ("Loading...");
+		//Debug.Log ("Loading...");
 		SaveFile saveObject = (SaveFile)bf.Deserialize (saveFile);
 
 		loadSave (saveObject);
@@ -660,29 +662,29 @@ public class LoadManager : MonoBehaviour {
 
 	public void LoadSceneRoutine(string map) {
 		StopAllCoroutines ();
-		Debug.Log ("StartCoroutine");
+		//Debug.Log ("StartCoroutine");
 		cor = StartCoroutine (LoadManager.instance.LoadSceneCoroutine(map));
-		Debug.Log ("StartCoroutineFinished");
+		//Debug.Log ("StartCoroutineFinished");
 	}
 
 	public IEnumerator LoadSceneCoroutine(string map) {
 		// We wait just 3 seconds to feel the loading
-		Debug.Log ("Start wait");
+		//Debug.Log ("Start wait");
 		yield return new WaitForSeconds (1);
-		Debug.Log ("Wait is over");
-		Debug.Log ("LoadSceneAsync");
+		//Debug.Log ("Wait is over");
+		//Debug.Log ("LoadSceneAsync");
 
 		// Start an ansync operation to load the scene
 		async = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
-		Debug.Log ("LoadSceneAsync launched");
+		//Debug.Log ("LoadSceneAsync launched");
 		while (!async.isDone) {
-			Debug.Log (async.progress.ToString());
+			//Debug.Log (async.progress.ToString());
 			yield return null;
 		}
-		Debug.Log ("LoadSceneAsync done");
+		//Debug.Log ("LoadSceneAsync done");
 		loadingAScene = false;
-		Debug.Log ("LoadingAScene false !");
+		//Debug.Log ("LoadingAScene false !");
 		yield break;
-		Debug.Log ("yield break !");
+		//Debug.Log ("yield break !");
 	}
 }
