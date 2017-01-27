@@ -22,8 +22,11 @@ public class AiScript {
 
     System.Random rand;
 
+    public bool end;
+
     public AiScript(/*string difficulty*/)
     {
+        end = false;
         rand = new System.Random();
         notEnoughGold = false;
         movingShip = null;
@@ -67,9 +70,6 @@ public class AiScript {
 
     public bool turn(Player player, Map map)
     {
-        Debug.Log("wait");
-            Thread.Sleep(1000);
-            Debug.Log("ok");
         if (movingShip != null && movingShip.CurrentPath != null && movingShip.CurrentPath.Count > 0)
         {
             return true;
@@ -251,6 +251,9 @@ public class AiScript {
                 }
             }
         }
+        //End of AI turn
+        end = true;
+
         return false;
     }
 
@@ -283,6 +286,7 @@ public class AiScript {
                 }
                 else
                 {
+
                     ship.DirectionLifeTime = 0;
                 }
             }

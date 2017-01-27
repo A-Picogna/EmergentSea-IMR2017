@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour {
     //AI
     AiScript AI;
     public bool aiIsPlaying;
+    public int waiting;
 
 	// Public attibutes
 	public int FleetSize;
@@ -68,6 +69,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void initGameManager() {
+        waiting = 0;
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		aiTurn = false;
 		aiIsPlaying = false;
@@ -101,6 +103,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void loadGameManager(GameFile game) {
+        waiting = 0;
 		this.lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		this.aiTurn = false;
 		this.aiIsPlaying = false;
@@ -249,11 +252,24 @@ public class GameManager : MonoBehaviour {
 			panelHandler.initPanelEnnemyShip ();
             panelHandler.hidePanelHarbor();
 		}
-
-        if (aiTurn)
+        if(AI.end)
         {
-            aiTurn = false;
-            NextPlayer();
+            AI.end = false;
+            waiting = 100;
+        }
+
+        if (waiting > 0)
+        {
+            Debug.Log("Waiting");
+            waiting--;
+        }
+        else
+        {
+            if (aiTurn)
+            {
+                aiTurn = false;
+                NextPlayer();
+            }
         }
     }
 
@@ -297,9 +313,6 @@ public class GameManager : MonoBehaviour {
 	{
         if (!aiIsPlaying)
         {
-            /*Debug.Log("wait");
-            Thread.Sleep(5000);
-            Debug.Log("ok");*/
             ResetFOW();
             RevealAreaAlreadyExplored();
             RevealAreaAroundCurrentPlayerShips();
