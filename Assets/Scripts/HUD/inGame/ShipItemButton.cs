@@ -35,7 +35,9 @@ public class ShipItemButton : MonoBehaviour {
 		if (amount < Mathf.Pow(10, 3)) { 
 			return amount.ToString();
 		} else if (amount < Mathf.Pow(10, 6)) {
-			return amount / (int)Mathf.Pow(10, 3) + "k";
+			int am = amount / (int)Mathf.Pow (10, 2);
+			return (float)am / 10 + "k";
+			//return amount / (int)Mathf.Pow(10, 3) + "k";
 		} else if (amount < Mathf.Pow(10, 9)) {
 			return amount / (int)Mathf.Pow(10, 6) + "M";
 		} else if (amount < Mathf.Pow(10, 12)) {
