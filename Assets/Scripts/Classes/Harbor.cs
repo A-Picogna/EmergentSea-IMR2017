@@ -158,6 +158,7 @@ public class Harbor : Land
         ship_go.GetComponentInChildren<MeshRenderer>().material.color = owner.Color;
         Ship ship = ship_go.GetComponent<Ship>();
         ship.Owner = owner;
+		ship.setRandomName ();
         owner.Fleet.Add(ship);
         GameObject.Find("Hex_" + buildingShipX + "_" + buildingShipY).GetComponent<Sea>().ShipContained = ship;
     }

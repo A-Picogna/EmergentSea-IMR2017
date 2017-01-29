@@ -442,6 +442,7 @@ public class GameManager : MonoBehaviour {
 		ship.addCrewMember(new Filibuster());
 		ship.addCrewMember(new PowderMonkey());
 		ship.addCrewMember(new Conjurer());
+		ship.setRandomName ();
 		player.Fleet.Add (ship);
 		mouseManager.map.graph [x, y].isWalkable = false;
 		GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;

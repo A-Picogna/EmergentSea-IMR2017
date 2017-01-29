@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public class Ship : MonoBehaviour {
 
@@ -645,6 +646,27 @@ public class Ship : MonoBehaviour {
 	}
 
 	public void hideHp(){
+	}
+
+	public void setRandomName() {
+		NamePool namePool = new NamePool(Path.Combine(Application.dataPath, GlobalVariables.pathName), GlobalVariables.currentLang);
+		string nameChoice = "";
+		int maxTentative = 5;
+		int tentative = 0;
+		int i;
+		bool exist = true;
+		do {
+			tentative++;
+			int choice = Random.Range( 0, namePool.getNbNames() );
+			print ("Tentative numéro " + tentative);
+			nameChoice = namePool.getName(choice);
+			for (i = 0; i < owner.Fleet.Count; i++) {
+				if (!owner.Fleet[i].name.Equals(nameChoice)) {
+					exist = false;
+				}
+			}
+		} while (exist && tentative <= maxTentative);
+		this.shipName = nameChoice;
 	}
 
 	// ====================
