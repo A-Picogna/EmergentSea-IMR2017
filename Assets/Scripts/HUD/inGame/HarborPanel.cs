@@ -23,6 +23,8 @@ public class HarborPanel : MonoBehaviour {
 	public Text shipyard;
 	private Lang lang;
 
+	public PanelHandler panelHandler;
+
 	private Text innAction;
 	private Text storehouseAction;
 	private Text warehouseAction;
@@ -102,9 +104,10 @@ public class HarborPanel : MonoBehaviour {
     }
 
 	private void handleClickInn() {
-
-        buttonClicked = "tavern";
-        selected = true;
+		panelHandler.showPanelHealth ();
+		panelHandler.initHealth ();
+        /*buttonClicked = "tavern";
+        selected = true;*/
     }
 
 	private void handleClickStorehouse() {

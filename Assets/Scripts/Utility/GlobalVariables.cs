@@ -13,7 +13,7 @@ public class GlobalVariables : MonoBehaviour {
 
 	// Gold
 	public static float changeFoodGold = 0.1f;
-	public static float healthCost = 0.5f;
+	public static float healthCost = 2f;
 	public static int admiralCost = 2000;
 	public static int filibusterCost = 210;
 	public static int powderMonkeyCost = 140;

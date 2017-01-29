@@ -27,6 +27,9 @@ public class PanelHandler : MonoBehaviour {
 
 	private TradePanel tradePanelScript;
 
+	public GameObject panelHealth;
+	private CrewHealthPanel healthPanelScript;
+
 	private HelpPanel helpPanelScript;
 	private HelpPanel helpPanelScript2;
 	private HelpPanel helpPanelScript3;
@@ -37,6 +40,7 @@ public class PanelHandler : MonoBehaviour {
 		shipInfoScript = panelShipInfo.GetComponent<ShipInfoPanel>();
 		shipCrewScript = panelShipCrew.GetComponent<CrewMemberList>();
 		tradePanelScript = panelTrade.GetComponent<TradePanel> ();
+		healthPanelScript = panelHealth.GetComponent<CrewHealthPanel> ();
 		helpPanelScript = panelHelp.GetComponent<HelpPanel> ();
 		helpPanelScript2 = panelHelp2.GetComponent<HelpPanel> ();
 		helpPanelScript3 = panelHelp3.GetComponent<HelpPanel> ();
@@ -55,6 +59,12 @@ public class PanelHandler : MonoBehaviour {
 	public void hidePanelTrade() {
 		tradePanelScript.hidePanel ();
 	}
+	public void showPanelHealth() {
+		healthPanelScript.showPanel ();
+	}
+	public void hidePanelHealth() {
+		healthPanelScript.hidePanel ();
+	}
 	public void showPanelCrewMember() {
 		panelCrewMember.SetActive (true);
 	}
@@ -69,6 +79,7 @@ public class PanelHandler : MonoBehaviour {
 		tradePanelScript.hidePanel ();
 		panelCrewMember.SetActive (false);
 		panelTradeAmount.SetActive (false);
+		hidePanelHealth ();
 	}
 
 	// Show/hide bottom
@@ -154,6 +165,11 @@ public class PanelHandler : MonoBehaviour {
 	// Prepare trade
 	public void initTrade(Ship toShip) {
 		tradePanelScript.Setup (mouseManager.selectedUnit, toShip);
+	}
+
+	// Prepare health
+	public void initHealth() {
+		healthPanelScript.Setup (mouseManager.selectedUnit);
 	}
 
 	// Helper utilities
