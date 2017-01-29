@@ -111,27 +111,27 @@ public class HarborPanel : MonoBehaviour {
     }
 
 	private void handleClickStorehouse() {
-
+		panelHandler.hidePanelHealth ();
         buttonClicked = "store";
         selected = true;
     }
 	private void handleClickWarehouse() {
-
+		panelHandler.hidePanelHealth ();
         buttonClicked = "warehouse";
         selected = true;
     }
 	private void handleClickSlums() {
-
+		panelHandler.hidePanelHealth ();
         buttonClicked = "shallows";
         selected = true;
     }
 	private void handleClickDarkArtsAcademy() {
-
+		panelHandler.hidePanelHealth ();
         buttonClicked = "daa";
         selected = true;
     }
 	private void handleClickShipyard() {
-
+		panelHandler.hidePanelHealth ();
         buttonClicked = "shipyard";
         selected = true;
     }
