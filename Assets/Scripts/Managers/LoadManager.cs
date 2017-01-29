@@ -63,7 +63,7 @@ public class LoadManager : MonoBehaviour {
 	public string SaveToLoad;
 	private int nbCasesTerre;
 	private int nbCasesTresors;
-	private MapFile MapAsStarted;
+	public MapFile MapAsStarted;
 	private AsyncOperation async;
 	public bool loadingAScene;
 	private Coroutine cor;
@@ -538,9 +538,13 @@ public class LoadManager : MonoBehaviour {
 		SurrogateSelector ss = new SurrogateSelector();
 
 		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ColorSerializationSurrogate css = new ColorSerializationSurrogate();
 		ss.AddSurrogate(typeof(Vector3),
 			new StreamingContext(StreamingContextStates.All),
 			v3ss);
+		ss.AddSurrogate(typeof(Color),
+			new StreamingContext(StreamingContextStates.All),
+			css);
 
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
@@ -561,9 +565,13 @@ public class LoadManager : MonoBehaviour {
 		SurrogateSelector ss = new SurrogateSelector();
 
 		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ColorSerializationSurrogate css = new ColorSerializationSurrogate();
 		ss.AddSurrogate(typeof(Vector3),
 			new StreamingContext(StreamingContextStates.All),
 			v3ss);
+		ss.AddSurrogate(typeof(Color),
+			new StreamingContext(StreamingContextStates.All),
+			css);
 
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;
@@ -584,9 +592,13 @@ public class LoadManager : MonoBehaviour {
 		SurrogateSelector ss = new SurrogateSelector();
 
 		Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+		ColorSerializationSurrogate css = new ColorSerializationSurrogate();
 		ss.AddSurrogate(typeof(Vector3),
 			new StreamingContext(StreamingContextStates.All),
 			v3ss);
+		ss.AddSurrogate(typeof(Color),
+			new StreamingContext(StreamingContextStates.All),
+			css);
 
 		// 5. Have the formatter use our surrogate selector
 		bf.SurrogateSelector = ss;

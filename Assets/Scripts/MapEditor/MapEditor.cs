@@ -49,7 +49,9 @@ public class MapEditor : MonoBehaviour {
 	Vector3 worldCoordTreasure;
 
 	void Start () {
-		players = new List<Player>();
+		if (players == null) {
+			players = new List<Player> ();
+		}
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		size = width * height;
 		btn_selectSea = (Button) GameObject.Find("btn_selectSea").GetComponent<Button>();
@@ -293,6 +295,12 @@ public class MapEditor : MonoBehaviour {
 		LoadMap (SavedMap);
 		InstantiateMap (SavedMap);
 		loadFoodAndTreasures (SavedMap);
+		if (SavedMap.boatPreset = true) {
+			if (players == null) {
+				players = new List<Player> ();
+			}
+			loadBoats (SavedMap);
+		}
 	}
 
 	public void LoadMap(MapFile SavedMap) {
@@ -326,6 +334,17 @@ public class MapEditor : MonoBehaviour {
 					SavedMap.graph[index].type);
 
 				this.graph [i, j].tag = SavedMap.graph [index].tag;
+			}
+		}
+	}
+
+	void loadBoats(MapFile mapSaved) {
+		foreach(PlayerStruct p in mapSaved.playerPreset) {
+			// We recreate just the player for now
+			Player loadedPlayer = AddPlayer(p.name, p.color, p.type);
+			foreach (ShipStruct s in p.fleet) {
+				// We recreate just a boat for now
+				createShip (loadedPlayer, s.shipX, s.shipY, p.name);
 			}
 		}
 	}
@@ -458,6 +477,22 @@ public class MapEditor : MonoBehaviour {
 				}
 
 			}
+		}
+
+		if (CheckShipMapValidity () == 2) {
+			// Everything is ready to save the map with the ship list
+			mapSaved.playerPreset = new List<PlayerStruct>();
+			foreach (Player p in this.players) {
+				PlayerStruct savedPlayer = new PlayerStruct (p);
+				foreach (Ship s in p.Fleet) {
+					savedPlayer.fleet.Add (s.SaveShip ());
+				}
+				mapSaved.playerPreset.Add (savedPlayer);
+			}
+			// Done
+			mapSaved.boatPreset = true;
+		} else {
+			mapSaved.boatPreset = false;
 		}
 
 		return mapSaved;

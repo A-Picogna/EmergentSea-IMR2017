@@ -55,6 +55,8 @@ public class Map : MonoBehaviour {
 	GameObject land_go;
 	System.Random rand;
 
+	public MapFile loadedMap;
+
     // Use this for initialization
     void Start () {
 		GameObject miniMapCamera_go = GameObject.Find ("Minimap camera");
@@ -111,6 +113,7 @@ public class Map : MonoBehaviour {
 
 	public void LaunchMapLoading(MapFile saveMap) {
 
+		this.loadedMap = saveMap;
 		LoadMap (saveMap);
 
 		this.size = this.width * this.height;

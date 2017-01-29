@@ -84,19 +84,28 @@ public class GameManager : MonoBehaviour {
 		AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
+
 		players = new List<Player>();
 		this.AddPlayer ("Player1", Color.red, true);
 		this.AddPlayer ("Player2", Color.blue, true);
 		currentPlayerNumber = 0;
 		currentPlayer = players [currentPlayerNumber];
+
 		endTurnButton.onClick.AddListener(() => NextPlayer());
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
-		AddShips (FleetSize);
+
+		if (map.loadedMap.boatPreset = false) {
+			AddShips (FleetSize);
+		} else {
+			loadShip (map.loadedMap);
+		}
+
 		foreach(Player player in players){
 			foreach (Ship ship in player.Fleet) {
 				ship.UpdateShipHp ();
 			}
 		}
+
 		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
 			foreach (Ship ship in currentPlayer.Fleet) {
 				ship.Playable = true;
@@ -476,9 +485,26 @@ public class GameManager : MonoBehaviour {
 				mouseManager.map.graph [s.shipX, s.shipY].isWalkable = false;
 				GameObject.Find("Hex_" + s.shipX + "_" + s.shipY).GetComponent<Sea>().ShipContained = ss;
 				pp.NbTotalShip++;
-
 			}
+		}
+	}
 
+	public void loadShip(MapFile mapSaved) {
+		foreach (PlayerStruct p in mapSaved.playerPreset) {
+			Player pp = this.players.Find (x => x.Name.Equals(p.name));
+			foreach (ShipStruct s in p.fleet) {
+				GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [s.shipX, s.shipY].worldPos, Quaternion.identity);
+				ship_go.name = "Ship_" + p.name + "_" + pp.NbTotalShip;
+				Ship ss = (ship_go.GetComponent<Ship> ());
+				ss.LoadShip (s);
+				ship_go.GetComponentInChildren<MeshRenderer> ().material.color = p.color;
+				ss.Owner = pp;
+				ss.Gold = GoldAmount;
+				pp.Fleet.Add (ss);
+				mouseManager.map.graph [s.shipX, s.shipY].isWalkable = false;
+				GameObject.Find("Hex_" + s.shipX + "_" + s.shipY).GetComponent<Sea>().ShipContained = ss;
+				pp.NbTotalShip++;
+			}
 		}
 	}
 
