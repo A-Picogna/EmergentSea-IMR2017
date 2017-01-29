@@ -47,6 +47,13 @@ public class Ship : MonoBehaviour {
     private int targetY;
     private int targetDistance;
 
+	//Options
+	public bool fishingEnabled = true;
+	public bool attackEnabled = true;
+	public bool tradeEnabled = true;
+	public bool moveEnabled = true;
+	public bool lootEnabled = true;
+
     // Use this for initialization
     void Awake () {
         targetDistance = -1;
@@ -216,18 +223,18 @@ public class Ship : MonoBehaviour {
 			errorCode = 4;
 			return errorCode;
 		}
-		if (target == this) {
+		if (target == this && fishingEnabled) {
 			bool resFishing = fishing ();
 			if (!resFishing) {
 				errorCode = 1;
 			}
-		} else if (target.owner.Name.Equals (owner.Name)) {
+		} else if (target.owner.Name.Equals (owner.Name) && tradeEnabled) {
 			if (AtTradeRange (target)) {
 				Trade (target);
 			} else {
 				errorCode = 2;
 			}
-		} else if (!target.owner.Name.Equals (owner.Name)) {
+		} else if (!target.owner.Name.Equals (owner.Name) && attackEnabled) {
 			if (energyQuantity >= atkCost) {
 				int attackValue = 0;
 				int retributionValue = 0;

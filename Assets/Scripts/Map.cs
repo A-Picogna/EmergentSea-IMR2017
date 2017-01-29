@@ -526,7 +526,7 @@ public class Map : MonoBehaviour {
 	}
 
 	// Add the neighbours to each node, for each node AFTER the land generation
-	void AddNeighboursToNodes(){
+	public void AddNeighboursToNodes(){
 		// Creation of the graph with neighbours
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
@@ -591,6 +591,7 @@ public class Map : MonoBehaviour {
 
 	public int Size{
 		get{ return size; }
+		set{ size = value; }
 	}
 
 	public MapFile SaveMap() {
@@ -673,7 +674,7 @@ public class Map : MonoBehaviour {
 
 	}
 
-	private void GenerateMapBorder(int borderSize){
+	public void GenerateMapBorder(int borderSize){
 		GameObject hex_go = null;
 		for (int x = -borderSize; x < width+borderSize; x++) {
 			for (int y = -borderSize; y < 0; y++) {
