@@ -88,7 +88,9 @@ public class HelpPanel : MonoBehaviour {
 			string text = lang.getString ("conjurer") + "//n" + formatString(lang.getString ("help_conjurer"));
 			textHelp.text = text.Replace("//n", "\n");
 		} else if (type == 16) { // Taverne
-			textHelp.text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.healthCost.ToString() + " " + lang.getString ("gold") + "</color>/" + lang.getString ("pv");
+			//textHelp.text = lang.getString ("help_cost") + "<color=red> " + GlobalVariables.healthCost.ToString() + " " + lang.getString ("gold") + "</color>/" + lang.getString ("pv");
+			string text = formatString(lang.getString ("help_inn"));
+			textHelp.text = text.Replace("//n", "\n");
 		} else if (type == 17) { // Vendre Nourriture
 			textHelp.text = lang.getString ("help_gain") + "<color=green> " + GlobalVariables.changeFoodGold.ToString() + " " + lang.getString ("gold") + "</color>/" + lang.getString ("food");
 		} else if (type == 18) { // Engager flibustier

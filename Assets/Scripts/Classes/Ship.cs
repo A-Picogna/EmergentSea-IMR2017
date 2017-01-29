@@ -658,7 +658,7 @@ public class Ship : MonoBehaviour {
 		do {
 			tentative++;
 			int choice = Random.Range( 0, namePool.getNbNames() );
-			print ("Tentative numéro " + tentative);
+			//print ("Tentative numéro " + tentative);
 			nameChoice = namePool.getName(choice);
 			for (i = 0; i < owner.Fleet.Count; i++) {
 				if (!owner.Fleet[i].name.Equals(nameChoice)) {
