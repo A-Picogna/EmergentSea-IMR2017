@@ -135,6 +135,9 @@ public class HelpPanel : MonoBehaviour {
 		} else if (type == 29) { // MapEditor
 			string text = formatString(lang.getString ("mapEditor_explaination"));
 			textHelp.text = text.Replace("//n", "\n");
+		} else if (type == 30) { // Change name
+			string text = formatString(lang.getString ("help_change_name"));
+			textHelp.text = text.Replace("//n", "\n");
 		}
 	}
 	public void changeText(int tp) {

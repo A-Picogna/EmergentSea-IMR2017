@@ -264,7 +264,7 @@ public class Harbor : Land
         }
 
         //Tavern - heal
-        if (select == "tavern")
+        /*if (select == "tavern")
         {
             int lpMissing = 0;
             //Debug.Log("gold amount : " + selected.Gold);
@@ -325,7 +325,7 @@ public class Harbor : Land
 			GameObject.Find ("HUDCanvas").GetComponent<PanelHandler> ().updateShip();
 			selected.UpdateShipHp ();
 			selected.DisplayHp (true);
-        }
+        }*/
 
         //DarkArtAcademy - Conjurer
         if (select == "daa")

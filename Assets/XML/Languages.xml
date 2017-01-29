@@ -77,6 +77,7 @@
         <string name="help_life">Points de vie</string>
         <string name="help_xp">Points d'expérience</string>
         <string name="help_level">Niveau</string>
+        <string name="help_change_name">Modifier le nom du navire.</string>
         <string name="color_FF0000">Rouge</string>
         <string name="color_0000FF">Bleu</string>
         <string name="infoMessage_welcome_joueur">Bienvenue Commandant, vous êtes le joueur </string>
