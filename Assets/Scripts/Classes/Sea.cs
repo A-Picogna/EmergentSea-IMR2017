@@ -26,6 +26,7 @@ public class Sea : Hex {
 
 	public int Treasure{
 		get { return treasure; }
+		set { treasure = value; }
 	}
 
 	public int FoodQuantity{
@@ -73,6 +74,7 @@ public class Sea : Hex {
 
 	public GameObject Treasure_go{
 		get { return treasure_go; }
+		set { treasure_go = value; }
 	}
 
     public void updateFoodQuantity(){

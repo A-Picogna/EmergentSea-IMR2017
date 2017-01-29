@@ -23,6 +23,8 @@ public class MouseManager : MonoBehaviour {
 	private Lang lang;
 	private int returnInteractionCode;
 
+	public bool mouseManagerEnabled = true;
+
 	// UI
 	public PanelHandler panelHandler;
 
@@ -53,7 +55,7 @@ public class MouseManager : MonoBehaviour {
 			}
 		}*/
 
-		if (!EventSystem.current.IsPointerOverGameObject ()) {
+		if (!EventSystem.current.IsPointerOverGameObject () && mouseManagerEnabled) {
 			RayCast ();
 		} else {
 			Cursor.SetCursor(mainCursorTexture, Vector2.zero, CursorMode.Auto);
@@ -129,11 +131,13 @@ public class MouseManager : MonoBehaviour {
 
 			if (target.Owner.Name.Equals (gameManager.currentPlayer.Name)) {
 				if (target == selectedUnit) {
-					Cursor.SetCursor (fishingCursorTexture, new Vector2 (fishingCursorTexture.width / 2, fishingCursorTexture.height / 2), CursorMode.Auto);
-					panelHandler.changeTextHelper (11);
-					panelHandler.refreshHelper ();
-					panelHandler.showPanelHelper ();
-				} else {
+					if (selectedUnit.fishingEnabled) {
+						Cursor.SetCursor (fishingCursorTexture, new Vector2 (fishingCursorTexture.width / 2, fishingCursorTexture.height / 2), CursorMode.Auto);
+						panelHandler.changeTextHelper (11);
+						panelHandler.refreshHelper ();
+						panelHandler.showPanelHelper ();
+					}
+				} else if (selectedUnit.tradeEnabled){
 					Cursor.SetCursor (tradeCursorTexture, new Vector2 (tradeCursorTexture.width / 2, tradeCursorTexture.height / 2), CursorMode.Auto);
 					panelHandler.changeTextHelper (10);
 					panelHandler.refreshHelper ();
@@ -183,7 +187,7 @@ public class MouseManager : MonoBehaviour {
 	}
 
 	void MouseOver_Treasure(GameObject ourHitObject){
-		if (selectedUnit != null) {
+		if (selectedUnit != null && selectedUnit.lootEnabled) {
 			panelHandler.changeTextHelper (6);
 			panelHandler.refreshHelper ();
 			panelHandler.showPanelHelper ();

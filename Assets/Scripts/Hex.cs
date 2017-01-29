@@ -10,7 +10,7 @@ public class Hex : MonoBehaviour {
 	public int x;
 	public int y;
 	protected bool isWalkable;
-	protected string type;
+	protected string type = "";
 
     // Coordinates in the grid (not unity unit)
 	public float movementCost;

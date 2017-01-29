@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.IO;
 using System.Threading;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -34,7 +35,7 @@ public class GameManager : MonoBehaviour {
 
 	// Attributes
 	public Player currentPlayer;
-	List<Player> players;
+	public List<Player> players;
 	int currentPlayerNumber;
 	int turnNumber;
 	System.Random rand;
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour {
 	bool aiTurn;
 	private Lang lang;
 	private int returnInteractionCode;
+	private bool isTutorial = false;
 
     //AI
     AiScript AI;
@@ -50,7 +52,7 @@ public class GameManager : MonoBehaviour {
 
 	// Public attibutes
 	public int FleetSize;
-	public int GoldAmount;
+	public int GoldAmount = 0;
 	public float retributionStrength;
 
 	//GameFile
@@ -60,10 +62,16 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 
 	void Start () {
-		if (!loadingMode) {
-			initGameManager ();
+		if (SceneManager.GetActiveScene().name.Equals("map_tutorial")){
+			isTutorial = true;
+			LaunchTutorial();
 		} else {
-			loadGameManager (game);
+			isTutorial = false;
+			if (!loadingMode) {
+				initGameManager ();
+			} else {
+				loadGameManager (game);
+			}
 		}
 		gameover = false;
 	}
@@ -293,18 +301,20 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void GameOver(Player player){
-		gameover = true;
-		if (!player.IsHuman) {
-			GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_winnerLabel");
-			GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner");
-		} else {
-			GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_looserLabel");
-			GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_looser");
+		if (!isTutorial) {
+			gameover = true;
+			if (!player.IsHuman) {
+				GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_winnerLabel");
+				GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner");
+			} else {
+				GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_looserLabel");
+				GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_looser");
+			}
+			GameObject.Find ("GameoverCanvas").GetComponent<GameoverManager> ().Pause ();
 		}
-		GameObject.Find ("GameoverCanvas").GetComponent<GameoverManager> ().Pause ();
 	}
 
-	void NextTurn(){
+	public void NextTurn(){
 		turnNumber++;
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
 	}
@@ -429,12 +439,14 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public Ship createShip(Player player, int x, int y){
+	public Ship createShip(Player player, int x, int y, string goName = "", string name = ""){
+		if (goName.Equals("")) goName = "Ship_" + player.Name + "_" + player.NbTotalShip;
+		if (name.Equals("")) name = player.Name + "_Ship_" + player.NbTotalShip;
 		GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [x, y].worldPos, Quaternion.identity);
-		ship_go.name = "Ship_" + player.Name + "_" + player.NbTotalShip;
+		ship_go.name = goName;
 		ship_go.GetComponent<Ship> ().ShipX = x;
 		ship_go.GetComponent<Ship> ().ShipY = y;
-		ship_go.GetComponent<Ship> ().ShipName = player.Name + "_Ship_" + player.NbTotalShip;
+		ship_go.GetComponent<Ship> ().ShipName = name;
 		ship_go.GetComponent<Ship> ().Gold = GoldAmount;
 		ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 		Ship ship = ship_go.GetComponent<Ship> ();
@@ -529,8 +541,7 @@ public class GameManager : MonoBehaviour {
             MeshRenderer[] meshRenderers;
             foreach (Node n in currentPlayer.ExploredHex)
             {
-                currentHex = GameObject.Find("Hex_" + n.x + "_" + n.y);
-                currentHex.GetComponent<Hex>().setVisibility(1);
+				GameObject.Find("Hex_" + n.x + "_" + n.y).GetComponent<Hex>().setVisibility(1);
             }
         }
 	}
@@ -548,7 +559,7 @@ public class GameManager : MonoBehaviour {
 			);
 	}
 
-	private void CenterCameraOnFirstShip(){
+	public void CenterCameraOnFirstShip(){
 		if (currentPlayer.Fleet.Count > 0) {
 			Ship ship = currentPlayer.Fleet [0];
 			GameObject cam = GameObject.Find ("Main Camera");
@@ -586,4 +597,54 @@ public class GameManager : MonoBehaviour {
 		}
 		return result;
 	}
+
+	public void LaunchTutorial(){		
+		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
+		GameObject.Find("TutorialManager").GetComponent<TutorialManager>().InitTutorial();
+
+		waiting = 0;
+		currentPlayerNumber = 0;
+		turnNumber = 1;
+
+		aiTurn = false;
+		aiIsPlaying = false;
+
+		AI = new AiScript();
+		rand = new System.Random();
+		players = new List<Player>();
+
+		// we add ships for the scenario
+		AddPlayer ("Player", Color.red, true);
+		AddPlayer ("Computer", Color.blue, false);
+		currentPlayer = players [currentPlayerNumber];
+
+		endTurnButton.onClick.AddListener( () => GameObject.Find("TutorialManager").GetComponent<TutorialManager>().NextTurn() );
+		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
+
+		createShip (players [0], 1, 1, "PlayerShip_1", "La Perle rouge");
+		createShip (players [1], 14, 7, "EnemyShip_1", "Le Bluebeard");
+		createShip (players [1], 15, 5, "EnemyShip_2", "Le Narada");
+		createShip (players [1], 15, 3, "EnemyShip_3", "Le Titanic");
+
+		foreach(Player player in players){
+			foreach (Ship ship in player.Fleet) {
+				ship.UpdateShipHp ();
+			}
+		}
+
+		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
+			foreach (Ship ship in currentPlayer.Fleet) {
+				ship.Playable = true;
+			}
+		}
+
+		checkInit = false;
+		ResetFOW ();
+		RevealAreaAroundCurrentPlayerShips ();
+		CenterCameraOnFirstShip ();
+		Color32 color = currentPlayer.Color;
+		string hexaCodeColor = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
+		//Debug.Log (hexaCodeColor);
+	}
+
 }

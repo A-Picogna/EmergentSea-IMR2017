@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public class MenuPanel : MonoBehaviour {
 	public Text menuHeader;
@@ -14,7 +15,9 @@ public class MenuPanel : MonoBehaviour {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		menuHeader.text = lang.getString("menu");
 		resume.text = lang.getString("resume");
-		save.text = lang.getString("save");
+		if (!SceneManager.GetActiveScene ().name.Equals ("map_tutorial")) {
+			save.text = lang.getString("save");
+		}
 		quit.text = lang.getString("quit");
 		GameObject.Find("btn_gameover_return").GetComponentInChildren<Text>().text = lang.getString("quit");
 	}
