@@ -21,6 +21,7 @@ public class TutorialManager : MonoBehaviour {
 	public Projector objProj;
 	public Map map;
 	public Ship ship;
+	public Harbor harbor;
 
 	int step = 0;
 
@@ -28,6 +29,7 @@ public class TutorialManager : MonoBehaviour {
 		nextButton.onClick.AddListener( () => NextStep() );	
 		mouseManager.mouseManagerEnabled = false;
 		endTurnButton.gameObject.SetActive (false);
+		harbor = GameObject.Find ("Hex_9_3").GetComponent<Harbor> ();
 	}
 
 	// Update is called once per frame
@@ -45,7 +47,7 @@ public class TutorialManager : MonoBehaviour {
 			}
 			break;
 		case 3:
-			if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.ShipX == 2 && mouseManager.selectedUnit.ShipY == 2) {
+			if (ship != null && ship.ShipX == 2 && ship.ShipY == 2) {
 				map.graph [1, 1].isWalkable = false;
 				map.graph [2, 2].isWalkable = false;
 				map.graph [2, 3].isWalkable = false;
@@ -62,16 +64,37 @@ public class TutorialManager : MonoBehaviour {
 			}
 			break;
 		case 7:
+			if (mouseManager.selectedUnit != null && mouseManager.selectedUnit.Food > 0) {
+				NextStep ();
+			}
 			break;
 		case 8:
+			if (ship != null && ship.ShipX == 7 && ship.ShipY == 4) {
+				map.graph [4, 5].isWalkable = false;
+				map.graph [5, 5].isWalkable = false;
+				map.graph [6, 5].isWalkable = false;
+				map.graph [7, 4].isWalkable = false;
+				objProj.transform.position = new Vector3 (0, -5f, 0);
+				NextStep ();
+			}
 			break;
 		case 9:
+			if (harbor.OwnerName != null) {
+				map.graph [8, 4].isWalkable = false;
+				map.graph [9, 4].isWalkable = false;
+				objProj.transform.position = new Vector3 (0, -5f, 0);
+				NextStep ();
+			}
 			break;
 		case 10:
-			break;
-		case 11:
+			if (ship.IsFullLife()) {
+				NextStep ();
+			}
 			break;
 		case 12:
+			if (gameManager.players [1].Fleet.Count == 0) {
+				NextStep ();
+			}
 			break;
 		case 13:
 			break;
@@ -88,6 +111,7 @@ public class TutorialManager : MonoBehaviour {
 		}
 		map.Size = map.width * map.height;
 		map.AddNeighboursToNodes();
+		map.generateFood ();
 		map.GenerateMapBorder (5);
 		GameObject.Find ("Hex_4_5").GetComponent<Sea> ().Treasure_go = GameObject.Find ("Hex_4_5_Treasure");
 		GameObject.Find ("Hex_4_5").GetComponent<Sea> ().Treasure = 10000;
@@ -133,16 +157,41 @@ public class TutorialManager : MonoBehaviour {
 			map.graph [3, 4].isWalkable = false;
 			map.graph [4, 4].isWalkable = false;
 			map.graph [4, 5].isWalkable = false;
+			ship.fishingEnabled = true;
 			break;
 		case 8:
+			objProj.transform.position = GameObject.Find ("Hex_7_4").transform.position + new Vector3 (0, 5f, 0);
+			map.graph [4, 5].isWalkable = true;
+			map.graph [5, 5].isWalkable = true;
+			map.graph [6, 5].isWalkable = true;
+			map.graph [7, 4].isWalkable = true;
 			break;
 		case 9:
+			objProj.transform.position = GameObject.Find ("Hex_9_4").transform.position + new Vector3 (0, 5f, 0);
+			map.graph [8, 4].isWalkable = true;
+			map.graph [9, 4].isWalkable = true;
 			break;
 		case 10:
-			break;
-		case 11:
+			map.graph [8, 4].isWalkable = false;
+			map.graph [9, 4].isWalkable = false;
 			break;
 		case 12:
+			mouseManager.selectedUnit.fishingEnabled = true;
+			mouseManager.selectedUnit.attackEnabled = true;
+			mouseManager.selectedUnit.moveEnabled = true;
+			mouseManager.selectedUnit.tradeEnabled = true;
+			mouseManager.selectedUnit.lootEnabled = true;
+			foreach (Node n in map.graph) {
+				if (n.type.Equals ("sea")) {
+					n.isWalkable = true;
+				}
+			}
+			mouseManager.pathfinder.PathRequest (gameManager.players [1].Fleet [0], GameObject.Find ("Hex_10_6"));
+			mouseManager.pathfinder.PathRequest (gameManager.players [1].Fleet [1], GameObject.Find ("Hex_11_5"));
+			mouseManager.pathfinder.PathRequest (gameManager.players [1].Fleet [2], GameObject.Find ("Hex_11_3"));
+			gameManager.players [1].Fleet [0].DisplayHp (true);
+			gameManager.players [1].Fleet [1].DisplayHp (true);
+			gameManager.players [1].Fleet [2].DisplayHp (true);
 			break;
 		case 13:
 			break;
@@ -156,6 +205,9 @@ public class TutorialManager : MonoBehaviour {
 		gameManager.RevealAreaAroundCurrentPlayerShips ();
 		gameManager.CenterCameraOnFirstShip ();
 		if (step == 5) {
+			NextStep();
+		}
+		if (step == 11 && ship.Crew.Count == 8) {
 			NextStep();
 		}
 	}

@@ -7,7 +7,7 @@ public class Land : Hex {
     // Use this for initialization
 	private bool isCoast = false;
 
-    void Start()
+    void Awake()
 	{
 		isWalkable = false;
 		movementCost = Mathf.Infinity;

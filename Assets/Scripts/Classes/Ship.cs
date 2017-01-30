@@ -459,6 +459,21 @@ public class Ship : MonoBehaviour {
 		textHp = currentHp.ToString() + "/" + totalHp.ToString();
 	}
 
+	public bool IsFullLife(){
+		int totalHp = 0;
+		int currentHp = 0;
+		foreach (CrewMember cm in crew){
+			totalHp += cm.LpMax;
+			currentHp += cm.Lp;
+		}
+		Debug.Log (totalHp + " ///// " + currentHp);
+		if (totalHp == currentHp) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public void displayFloatingInfo(Color color, string text, Vector3 pos){
 		transform.FindChild("floatingInfo").GetComponent<FloatingText>().SetText (color, text, pos);
 	}
@@ -567,7 +582,6 @@ public class Ship : MonoBehaviour {
 		// We get all the neighbours in a range of 3 tiles
 		neighbours = currentHex.GetComponent<Hex> ().getNLevelOfNeighbours (0, 3);
 		foreach (GameObject n in neighbours) {
-			this.DisplayTargetHp (n);
 			if (!owner.IsHuman) {
 				if (n.GetComponent<Sea> () != null && n.GetComponent<Sea> ().ShipContained != null && !n.GetComponent<Sea> ().ShipContained.Owner.Name.Equals(this.owner.Name)) {
 					visibleByOther = true;
@@ -587,6 +601,10 @@ public class Ship : MonoBehaviour {
 			if (!owner.ExploredHex.Exists (e => e.x == newNode.x && e.y == newNode.y)) {
 				owner.ExploredHex.Add(newNode);
 			}
+		}
+		neighbours = currentHex.GetComponent<Hex> ().getNLevelOfNeighbours (0, 4);
+		foreach (GameObject n in neighbours) {
+			this.DisplayTargetHp (n);
 		}
 		if (!owner.IsHuman) {
 			if (visibleByOther) {
