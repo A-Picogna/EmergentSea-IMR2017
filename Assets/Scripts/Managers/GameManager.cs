@@ -93,6 +93,7 @@ public class GameManager : MonoBehaviour {
 		endTurnButton.onClick.AddListener(() => NextPlayer());
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
 
+		if(map.loadedMap != null && map.loadedMap.boatPreset == false){
 			AddShips (FleetSize);
 		} else {
 			loadShip (map.loadedMap);
@@ -267,7 +268,6 @@ public class GameManager : MonoBehaviour {
 			panelHandler.initPanelEnnemyShip ();
             panelHandler.hidePanelHarbor();
 		}
-		if (map.loadedMap.boatPreset = false) {
 		currentPlayerNumber = 0;
         if(AI.end)
         {
