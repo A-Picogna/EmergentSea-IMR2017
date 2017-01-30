@@ -11,7 +11,7 @@ public class Sea : Hex {
 	private Ship shipContained = null;
 
     // Use this for initialization
-    void Start()
+    void Awake()
 	{
 		isWalkable = true;
 		movementCost = 1;

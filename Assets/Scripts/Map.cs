@@ -555,15 +555,16 @@ public class Map : MonoBehaviour {
 	{
 		for (int absFood = 0; absFood < width; absFood++) {
 			for (int ordFood = 0; ordFood < height; ordFood++) {
-				if (graph [absFood, ordFood].type.Equals ("sea") & graph [absFood, ordFood].tag == true) {
+				if (graph [absFood, ordFood].type.Equals ("sea")) {
 					worldCoordFood = graph [absFood, ordFood].worldPos;
 					GameObject caseFood = GameObject.Find ("Hex_" + absFood + "_" + ordFood);
-					caseFood.GetComponent<Sea> ().FoodQuantity = rand.Next (foodQuantityMin, foodQuantityMax);
+					caseFood.GetComponent<Sea> ().FoodQuantity = Random.Range (foodQuantityMin, foodQuantityMax);
 					//Instantiate (foodPrefab, worldCoordFood, Quaternion.identity);
 				}
 			}
 		}
 	}
+
 	public void generateTreasure()
 	{
 		for (int c = 0; c < nombreCasesTreasure; c++) {

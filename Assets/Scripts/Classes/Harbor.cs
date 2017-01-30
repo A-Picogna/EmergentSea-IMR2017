@@ -6,8 +6,8 @@ using System.Collections.Generic;
 
 public class Harbor : Land
 {
-    private Player owner;
-    private string ownerName;
+    public Player owner;
+    public string ownerName;
     private float lpCost = 2f; //0.5 => 2pv = 1gold, 2 => 2pv = 4gold
     private float changeFoodGold = 0.1f; //0.5 => 100 food sold = 50 gold, 2 => 100 food = 200 gold
     private int buildingTime = 2;
@@ -107,14 +107,14 @@ public class Harbor : Land
                     }
                     else
                     {
-                        //Debug.Log("This harbor doesn't belong to you");
+                        Debug.Log("This harbor doesn't belong to you");
                         return false;
                     }
                 }
                 //Taking harbor
                 else
                 {
-                    //Debug.Log("No owner, taking it...");
+                    Debug.Log("No owner, taking it...");
                     owner = selected.Owner;
                     ownerName = selected.Owner.Name;
                     owner.Harbors.Add(this);

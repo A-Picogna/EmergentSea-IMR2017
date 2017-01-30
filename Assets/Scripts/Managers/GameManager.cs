@@ -88,13 +88,11 @@ public class GameManager : MonoBehaviour {
 		players = new List<Player>();
 		this.AddPlayer ("Player1", Color.red, true);
 		this.AddPlayer ("Player2", Color.blue, true);
-		currentPlayerNumber = 0;
 		currentPlayer = players [currentPlayerNumber];
 
 		endTurnButton.onClick.AddListener(() => NextPlayer());
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
 
-		if (map.loadedMap != null && map.loadedMap.boatPreset == false) {
 			AddShips (FleetSize);
 		} else {
 			loadShip (map.loadedMap);
@@ -269,6 +267,8 @@ public class GameManager : MonoBehaviour {
 			panelHandler.initPanelEnnemyShip ();
             panelHandler.hidePanelHarbor();
 		}
+		if (map.loadedMap.boatPreset = false) {
+		currentPlayerNumber = 0;
         if(AI.end)
         {
             AI.end = false;
@@ -450,12 +450,10 @@ public class GameManager : MonoBehaviour {
 
 	public Ship createShip(Player player, int x, int y, string goName = "", string name = ""){
 		if (goName.Equals("")) goName = "Ship_" + player.Name + "_" + player.NbTotalShip;
-		if (name.Equals("")) name = player.Name + "_Ship_" + player.NbTotalShip;
 		GameObject ship_go = (GameObject)Instantiate (shipPrefab, mouseManager.map.graph [x, y].worldPos, Quaternion.identity);
 		ship_go.name = goName;
 		ship_go.GetComponent<Ship> ().ShipX = x;
 		ship_go.GetComponent<Ship> ().ShipY = y;
-		ship_go.GetComponent<Ship> ().ShipName = name;
 		ship_go.GetComponent<Ship> ().Gold = GoldAmount;
 		ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 		Ship ship = ship_go.GetComponent<Ship> ();
@@ -463,7 +461,11 @@ public class GameManager : MonoBehaviour {
 		ship.addCrewMember(new Filibuster());
 		ship.addCrewMember(new PowderMonkey());
 		ship.addCrewMember(new Conjurer());
-		ship.setRandomName ();
+		if (name.Equals ("")) {
+			ship.setRandomName ();
+		} else {
+			ship.ShipName = name;
+		}
 		player.Fleet.Add (ship);
 		mouseManager.map.graph [x, y].isWalkable = false;
 		GameObject.Find("Hex_" + x + "_" + y).GetComponent<Sea>().ShipContained = ship;
@@ -656,6 +658,10 @@ public class GameManager : MonoBehaviour {
 			foreach (Ship ship in player.Fleet) {
 				ship.UpdateShipHp ();
 			}
+		}
+
+		foreach (CrewMember c in players[0].Fleet[0].Crew) {
+			c.Lp = Random.Range (Mathf.RoundToInt(c.LpMax * 0.1f), Mathf.RoundToInt(c.LpMax * 0.9f));
 		}
 
 		if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
