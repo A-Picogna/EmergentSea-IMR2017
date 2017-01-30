@@ -465,8 +465,7 @@ public class Ship : MonoBehaviour {
 		foreach (CrewMember cm in crew){
 			totalHp += cm.LpMax;
 			currentHp += cm.Lp;
-		}
-		Debug.Log (totalHp + " ///// " + currentHp);
+   		}
 		if (totalHp == currentHp) {
 			return true;
 		} else {

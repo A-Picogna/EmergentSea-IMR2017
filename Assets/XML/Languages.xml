@@ -118,7 +118,7 @@
     	<string name="tuto_step_11">Si vous le souhaitez, vous pouvez vendre votre nourriture et aussi recruter de nouveaux membres. Observez donc les différents membres d’équipage disponibles et recrutez-en jusqu’à remplir les capacités de votre navire. Cliquez sur le bouton fin de tour lorsque vous avez terminé.</string>
     	<string name="tuto_step_12">Sacrebleu ! Une flotte ennemie est à vos trousses ! Vite ! Engagez le combat et éliminez ces marins d’eau douce ! Utilisez les différentes capacités de votre équipage pour maximiser les dégâts (Attention, quand vous attaquez, l'ennemi riposte automatiquement avec tout ce qu'il peut à un pourcentage de puissance réduit).</string>
     	<string name="tuto_step_13">Bravo, votre combat à fait gagner de l'expérience à vos membres d'équipage, elle est indiqué par la barre jaune en dessous des points de vie. Lorsqu'elle est pleine, le matelot gagne un niveau, chaque niveau augmente toutes les statistiques de 5%</string>
+    	<string name="tuto_step_14">C'est la fin de ce tutorial, allez donc silloner les océans et montrer à tous qui est le maître !</string>
     	<string name="tuto_loose">Mille millions de mille sabords, vous avez réussi à perdre ? Eh bien recommencez et faites plus attention !</string>
-    	<string name="tuto_win">C'est la fin de ce tutorial, allez donc silloner les océans et montrer à tous qui est le maître !</string>
     </French>
 </languages>

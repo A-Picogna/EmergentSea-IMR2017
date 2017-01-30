@@ -22,7 +22,7 @@ public class CrewMember
 	levelMax;
 
 	public CrewMember(){
-		baseEnergyQuantity = 2;
+		baseEnergyQuantity = 1;
 		energyQuantity = baseEnergyQuantity;
 		xp = 0;
 		level = 1;
