@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour {
 		endTurnButton.onClick.AddListener(() => NextPlayer());
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
 
-		if (map.loadedMap.boatPreset = false) {
+		if (map.loadedMap != null && map.loadedMap.boatPreset == false) {
 			AddShips (FleetSize);
 		} else {
 			loadShip (map.loadedMap);
