@@ -23,11 +23,8 @@ public class AiScript {
     System.Random rand;
 
     public bool end;
-<<<<<<< Updated upstream
     public InfoPanel panel_message;
-=======
     public bool blocked;
->>>>>>> Stashed changes
 
     public AiScript(/*string difficulty*/)
     {
