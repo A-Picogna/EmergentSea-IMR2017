@@ -244,6 +244,8 @@ public class Ship : MonoBehaviour {
 				if (AtFilibusterRange (target)) {
 					// 1 is the type code of Filibusters
 					attackValue += Attack (1, target, 1f);
+				}
+				if (target.AtFilibusterRange (this)) {
 					// Retribution
 					retributionValue += target.Attack (1, this, RetributionStrength);
 				}
@@ -253,9 +255,17 @@ public class Ship : MonoBehaviour {
 					// Retribution
 					retributionValue += target.Attack (2, this, RetributionStrength);
 				}
+				if (target.AtPowderMonkeyRange (this)) {
+					// Retribution
+					retributionValue += target.Attack (2, this, RetributionStrength);
+				}
 				if (AtConjurerRange (target)) {
 					// 3 is the type code of Conjurers
 					attackValue += Attack (3, target, 1f);
+					// Retribution
+					retributionValue += target.Attack (3, this, RetributionStrength);
+				}
+				if (target.AtConjurerRange (this)) {
 					// Retribution
 					retributionValue += target.Attack (3, this, RetributionStrength);
 				}
