@@ -18,9 +18,10 @@ public class GameManager : MonoBehaviour {
 	public Button endTurnButton;
 	public Text textEndTurnNumber;
 	public StartTurn startTurnCanvas;
+    public InfoPanel panel_mess;
 
-	// Prefabs
-	public GameObject shipPrefab;
+    // Prefabs
+    public GameObject shipPrefab;
 	public GameObject mapPrefab;
 	public GameObject hexPrefab;
 	public GameObject landPrefab;
@@ -423,7 +424,9 @@ public class GameManager : MonoBehaviour {
 				//Debug.Log("AI playing...");
 				if (!aiIsPlaying)
 				{
-					foreach (Ship ship in currentPlayer.Fleet)
+                    panel_mess = GameObject.Find("txt_genInfo").GetComponent<InfoPanel>();
+                    panel_mess.DisplayInfo("Votre ennemi commence à jouer", 1, 0, 64);
+                    foreach (Ship ship in currentPlayer.Fleet)
 					{
 						ship.Used = false;
 						ship.TargetDistance = -1;
