@@ -312,7 +312,7 @@ public class GameManager : MonoBehaviour {
 	void GameOver(Player player){
 		if (!isTutorial) {
 			gameover = true;
-			if (!player.IsHuman) {
+			if (!player.Name.Equals(currentPlayer.Name)) {
 				GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_winnerLabel");
 				GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner");
 			} else {
