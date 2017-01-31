@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour {
 	private Lang lang;
 	private int returnInteractionCode;
 	private bool isTutorial = false;
+	private bool isMultiplayer;
 
     //AI
     AiScript AI;
