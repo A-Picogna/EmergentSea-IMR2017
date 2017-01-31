@@ -16,8 +16,8 @@ public class InfoPanel : MonoBehaviour {
 	
 	}
 
-	public void DisplayInfo(string message, float duration){
-		co = StartCoroutine (MessageForPlayer(message, duration));
+	public void DisplayInfo(string message, float duration, float delay = 0f, int fontSize = 32){
+		co = StartCoroutine (MessageForPlayer(message, duration, delay, fontSize));
 	}
 
 	IEnumerator MessageForPlayer (string message, float duration, float delay = 0f, int fontSize = 32){
