@@ -87,7 +87,8 @@
         <string name="mapEditor_firstExplaination">Bienvenu dans l'éditeur de carte d'Emergent-Sea, vous pouvez ajouter des éléments pour créer votre propre carte de jeu et ensuite la sauvegarder pour l'utiliser en partie normale</string>
     	<string name="mapEditor_explaination">Pour séléctionner un élément, utilisez le bouton gauche de la souris. Pour placer un élément, cliquez sur la carte avec le bouton gauche. Pour "Peindre" avec un élément, Cliquez avec le bouton droit.</string>
     	<string name="gameover_winnerLabel">Victoire !</string>
-    	<string name="gameover_looserLabel">Défaite...</string>
+    	<string name="gameover_looserLabel">Défaite</string>
+    	<string name="gameover_label">Fin de partie</string>
     	<string name="gameover_winner">Félicitation, vous avez gagné la partie ! Vous pouvez maintenant quitter et relancer une nouvelle partie avec d'autres paramètres !</string>
     	<string name="gameover_looser">Dommage, votre flotte à été complètement anéantie. Vous pouvez maintenant quitter et relancer une partie pour retenter votre chance !</string>
     	<string name="notEnoughEnergy">Votre navire n'a pas assez d'énergie !</string>
@@ -99,6 +100,8 @@
     	<string name="noHealNeeded">L'équipage est déjà complètement soigné</string>
     	<string name="outOffRange_ally">Votre navire est trop loin du navire allié désigné</string>
     	<string name="outOffRange_enemy">Votre navire n'a aucun membre d'équipage à portée de tir</string>
+    	<string name="gameover_winner_multia">Le joueur </string>
+    	<string name="gameover_winner_multib"> a gagné ! Vous pouvez maintenant quitter et relancer une nouvelle partie.</string>
 
     	<string name="editor_addShipHUD_menuLabel">Détails du navire</string>
     	<string name="editor_addShipHUD_shipName">Entrez le nom du navire</string>

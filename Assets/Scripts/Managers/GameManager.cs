@@ -85,13 +85,14 @@ public class GameManager : MonoBehaviour {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		aiTurn = false;
 		aiIsPlaying = false;
+		isMultiplayer = true;
 		AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
 		currentPlayerNumber = 0;
 		players = new List<Player>();
 		this.AddPlayer ("Player1", Color.red, true);
-		this.AddPlayer ("Player2", Color.blue, false);
+		this.AddPlayer ("Player2", Color.blue, true);
 		currentPlayer = players [currentPlayerNumber];
 
 		endTurnButton.onClick.AddListener(() => NextPlayer());
@@ -208,7 +209,7 @@ public class GameManager : MonoBehaviour {
 			}
 			*/
 			if ( (player.Fleet == null || player.Fleet.Count == 0) && !gameover) {
-				GameOver (player);
+				GameOver (player, playersCopy);
 			}
 			CheckShipsToDestroy (player);
 		}
@@ -324,15 +325,30 @@ public class GameManager : MonoBehaviour {
 		ship.Die ();
 	}
 
-	void GameOver(Player player){
+	void GameOver(Player player, List<Player> playersCopy){
 		if (!isTutorial) {
 			gameover = true;
-			if (!player.Name.Equals(currentPlayer.Name)) {
-				GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_winnerLabel");
-				GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner");
+			if (!isMultiplayer) {
+				if (!player.IsHuman) {
+					GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_winnerLabel");
+					GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner");
+				} else {
+					GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_looserLabel");
+					GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_looser");
+				}
 			} else {
-				GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_looserLabel");
-				GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_looser");
+				GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_label");
+				Player gagnant;
+				if (player.Name.Equals (playersCopy [0].Name)) {
+					gagnant = playersCopy [1];
+				} else {
+					gagnant = playersCopy [0];
+				}
+				Color32 color = gagnant.Color;
+				string hexaCodeColor = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
+				GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner_multia") + "<color=#" + hexaCodeColor + "ff>" +
+				lang.getString ("color_" + hexaCodeColor) +
+				"</color>" + lang.getString ("gameover_winner_multib");
 			}
 			GameObject.Find ("GameoverCanvas").GetComponent<GameoverManager> ().Pause ();
 		}
