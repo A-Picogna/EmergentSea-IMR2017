@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour {
         currentPlayerNumber = 0;
 		players = new List<Player>();
 		this.AddPlayer ("Player1", Color.red, true);
-		this.AddPlayer ("Player2", Color.blue, false);
+		this.AddPlayer ("Player2", Color.blue, true);
 		currentPlayer = players [currentPlayerNumber];
 
 		endTurnButton.onClick.AddListener(() => NextPlayer());
