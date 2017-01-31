@@ -11,7 +11,7 @@ public class Admiral : CrewMember
 	public Admiral() : base(){
 		//Initialise the variables
         //A changer pour la version finale et mettre baseEnergyQuantity à 5
-		baseEnergyQuantity = 5;
+		baseEnergyQuantity = 60;
 		energyQuantity = baseEnergyQuantity;
 		BaseAtk = 0;
 		BaseLpMax = 300;
