@@ -119,7 +119,6 @@ public class CrewHealthPanel : MonoBehaviour {
 			toUpdate = panelRight.GetChild (i).gameObject;
 			if (toUpdate.GetComponent<CrewHealthButton> ()) {
 				CrewHealthButton chb = toUpdate.GetComponent<CrewHealthButton> ();
-				buttonObjectPool.ReturnObject (toUpdate);
 				chb.setMaxLP ();
 			}
 		}
@@ -136,7 +135,6 @@ public class CrewHealthPanel : MonoBehaviour {
 				toUpdate = panelRight.GetChild (i).gameObject;
 				if (toUpdate.GetComponent<CrewHealthButton> ()) {
 					CrewHealthButton chb = toUpdate.GetComponent<CrewHealthButton> ();
-					buttonObjectPool.ReturnObject (toUpdate);
 					chb.setHealth ();
 				}
 			}
