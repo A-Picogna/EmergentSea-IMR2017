@@ -48,8 +48,9 @@ public class Sea : Hex {
 
 	// Remove the ship from the current hex
 	public void RemoveShip(){
-		shipContained = null;
-		isWalkable = true;
+	    //Object.Destroy(shipContained);
+        shipContained = null;
+        isWalkable = true;
 	}
 
 	// Remove the ship from the current hex

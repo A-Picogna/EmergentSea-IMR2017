@@ -115,7 +115,11 @@ public class MapEditor : MonoBehaviour {
 				Destroy (target.GetComponent<Sea> ().Treasure_go.gameObject);
 				target.GetComponent<Sea> ().RemoveTreasure();
 			} else if (target.GetComponent<Sea> ().ShipContained != null) {
-				Destroy (target.GetComponent<Sea> ().ShipContained.gameObject);
+			    foreach (Player p in players)
+			    {
+			        p.Fleet.Remove(target.GetComponent<Sea>().ShipContained);
+			    }
+                Destroy (target.GetComponent<Sea> ().ShipContained.gameObject);
 				target.GetComponent<Sea> ().RemoveShip();
 			}
 		}
