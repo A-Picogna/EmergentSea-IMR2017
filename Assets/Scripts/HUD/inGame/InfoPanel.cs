@@ -20,11 +20,12 @@ public class InfoPanel : MonoBehaviour {
 		co = StartCoroutine (MessageForPlayer(message, duration));
 	}
 
-	IEnumerator MessageForPlayer (string message, float duration, float delay = 0f){
+	IEnumerator MessageForPlayer (string message, float duration, float delay = 0f, int fontSize = 32){
 		yield return new WaitForSeconds(delay);
 		if (duration < 3f) {
 			duration = 3f;
 		}
+		this.GetComponent<Text>().fontSize = fontSize;  
 		this.GetComponent<Text>().text = message;    
 		yield return new WaitForSeconds(duration-2f);
 		this.GetComponent<Text>().CrossFadeAlpha(0.0f, 2f, false);

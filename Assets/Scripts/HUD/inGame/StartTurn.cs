@@ -23,7 +23,7 @@ public class StartTurn : MonoBehaviour {
 	public void Show(int turnNumber, Player player){
 		Color32 color = player.Color;
 		string hexaCodeColor = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
-		string txt = "Tour du joueur " +
+		string txt = "Tour " + turnNumber.ToString() + " - Joueur " +
 			"<color=#"+ hexaCodeColor + "ff>" + 
 			player.Color.ToString () + 
 			"</color>" +
