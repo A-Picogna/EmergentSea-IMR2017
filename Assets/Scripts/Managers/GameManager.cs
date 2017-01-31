@@ -269,24 +269,35 @@ public class GameManager : MonoBehaviour {
 			panelHandler.initPanelEnnemyShip ();
             panelHandler.hidePanelHarbor();
 		}
-		//currentPlayerNumber = 0;
-        if(AI.end)
+        if (!AI.blocked)
         {
-            AI.end = false;
-            waiting = 100;
-        }
+            if (AI.end)
+            {
+                AI.end = false;
+                waiting = 100;
+            }
 
-        if (waiting > 0)
-        {
-            Debug.Log("Waiting");
-            waiting--;
+            if (waiting > 0)
+            {
+                Debug.Log("Waiting");
+                waiting--;
+            }
+            else
+            {
+                if (aiTurn)
+                {
+                    aiTurn = false;
+                    NextPlayer();
+                }
+            }
         }
         else
         {
-            if (aiTurn)
+            if(AI.MovingShip.unblocked)
             {
-                aiTurn = false;
-                NextPlayer();
+                AI.MovingShip.unblocked = false;
+                AI.blocked = false;
+                waiting = 20;
             }
         }
     }

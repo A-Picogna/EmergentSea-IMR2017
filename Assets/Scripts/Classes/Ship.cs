@@ -46,6 +46,7 @@ public class Ship : MonoBehaviour {
     private int targetX;
     private int targetY;
     private int targetDistance;
+    public bool unblocked;
 
 	//Options
 	public bool fishingEnabled = true;
@@ -79,6 +80,8 @@ public class Ship : MonoBehaviour {
 		this.shipName = s.shipName;
 
 		this.crew = s.crew;
+
+        unblocked = false;
 
 		// Reinit
 		destination = transform.position;
@@ -272,6 +275,7 @@ public class Ship : MonoBehaviour {
 		if (owner.IsHuman) {
 			panelHandler.updateShip ();
 		}
+        unblocked = true;
 		return errorCode;
 	}
 

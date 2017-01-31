@@ -23,10 +23,15 @@ public class AiScript {
     System.Random rand;
 
     public bool end;
+<<<<<<< Updated upstream
     public InfoPanel panel_message;
+=======
+    public bool blocked;
+>>>>>>> Stashed changes
 
     public AiScript(/*string difficulty*/)
     {
+        blocked = false;
         end = false;
         rand = new System.Random();
         notEnoughGold = false;
@@ -350,6 +355,7 @@ public class AiScript {
             if (canAtk && ship.EnergyQuantity >= ship.AtkCost)
             {
                 //Debug.Log("Attacking target");
+                blocked = true;
                 ship.Interact(target);
             }
             else if(ship.EnergyQuantity > 0 && ship.TargetDistance > 0)
