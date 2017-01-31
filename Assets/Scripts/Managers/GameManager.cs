@@ -268,7 +268,7 @@ public class GameManager : MonoBehaviour {
 			panelHandler.initPanelEnnemyShip ();
             panelHandler.hidePanelHarbor();
 		}
-		currentPlayerNumber = 0;
+		//currentPlayerNumber = 0;
         if(AI.end)
         {
             AI.end = false;
@@ -332,9 +332,10 @@ public class GameManager : MonoBehaviour {
 	{
         if (!aiIsPlaying)
         {
-            ResetFOW();
-            RevealAreaAlreadyExplored();
-            RevealAreaAroundCurrentPlayerShips();
+            Debug.Log("pouet1");
+            //ResetFOW();
+            //RevealAreaAlreadyExplored();
+            //RevealAreaAroundCurrentPlayerShips();
 
             AI.MovingShip = null;
             mouseManager.selectedUnit = null;
@@ -347,8 +348,10 @@ public class GameManager : MonoBehaviour {
 			}
 
             currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
+            Debug.Log(currentPlayerNumber);
             if (currentPlayerNumber == 0)
             {
+                Debug.Log("pouet2");
                 NextTurn();
             }
             currentPlayer = players[currentPlayerNumber];
@@ -367,8 +370,10 @@ public class GameManager : MonoBehaviour {
             }
         }
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
-			if(currentPlayer.IsHuman)
+            Debug.Log("pouet3");
+            if (currentPlayer.IsHuman)
             {
+                Debug.Log("pouet4");
                 // We reset fow for next player
                 ResetFOW ();
                 RevealAreaAlreadyExplored ();
