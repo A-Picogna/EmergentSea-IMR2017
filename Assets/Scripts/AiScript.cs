@@ -257,7 +257,7 @@ public class AiScript {
         //End of AI turn
         end = true;
         panel_message = GameObject.Find("txt_genInfo").GetComponent<InfoPanel>();
-        panel_message.DisplayInfo("A vous de jouer !", 1);
+        panel_message.DisplayInfo("A vous de jouer !", 1, 5,64);
 
         return false;
     }
