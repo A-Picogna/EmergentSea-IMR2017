@@ -34,7 +34,21 @@ public class SceneLoader : MonoBehaviour {
 		}
 	}
 
-	void Update() {
+    public void Tutorial()
+    {
+        //		Resources.UnloadUnusedAssets ();
+        if (LoadManager.instance.loadingAScene == false)
+        {
+            LoadManager.instance.LoadManagerState = LoadManager.state.LaunchTutorial;
+            LoadManager.instance.loadingAScene = true;
+
+            gameObject.SetActive(true);
+
+            LoadManager.instance.LoadSceneRoutine("map_tutorial");
+        }
+    }
+
+    void Update() {
 		if (LoadManager.instance.loadingAScene = true) {
 			if (supercount == 19) {
 				switch (count) 

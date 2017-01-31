@@ -23,7 +23,7 @@ public class LoadManager : MonoBehaviour {
 	// The magic works here : You can use the singleton just by indicating nager.instance
 
 	// Object Enum
-	public enum state { Inactive, StartNewMap, StartLoadedMap, LoadSave, StartEditor, LoadMapEditor }
+	public enum state { Inactive, StartNewMap, StartLoadedMap, LoadSave, StartEditor, LoadMapEditor, LaunchTutorial}
 
 	// LoadManager Info
 	public state LoadManagerState;
@@ -40,6 +40,7 @@ public class LoadManager : MonoBehaviour {
 	public int FleetSize = 2;
 	public int goldAmountPerFleet = 200;
 	public int retributionStrength = 80;
+    public bool LocalMultiplayer = false;
 
 	//public int Parameter =;
 	//public int Parameter =;
@@ -443,6 +444,11 @@ public class LoadManager : MonoBehaviour {
 		NewMapMenu.SetActive (false);
 	}
 
+    private void linkObjectsTutorial()
+    {
+        
+    }
+
 	void OnLevelWasLoaded() {
 		
 		this.MapLoaded = null;
@@ -476,6 +482,10 @@ public class LoadManager : MonoBehaviour {
 			//Debug.Log ("Chargement de l'éditeurs avec une carte !");
 			loadPrefabricatedMapEditor (MapPrefabToLoad);
 			break;
+        case state.LaunchTutorial:
+            Debug.Log("Chargement du tutoriel !");
+            linkObjectsTutorial();
+            break;
 		default:
 			//Debug.LogError ("Ca ne devrait pas arriver.");
 			break;
