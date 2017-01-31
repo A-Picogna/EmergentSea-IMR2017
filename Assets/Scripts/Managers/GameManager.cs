@@ -92,9 +92,12 @@ public class GameManager : MonoBehaviour {
 		turnNumber = 1;
 		currentPlayerNumber = 0;
 		players = new List<Player>();
-		this.AddPlayer ("Player1", Color.red, true);
-		this.AddPlayer ("Player2", Color.blue, true);
-		currentPlayer = players [currentPlayerNumber];
+
+        this.AddPlayer("Player1", Color.red, true);
+        // Si pas de multijoueur, ce n'est pas un humain ! :D
+        this.AddPlayer("Player2", Color.blue, isMultiplayer);
+
+        currentPlayer = players [currentPlayerNumber];
 
 		endTurnButton.onClick.AddListener(() => NextPlayer());
 		textEndTurnNumber.text = "Tour n°" + turnNumber.ToString();
