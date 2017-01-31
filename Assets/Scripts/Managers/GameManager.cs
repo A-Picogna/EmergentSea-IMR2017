@@ -358,7 +358,11 @@ public class GameManager : MonoBehaviour {
                 if (harbor.Building)
                 {
                     harbor.RemainingBuildingTime--;
-                    //Debug.Log(harbor.RemainingBuildingTime);
+                    Debug.Log(harbor.RemainingBuildingTime);
+                    if (harbor.RemainingBuildingTime <= 0)
+                    {
+                        harbor.Build(map);
+                    }
                 }
             }
         }
