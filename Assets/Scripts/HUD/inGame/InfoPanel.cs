@@ -20,7 +20,8 @@ public class InfoPanel : MonoBehaviour {
 		co = StartCoroutine (MessageForPlayer(message, duration));
 	}
 
-	IEnumerator MessageForPlayer (string message, float duration){
+	IEnumerator MessageForPlayer (string message, float duration, float delay = 0f){
+		yield return new WaitForSeconds(delay);
 		if (duration < 3f) {
 			duration = 3f;
 		}
