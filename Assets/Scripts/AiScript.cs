@@ -23,6 +23,7 @@ public class AiScript {
     System.Random rand;
 
     public bool end;
+    public InfoPanel panel_message;
 
     public AiScript(/*string difficulty*/)
     {
@@ -253,6 +254,8 @@ public class AiScript {
         }
         //End of AI turn
         end = true;
+        panel_message = GameObject.Find("txt_genInfo").GetComponent<InfoPanel>();
+        panel_message.DisplayInfo("A vous de jouer !", 1);
 
         return false;
     }
