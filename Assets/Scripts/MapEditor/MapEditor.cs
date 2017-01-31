@@ -299,7 +299,7 @@ public class MapEditor : MonoBehaviour {
 		LoadMap (SavedMap);
 		InstantiateMap (SavedMap);
 		loadFoodAndTreasures (SavedMap);
-		if (SavedMap.boatPreset = true) {
+		if (SavedMap.boatPreset == true) {
 			if (players == null) {
 				players = new List<Player> ();
 			}

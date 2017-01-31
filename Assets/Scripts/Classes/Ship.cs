@@ -412,11 +412,11 @@ public class Ship : MonoBehaviour {
 	public void GiveXP(int crewType){
 		foreach (CrewMember c in crew) {
 			if (c.Type == crewType){
-				c.gainXP (15);
+				c.gainXP (25);
 			}
 			// We also give xp to the admiral, code 0
 			if (c.Type == 0) {
-				c.gainXP (10);
+				c.gainXP (25);
 			}
 		}
 	}
@@ -465,8 +465,7 @@ public class Ship : MonoBehaviour {
 		foreach (CrewMember cm in crew){
 			totalHp += cm.LpMax;
 			currentHp += cm.Lp;
-		}
-		Debug.Log (totalHp + " ///// " + currentHp);
+   		}
 		if (totalHp == currentHp) {
 			return true;
 		} else {

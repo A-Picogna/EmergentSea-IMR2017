@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.IO;
 using System.Threading;
+using UnityEngine.SceneManagement;
 
 public class TutorialManager : MonoBehaviour {
 
@@ -30,6 +31,7 @@ public class TutorialManager : MonoBehaviour {
 		mouseManager.mouseManagerEnabled = false;
 		endTurnButton.gameObject.SetActive (false);
 		harbor = GameObject.Find ("Hex_9_3").GetComponent<Harbor> ();
+		GameObject.Find ("btn_return").GetComponent<Button> ().onClick.AddListener( () => SceneManager.LoadScene ("main", LoadSceneMode.Single) );
 	}
 
 	// Update is called once per frame
@@ -38,6 +40,8 @@ public class TutorialManager : MonoBehaviour {
 		case 1:
 			if (mouseManager.selectedUnit != null) {
 				ship = mouseManager.selectedUnit;
+				ship.EnergyQuantity = 3;
+				panelHandler.updateShipInfo();
 				mouseManager.selectedUnit.fishingEnabled = false;
 				mouseManager.selectedUnit.attackEnabled = false;
 				mouseManager.selectedUnit.moveEnabled = false;
@@ -194,11 +198,19 @@ public class TutorialManager : MonoBehaviour {
 			gameManager.players [1].Fleet [2].DisplayHp (true);
 			break;
 		case 13:
+			nextButton.gameObject.SetActive (true);
+			break;
+		case 14:
+			nextButton.gameObject.GetComponentInChildren<Text> ().text = "Quitter";
+			nextButton.onClick.RemoveAllListeners ();
+			nextButton.onClick.AddListener( () => SceneManager.LoadScene ("main", LoadSceneMode.Single) );
 			break;
 		}
 	}
 
 	public void NextTurn(){
+		ship.RefuelEnergy ();
+		panelHandler.updateShipInfo();
 		gameManager.NextTurn ();
 		gameManager.ResetFOW ();
 		gameManager.RevealAreaAlreadyExplored ();

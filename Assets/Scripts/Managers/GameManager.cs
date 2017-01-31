@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour {
 	private Lang lang;
 	private int returnInteractionCode;
 	private bool isTutorial = false;
+	private bool isMultiplayer;
 
     //AI
     AiScript AI;
@@ -84,7 +85,7 @@ public class GameManager : MonoBehaviour {
 		AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
-
+        currentPlayerNumber = 0;
 		players = new List<Player>();
 		this.AddPlayer ("Player1", Color.red, true);
 		this.AddPlayer ("Player2", Color.blue, true);
@@ -268,7 +269,7 @@ public class GameManager : MonoBehaviour {
 			panelHandler.initPanelEnnemyShip ();
             panelHandler.hidePanelHarbor();
 		}
-		currentPlayerNumber = 0;
+		//currentPlayerNumber = 0;
         if(AI.end)
         {
             AI.end = false;
@@ -312,7 +313,7 @@ public class GameManager : MonoBehaviour {
 	void GameOver(Player player){
 		if (!isTutorial) {
 			gameover = true;
-			if (!player.IsHuman) {
+			if (!player.Name.Equals(currentPlayer.Name)) {
 				GameObject.Find ("txt_gameoverLabel").GetComponent<Text> ().text = lang.getString ("gameover_winnerLabel");
 				GameObject.Find ("txt_gameover").GetComponent<Text> ().text = lang.getString ("gameover_winner");
 			} else {
@@ -332,9 +333,10 @@ public class GameManager : MonoBehaviour {
 	{
         if (!aiIsPlaying)
         {
-            ResetFOW();
-            RevealAreaAlreadyExplored();
-            RevealAreaAroundCurrentPlayerShips();
+            Debug.Log("pouet1");
+            //ResetFOW();
+            //RevealAreaAlreadyExplored();
+            //RevealAreaAroundCurrentPlayerShips();
 
             AI.MovingShip = null;
             mouseManager.selectedUnit = null;
@@ -347,8 +349,10 @@ public class GameManager : MonoBehaviour {
 			}
 
             currentPlayerNumber = (currentPlayerNumber + 1) % players.Count;
+            Debug.Log(currentPlayerNumber);
             if (currentPlayerNumber == 0)
             {
+                Debug.Log("pouet2");
                 NextTurn();
             }
             currentPlayer = players[currentPlayerNumber];
@@ -358,13 +362,19 @@ public class GameManager : MonoBehaviour {
                 if (harbor.Building)
                 {
                     harbor.RemainingBuildingTime--;
-                    //Debug.Log(harbor.RemainingBuildingTime);
+                    Debug.Log(harbor.RemainingBuildingTime);
+                    if (harbor.RemainingBuildingTime <= 0)
+                    {
+                        harbor.Build(map);
+                    }
                 }
             }
         }
         if (currentPlayer.Fleet != null && currentPlayer.Fleet.Count > 0) {
-			if(currentPlayer.IsHuman)
+            Debug.Log("pouet3");
+            if (currentPlayer.IsHuman)
             {
+                Debug.Log("pouet4");
                 // We reset fow for next player
                 ResetFOW ();
                 RevealAreaAlreadyExplored ();

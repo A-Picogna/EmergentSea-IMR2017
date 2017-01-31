@@ -10,7 +10,7 @@ public class Harbor : Land
     public string ownerName;
     private float lpCost = 2f; //0.5 => 2pv = 1gold, 2 => 2pv = 4gold
     private float changeFoodGold = 0.1f; //0.5 => 100 food sold = 50 gold, 2 => 100 food = 200 gold
-    private int buildingTime = 2;
+    private int buildingTime = 3;
     private bool building;
     private int remainingBuildingTime;
     private GameObject buildingShip;
