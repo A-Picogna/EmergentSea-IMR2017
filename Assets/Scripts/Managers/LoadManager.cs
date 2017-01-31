@@ -220,6 +220,11 @@ public class LoadManager : MonoBehaviour {
 		this.retributionStrength = Mathf.RoundToInt (number);
 	}
 
+    public void LocalMultiplayerCallback(bool LocalMultiplayer)
+    {
+        this.LocalMultiplayer = LocalMultiplayer;
+    }
+
 	private Map initMap() {
 		GameObject newObject = Instantiate(mapPrefab, new Vector3(0,0,0), Quaternion.identity) as GameObject;
 		newObject.name = newObject.name.Replace ("(Clone)", "").Trim ();
@@ -319,6 +324,7 @@ public class LoadManager : MonoBehaviour {
 
 		gameSettings.map = worldMap;
 		gameSettings.game = gameFile;
+	    gameSettings.isMultiplayer = gameFile.isMultiplayer;
 		gameSettings.loadingMode = true;
 
 		return gameSettings;
@@ -508,6 +514,7 @@ public class LoadManager : MonoBehaviour {
 		gameSettings.FleetSize = this.FleetSize;
 		gameSettings.GoldAmount = this.goldAmountPerFleet;
 		gameSettings.retributionStrength = this.retributionStrength;
+	    gameSettings.isMultiplayer = this.LocalMultiplayer;
 
 		return gameSettings;
 	}

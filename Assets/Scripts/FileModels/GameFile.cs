@@ -8,5 +8,6 @@ public class GameFile
 	public int turnNumber;
 	public int currentPlayerNumber;
 	public List<PlayerStruct> players;
+    public bool isMultiplayer;
 }
 

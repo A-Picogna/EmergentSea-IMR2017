@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour {
 	private Lang lang;
 	private int returnInteractionCode;
 	private bool isTutorial = false;
-	private bool isMultiplayer;
+	public bool isMultiplayer;
 
 	//AI
 	AiScript AI;
@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour {
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		aiTurn = false;
 		aiIsPlaying = false;
-		isMultiplayer = true;
+		//isMultiplayer = true;
 		AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
@@ -181,7 +181,7 @@ public class GameManager : MonoBehaviour {
 
 		gameFile.turnNumber = this.turnNumber;
 		gameFile.currentPlayerNumber = this.currentPlayerNumber;
-
+	    gameFile.isMultiplayer = this.isMultiplayer;
 
 		gameFile.players = new List<PlayerStruct> ();
 
