@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour {
 		AI = new AiScript();
 		rand = new System.Random();
 		turnNumber = 1;
-
+        currentPlayerNumber = 0;
 		players = new List<Player>();
 		this.AddPlayer ("Player1", Color.red, true);
 		this.AddPlayer ("Player2", Color.blue, true);
