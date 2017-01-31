@@ -21,6 +21,8 @@ public class StartTurn : MonoBehaviour {
 	}
 
 	public void Show(int turnNumber, Player player){
+		Color32 color = player.Color;
+		string hexaCodeColor = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
 		string txt = "Tour du joueur " + player.Color.ToString () +"\n"+"Appuyez sur GO pour jouer votre tour";
 		this.gameObject.GetComponent<Text> ().text = txt;
 		this.gameObject.SetActive (true);
