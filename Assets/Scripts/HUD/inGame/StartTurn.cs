@@ -16,7 +16,7 @@ public class StartTurn : MonoBehaviour {
 	}
 
 	public void Hide(){
-		this.gameObject.GetComponent<Text> ().text = "";
+		this.transform.Find("txt_startTurn").GetComponent<Text> ().text = "";
 		this.gameObject.SetActive (false);
 	}
 
@@ -29,7 +29,7 @@ public class StartTurn : MonoBehaviour {
 			"</color>" +
 			"\n"+ 
 			"Appuyez sur GO pour jouer votre tour";
-		this.gameObject.GetComponent<Text> ().text = txt;
+		this.transform.Find("txt_startTurn").GetComponent<Text> ().text = txt;
 		this.gameObject.SetActive (true);
 	}
 
