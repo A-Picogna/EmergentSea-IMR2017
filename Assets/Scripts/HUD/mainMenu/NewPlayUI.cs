@@ -41,6 +41,7 @@ public class NewPlayUI : MonoBehaviour {
 	public GameObject GoldQuantitySlider;
 	public GameObject RetributionStrengthFeedbackText;
 	public GameObject RetributionStrengthSlider;
+    public GameObject LocalMultiplayerToggle;
 
 	private Text ShipNumberTextComponent;
 	private Slider ShipNumberSliderComponent;
@@ -48,6 +49,7 @@ public class NewPlayUI : MonoBehaviour {
 	private Slider GoldQuantitySliderComponent;
 	private Text RetributionStrengthTextComponent;
 	private Slider RetributionStrengthSliderComponent;
+    private Toggle LocalMultiplayerToggleComponent;
 
 	public GameObject LaunchGameButton;
 
@@ -69,6 +71,7 @@ public class NewPlayUI : MonoBehaviour {
 		ShipNumberSliderComponent = ShipNumberSlider.gameObject.GetComponent<Slider> ();
 		GoldQuantitySliderComponent = GoldQuantitySlider.gameObject.GetComponent<Slider> ();
 		RetributionStrengthSliderComponent = RetributionStrengthSlider.gameObject.GetComponent<Slider> ();
+	    LocalMultiplayerToggleComponent = LocalMultiplayerToggle.gameObject.GetComponent<Toggle>();
 
 		populateMapList ();
 		updateValuesMap ();
@@ -193,12 +196,13 @@ public class NewPlayUI : MonoBehaviour {
 		MapYFeedbackTextComponent.text = LoadManager.instance.MapY.ToString ();
 
 		MapXSliderComponent.value = LoadManager.instance.MapX;
-		MapYSliderComponent.value = LoadManager.instance.MapY;
+		MapYSliderComponent.value = LoadManager.instance.MapY;
+
 
 		(GroundFrequencyInputDropdown.GetComponent<Dropdown> ()).value = LoadManager.instance.GroundFrequencyParameter;
 		(TreasureFrequencyInputDropdown.GetComponent<Dropdown> ()).value = LoadManager.instance.TreasureFrequencyParameter;
 		(PortFrequencyInputDropdown.GetComponent<Dropdown> ()).value = LoadManager.instance.PortFrequencyParameter;
-
+	    (LocalMultiplayerToggle.GetComponent<Toggle>()).isOn = LoadManager.instance.LocalMultiplayer;
 	}
 
 	private void updateValuesGame() {
@@ -209,5 +213,6 @@ public class NewPlayUI : MonoBehaviour {
 		ShipNumberSliderComponent.value = LoadManager.instance.FleetSize;
 		GoldQuantitySliderComponent.value = LoadManager.instance.goldAmountPerFleet;
 		RetributionStrengthSliderComponent.value = LoadManager.instance.retributionStrength;
+	    LocalMultiplayerToggleComponent.isOn = LoadManager.instance.LocalMultiplayer;
 	}
 }
