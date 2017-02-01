@@ -461,11 +461,17 @@ public class GameManager : MonoBehaviour {
 
 	void AddShips(int n){
 		int playerCount = 0;
+		int tryNumber = 0;
 		foreach (Player player in players) {
 			int count = 0;
 			float minDistance = Mathf.Max(map.width/2, map.height/2);
-			float maxDistance = Mathf.Max(map.width/5, map.height/5);
+			float maxDistance = Mathf.Max(map.width/4, map.height/4);
 			while (count < n) {
+				if (tryNumber > 100) {
+					tryNumber = 0;
+					minDistance--;
+					maxDistance++;
+				}
 				int x = rand.Next (1, mouseManager.map.width);
 				int y = rand.Next (1, mouseManager.map.height);
 				if (mouseManager.map.graph [x, y].type == "sea" && mouseManager.map.graph [x, y].tag && mouseManager.map.graph [x, y].isWalkable) {
@@ -492,6 +498,7 @@ public class GameManager : MonoBehaviour {
 						}
 					}
 				}
+				tryNumber++;
 			}
 			playerCount++;
 		}
@@ -718,6 +725,8 @@ public class GameManager : MonoBehaviour {
 				ship.Playable = true;
 			}
 		}
+
+		this.retributionStrength = 50;
 
 		checkInit = false;
 		ResetFOW ();
