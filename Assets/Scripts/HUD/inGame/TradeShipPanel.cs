@@ -233,7 +233,11 @@ public class TradeShipPanel : MonoBehaviour {
 				}
 			}
 		}
-	}
+        item.UpdateShipHp();
+        item.DisplayHp(true);
+        otherShipPanel.item.UpdateShipHp();
+        otherShipPanel.item.DisplayHp(true);
+    }
 
 	public void readyForTrade(bool selected, CrewMember cm, TradeShipPanel tsp, Button button) {
 		selectedForTrade = selected;

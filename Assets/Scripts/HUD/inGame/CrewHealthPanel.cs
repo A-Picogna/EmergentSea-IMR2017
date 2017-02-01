@@ -142,6 +142,8 @@ public class CrewHealthPanel : MonoBehaviour {
 			cost = 0;
 			lpSum = 0;
 			panelHandler.refreshCrewMemberDisplay ();
+            item.UpdateShipHp();
+            item.DisplayHp(true);
 		}
 	}
 	public void updateGold(int sum = 0) {

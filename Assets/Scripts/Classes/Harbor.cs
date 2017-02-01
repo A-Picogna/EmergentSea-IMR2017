@@ -428,6 +428,8 @@ public class Harbor : Land
             //Debug.Log("Hp : " + selected.Hp);
             //Debug.Log("Gold : " + selected.Gold);
 		}
-		return errorCode;
+        selected.UpdateShipHp();
+        selected.DisplayHp(true);
+        return errorCode;
     }
 }

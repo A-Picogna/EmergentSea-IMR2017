@@ -369,9 +369,9 @@ public class GameManager : MonoBehaviour {
 	{
 		if (!aiIsPlaying)
 		{
-			//ResetFOW();
-			//RevealAreaAlreadyExplored();
-			//RevealAreaAroundCurrentPlayerShips();
+			ResetFOW();
+			RevealAreaAlreadyExplored();
+			RevealAreaAroundCurrentPlayerShips();
 
 			AI.MovingShip = null;
 			mouseManager.selectedUnit = null;
