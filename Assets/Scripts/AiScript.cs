@@ -327,8 +327,10 @@ public class AiScript {
                 if (ship.CurrentPath.Count > 0)
                 {
                     //Put the original destination to walkable and the current place to unwalkable
-                    map.graph[ship.CurrentPath[ship.CurrentPath.Count - 1].x, ship.CurrentPath[ship.CurrentPath.Count - 1].y].isWalkable = false;
-                    GameObject.Find("Hex_" + ship.CurrentPath[ship.CurrentPath.Count - 1].x + "_" + ship.CurrentPath[ship.CurrentPath.Count - 1].y).GetComponent<Sea>().ShipContained = ship;
+                    map.graph[ship.ShipX, ship.ShipY].isWalkable = false;
+                    GameObject.Find("Hex_" + ship.ShipX + "_" + ship.ShipY).GetComponent<Sea>().ShipContained = ship;
+                    //map.graph[ship.CurrentPath[ship.CurrentPath.Count - 1].x, ship.CurrentPath[ship.CurrentPath.Count - 1].y].isWalkable = false;
+                    //GameObject.Find("Hex_" + ship.CurrentPath[ship.CurrentPath.Count - 1].x + "_" + ship.CurrentPath[ship.CurrentPath.Count - 1].y).GetComponent<Sea>().ShipContained = ship;
 
                     map.graph[ship.CurrentPath[ship.CurrentPath.Count - 1].x, ship.CurrentPath[ship.CurrentPath.Count - 1].y].isWalkable = true;
                     GameObject.Find("Hex_" + ship.CurrentPath[ship.CurrentPath.Count - 1].x + "_" + ship.CurrentPath[ship.CurrentPath.Count - 1].y).GetComponent<Sea>().RemoveShip();
