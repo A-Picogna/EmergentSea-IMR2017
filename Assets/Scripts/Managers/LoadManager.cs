@@ -596,6 +596,7 @@ public class LoadManager : MonoBehaviour {
 		//Debug.Log ("Loading...");
 		MapFile saveMap = (MapFile)bf.Deserialize (saveFile);
 
+		saveFile.Close ();
 		loadWorld (saveMap);
 	}
 
@@ -623,6 +624,7 @@ public class LoadManager : MonoBehaviour {
 		//Debug.Log ("Loading...");
 		MapFile saveMap = (MapFile)bf.Deserialize (saveFile);
 
+		saveFile.Close ();
 		loadEditor (saveMap);
 	}
 
@@ -679,8 +681,10 @@ public class LoadManager : MonoBehaviour {
 
 		//Debug.Log ("Loading...");
 		SaveFile saveObject = (SaveFile)bf.Deserialize (saveFile);
+		saveFile.Close ();
 
 		loadSave (saveObject);
+
 	}
 
 	public void BackToMenu(){
