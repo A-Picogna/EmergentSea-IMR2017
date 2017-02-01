@@ -261,6 +261,7 @@ public class MapEditor : MonoBehaviour {
 		ship_go.GetComponentInChildren<MeshRenderer> ().material.color = player.Color;
 		Ship ship = ship_go.GetComponent<Ship> ();
 		ship.Owner = player;
+		ship.ShipName = ship_go.name;
 		ship.addCrewMember(new Filibuster());
 		ship.addCrewMember(new PowderMonkey());
 		ship.addCrewMember(new Conjurer());
