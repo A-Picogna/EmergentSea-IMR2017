@@ -118,6 +118,7 @@ public class NewPlayUI : MonoBehaviour {
 	}
 
 	public void MapWidthDropdownCallback(int WidthType) {
+		LoadManager.instance.MapWidthDropdownCallback (WidthType);
 		if (WidthType == 6) {
 		
 			MapXDescGroup.gameObject.SetActive (true);
@@ -159,6 +160,47 @@ public class NewPlayUI : MonoBehaviour {
 		MapListDescGroup.SetActive(!MapGenerationIsActive);
 		MapListInputGroup.SetActive(!MapGenerationIsActive);
 
+	}
+
+	public void DifficultyDropdownCallback(int DifficultyType) {
+		LoadManager.instance.DifficultyDropdownCallback(DifficultyType);
+	}
+
+	public void GroundFrequencyDropdownCallback(int GroundFrequencyType) {
+		LoadManager.instance.GroundFrequencyDropdownCallback(GroundFrequencyType);
+	}
+
+	public void PortFrequencyDropdownCallback(int PortFrequencyType) {
+		LoadManager.instance.PortFrequencyDropdownCallback(PortFrequencyType);
+	}
+
+	public void TreasureFrequencyDropdownCallback(int TreasureFrequencyType) {
+		LoadManager.instance.TreasureFrequencyDropdownCallback (TreasureFrequencyType);
+	}
+
+	public void MapXSliderCallBack(float MapX) {
+		LoadManager.instance.MapXSliderCallBack (MapX);
+	}
+
+	public void MapYSliderCallBack(float MapY) {
+		LoadManager.instance.MapYSliderCallBack (MapY);
+	}
+
+	public void ShipNumberSliderCallBack(float number) {
+		LoadManager.instance.ShipNumberSliderCallBack(number);
+	}
+
+	public void GoldQuantitySliderCallBack(float number) {
+		LoadManager.instance.GoldQuantitySliderCallBack (number);
+	}
+
+	public void RetributionStrengthSliderCallBack(float number) {
+		LoadManager.instance.RetributionStrengthSliderCallBack (number); 
+	}
+
+	public void LocalMultiplayerCallback(bool LocalMultiplayer)
+	{
+		LoadManager.instance.LocalMultiplayerCallback (LocalMultiplayer);
 	}
 
 	private void populateMapList() {

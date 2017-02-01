@@ -124,5 +124,13 @@ public class MapEditorUI : MonoBehaviour
 		MapXSliderComponent.value = LoadManager.instance.MapX;
 		MapYSliderComponent.value = LoadManager.instance.MapY;
 	}
+
+	public void MapXSliderCallBack(float MapX) {
+		LoadManager.instance.MapXSliderCallBack (MapX);
+	}
+
+	public void MapYSliderCallBack(float MapY) {
+		LoadManager.instance.MapYSliderCallBack (MapY);
+	}
 }
 
