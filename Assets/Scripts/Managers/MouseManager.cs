@@ -194,10 +194,13 @@ public class MouseManager : MonoBehaviour {
 			Cursor.SetCursor (treasureCursorTexture, new Vector2 (treasureCursorTexture.width / 2, treasureCursorTexture.height / 2), CursorMode.Auto);
 			if (Input.GetMouseButtonUp (1)) {
 				Sea target = ourHitObject.GetComponent<Sea> ();
-				selectedUnit.HoistTreasure (target);
+				bool result = selectedUnit.HoistTreasure (target);
 				if (Mathf.Abs (Vector3.Distance (selectedUnit.transform.position, target.transform.position)) > 1f) {
-					ip.DisplayInfo (lang.getString("tooFarFrom_treasure"), 6f);
+					ip.DisplayInfo (lang.getString ("tooFarFrom_treasure"), 6f);
+				} else if (!result) {
+					ip.DisplayInfo (lang.getString ("notEnoughEnergy"), 6f);
 				}
+
 				panelHandler.hidePanelHarbor ();
 				panelHandler.hideAllModals ();
 			}
