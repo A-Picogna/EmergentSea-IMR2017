@@ -126,13 +126,13 @@ public class MapEditorUI : MonoBehaviour
 	}
 
 	public void MapXSliderCallBack(float MapX) {
-		if (LoadManager.instance == null) {
+		if (LoadManager.instance != null) {
 			LoadManager.instance.MapXSliderCallBack (MapX);
 		}
 	}
 
 	public void MapYSliderCallBack(float MapY) {
-		if (LoadManager.instance == null) {
+		if (LoadManager.instance != null) {
 			LoadManager.instance.MapYSliderCallBack (MapY);
 		}
 	}

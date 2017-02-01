@@ -179,38 +179,38 @@ public class NewPlayUI : MonoBehaviour {
 	}
 
 	public void MapXSliderCallBack(float MapX) {
-		if (LoadManager.instance == null) {
+		if (LoadManager.instance != null) {
 			LoadManager.instance.MapXSliderCallBack (MapX);
 		}
 	}
 
 	public void MapYSliderCallBack(float MapY) {
-		if (LoadManager.instance == null) {
+		if (LoadManager.instance != null) {
 			LoadManager.instance.MapYSliderCallBack (MapY);
 		}
 	}
 
 	public void ShipNumberSliderCallBack(float number) {
-		if (LoadManager.instance == null) {
+		if (LoadManager.instance != null) {
 			LoadManager.instance.ShipNumberSliderCallBack(number);
 		}
 	}
 
 	public void GoldQuantitySliderCallBack(float number) {
-		if (LoadManager.instance == null) {
+		if (LoadManager.instance != null) {
 			LoadManager.instance.GoldQuantitySliderCallBack (number);
 		}
 	}
 
 	public void RetributionStrengthSliderCallBack(float number) {
-		if (LoadManager.instance == null) {
+		if (LoadManager.instance != null) {
 			LoadManager.instance.RetributionStrengthSliderCallBack (number); 
 		}
 	}
 
 	public void LocalMultiplayerCallback(bool LocalMultiplayer)
 	{
-		if (LoadManager.instance == null) {
+		if (LoadManager.instance != null) {
 			LoadManager.instance.LocalMultiplayerCallback (LocalMultiplayer);
 		}
 	}
