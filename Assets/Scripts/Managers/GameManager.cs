@@ -65,8 +65,10 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 
 	void Start () {
-		startTurnCanvas = GameObject.Find ("StartTurnCanvas").GetComponent<StartTurn> ();
-		startTurnCanvas.Hide ();
+		if (!SceneManager.GetActiveScene ().name.Equals ("map_tutorial")) {
+			startTurnCanvas = GameObject.Find ("StartTurnCanvas").GetComponent<StartTurn> ();
+			startTurnCanvas.Hide ();
+		}
 		if (SceneManager.GetActiveScene().name.Equals("map_tutorial")){
 			isTutorial = true;
 			LaunchTutorial();
@@ -365,9 +367,6 @@ public class GameManager : MonoBehaviour {
 
 	void NextPlayer()
 	{
-		if (isMultiplayer) {
-			// Display the confirmation screen if we are in two player mode
-		}
 		if (!aiIsPlaying)
 		{
 			//ResetFOW();
@@ -426,9 +425,11 @@ public class GameManager : MonoBehaviour {
 			{
 				//Debug.Log("AI playing...");
 				if (!aiIsPlaying)
-				{
-                    panel_mess = GameObject.Find("txt_genInfo").GetComponent<InfoPanel>();
-                    panel_mess.DisplayInfo("Votre ennemi commence à jouer", 1, 0, 64);
+				{   
+					if (!isMultiplayer) {
+						panel_mess = GameObject.Find("txt_genInfo").GetComponent<InfoPanel>();
+						panel_mess.DisplayInfo("Votre ennemi commence à jouer", 1, 0, 64);    
+					}       
                     foreach (Ship ship in currentPlayer.Fleet)
 					{
 						ship.Used = false;
@@ -452,6 +453,10 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		checkInit = false;
+
+		if (isMultiplayer) {
+			startTurnCanvas.Show (turnNumber, currentPlayer);
+		}
 	}
 
 	void AddShips(int n){
