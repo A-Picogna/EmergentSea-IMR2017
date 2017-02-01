@@ -77,9 +77,6 @@ public class MapEditor : MonoBehaviour {
 		btn_selectTreasure.onClick.AddListener(() => setCursor (4, treasureHexCursor));
 		btn_selectShip.onClick.AddListener(() => setCursor (5, shipCursor));
 
-		this.AddPlayer ("Player1", Color.red, true);
-		this.AddPlayer ("Player2", Color.blue, false);
-
 		//Button btn_save = GameObject.Find ("btn_save").GetComponent<Button>();
 		//btn_save.onClick.AddListener (() => {
 		//	LoadManager.instance.savePrefabricatedMapEditor ("test");
@@ -135,9 +132,12 @@ public class MapEditor : MonoBehaviour {
 		int validityCode = 0;
 		int fleetCount = 0;
 		foreach (Player player in players) {
+			Debug.Log (player.Name + " : " + player.Fleet.Count.ToString());
 			if (player.Fleet.Count > 0) {
 				fleetCount++;
 			}
+			Debug.Log (fleetCount.ToString ());
+			Debug.Log (players.Count.ToString ());
 		}
 		if (fleetCount == 0) {
 			validityCode = 0;
@@ -298,6 +298,9 @@ public class MapEditor : MonoBehaviour {
 				hex_go.isStatic = true;
 			}
 		}
+		// Ajout des deux joueurs 
+		this.AddPlayer ("Player1", Color.red, true);
+		this.AddPlayer ("Player2", Color.blue, false);
 	}
 
 	public void LoadMapRoutine(MapFile SavedMap) {

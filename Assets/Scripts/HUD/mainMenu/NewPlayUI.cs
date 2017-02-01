@@ -179,28 +179,40 @@ public class NewPlayUI : MonoBehaviour {
 	}
 
 	public void MapXSliderCallBack(float MapX) {
-		LoadManager.instance.MapXSliderCallBack (MapX);
+		if (LoadManager.instance == null) {
+			LoadManager.instance.MapXSliderCallBack (MapX);
+		}
 	}
 
 	public void MapYSliderCallBack(float MapY) {
-		LoadManager.instance.MapYSliderCallBack (MapY);
+		if (LoadManager.instance == null) {
+			LoadManager.instance.MapYSliderCallBack (MapY);
+		}
 	}
 
 	public void ShipNumberSliderCallBack(float number) {
-		LoadManager.instance.ShipNumberSliderCallBack(number);
+		if (LoadManager.instance == null) {
+			LoadManager.instance.ShipNumberSliderCallBack(number);
+		}
 	}
 
 	public void GoldQuantitySliderCallBack(float number) {
-		LoadManager.instance.GoldQuantitySliderCallBack (number);
+		if (LoadManager.instance == null) {
+			LoadManager.instance.GoldQuantitySliderCallBack (number);
+		}
 	}
 
 	public void RetributionStrengthSliderCallBack(float number) {
-		LoadManager.instance.RetributionStrengthSliderCallBack (number); 
+		if (LoadManager.instance == null) {
+			LoadManager.instance.RetributionStrengthSliderCallBack (number); 
+		}
 	}
 
 	public void LocalMultiplayerCallback(bool LocalMultiplayer)
 	{
-		LoadManager.instance.LocalMultiplayerCallback (LocalMultiplayer);
+		if (LoadManager.instance == null) {
+			LoadManager.instance.LocalMultiplayerCallback (LocalMultiplayer);
+		}
 	}
 
 	private void populateMapList() {
