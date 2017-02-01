@@ -49,9 +49,6 @@ public class MapEditor : MonoBehaviour {
 	Vector3 worldCoordTreasure;
 
 	void Start () {
-		if (players == null) {
-			players = new List<Player> ();
-		}
 		lang = new Lang(Path.Combine(Application.dataPath, GlobalVariables.pathLang), GlobalVariables.currentLang);
 		size = width * height;
 		btn_selectSea = (Button) GameObject.Find("btn_selectSea").GetComponent<Button>();
@@ -299,18 +296,17 @@ public class MapEditor : MonoBehaviour {
 			}
 		}
 		// Ajout des deux joueurs 
+		players = new List<Player> ();
 		this.AddPlayer ("Player1", Color.red, true);
 		this.AddPlayer ("Player2", Color.blue, false);
 	}
 
 	public void LoadMapRoutine(MapFile SavedMap) {
+		players = new List<Player> ();
 		LoadMap (SavedMap);
 		InstantiateMap (SavedMap);
 		loadFoodAndTreasures (SavedMap);
 		if (SavedMap.boatPreset == true) {
-			if (players == null) {
-				players = new List<Player> ();
-			}
 			loadBoats (SavedMap);
 		}
 	}
