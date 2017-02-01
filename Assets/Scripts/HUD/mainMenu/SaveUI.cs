@@ -64,9 +64,9 @@ public class SaveUI : MonoBehaviour {
 
 			if(!amIInGame)
 			{
-				SaveFileLine [i].transform.Translate (new Vector3 (0, 15, 0));
-				SaveFileLine [i].transform.Translate (new Vector3 (0, i * -15, 0));
-				//SaveFileLine [i].transform.Translate (new Vector3 (0, i * (30-17), 0));
+				//SaveFileLine [i].transform.Translate (new Vector3 (0, 15, 0));
+				SaveFileLine [i].transform.Translate (new Vector3 (0, i * (-10) + 11, 0));
+				//SaveFileLine [i].transform.Translate (new Vector3 (0, i * (30-15), 0));
 			}
 			else {
 				//SaveFileLine [i].transform.Translate (new Vector3 (0, i * -30, 0));
