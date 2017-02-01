@@ -428,7 +428,7 @@ public class GameManager : MonoBehaviour {
 				{   
 					if (!isMultiplayer) {
 						panel_mess = GameObject.Find("txt_genInfo").GetComponent<InfoPanel>();
-						panel_mess.DisplayInfo("Votre ennemi commence à jouer", 1, 0, 64);    
+						panel_mess.DisplayInfo("Votre ennemi commence à jouer...", 1, 0, 64);    
 					}       
                     foreach (Ship ship in currentPlayer.Fleet)
 					{
